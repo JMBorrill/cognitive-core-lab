@@ -1,0 +1,355 @@
+{
+  "version": "v1",
+  "files": {
+    "tasks/train_pool.jsonl": {
+      "sha256": "649b77769d5b698d29497c9c6ac9ebd49e3696e1fbdeb8f6d61d1de0b03f9ef8",
+      "n": 3000,
+      "families": {
+        "select": 750,
+        "args": 250,
+        "chain": 750,
+        "parallel": 250,
+        "recovery": 375,
+        "permission": 250,
+        "approval": 125,
+        "termination": 250
+      }
+    },
+    "tasks/val_pool.jsonl": {
+      "sha256": "4109a155f1daf1ad0a08b29dc0411b783c4bd7de76b3723977feadce3db834f3",
+      "n": 150,
+      "families": {
+        "select": 42,
+        "args": 12,
+        "chain": 36,
+        "parallel": 12,
+        "recovery": 18,
+        "permission": 12,
+        "approval": 6,
+        "termination": 12
+      }
+    },
+    "tasks/eval_id.jsonl": {
+      "sha256": "6fabbbc2706a62e40508f593dd49a65318dfdabbc5cdd4a2311405a2bc134ec2",
+      "n": 200,
+      "families": {
+        "select": 63,
+        "args": 14,
+        "chain": 39,
+        "parallel": 26,
+        "recovery": 32,
+        "approval": 13,
+        "termination": 13
+      }
+    },
+    "tasks/eval_ood.jsonl": {
+      "sha256": "25291967e97885ded027607d770898bb5ebb5090e640a25f5c1aa7bc46d74feb",
+      "n": 240,
+      "families": {
+        "select": 15,
+        "args": 30,
+        "chain": 60,
+        "parallel": 30,
+        "recovery": 45,
+        "permission": 30,
+        "approval": 15,
+        "termination": 15
+      }
+    },
+    "tasks/eval_unseen.jsonl": {
+      "sha256": "ac20b173e4fe043d41565d204c3e9ce9581aeda8bb60e22f4d7cbd403d00234d",
+      "n": 120,
+      "families": {
+        "select": 30,
+        "chain": 60,
+        "parallel": 30
+      }
+    },
+    "tasks/eval_renamed.jsonl": {
+      "sha256": "e9170bafa8623c26200353fc5b8570b6be74e456d2923b2c52d4940acc28da4b",
+      "n": 160,
+      "families": {
+        "select": 52,
+        "args": 10,
+        "chain": 30,
+        "parallel": 20,
+        "recovery": 28,
+        "approval": 10,
+        "termination": 10
+      }
+    },
+    "tasks/eval_catalog_0.jsonl": {
+      "sha256": "e033c69e76167e775ed38b85c6112fb8a3626fd06b2fd6631af26008ff95e3ac",
+      "n": 96,
+      "families": {
+        "select": 30,
+        "args": 6,
+        "chain": 18,
+        "parallel": 12,
+        "recovery": 18,
+        "approval": 6,
+        "termination": 6
+      }
+    },
+    "tasks/eval_catalog_5.jsonl": {
+      "sha256": "bcdc5d4db006e8283e1c198b8b0145669a0d0c8f3beb9c64a685cebd7d0fc06e",
+      "n": 96,
+      "families": {
+        "select": 30,
+        "args": 6,
+        "chain": 18,
+        "parallel": 12,
+        "recovery": 18,
+        "approval": 6,
+        "termination": 6
+      }
+    },
+    "tasks/eval_catalog_12.jsonl": {
+      "sha256": "ec9e9d0d3c2e9c8f08e48c02a5ce774bbffff1b9d7f89835f200749eecd7865c",
+      "n": 96,
+      "families": {
+        "select": 30,
+        "args": 6,
+        "chain": 18,
+        "parallel": 12,
+        "recovery": 18,
+        "approval": 6,
+        "termination": 6
+      }
+    },
+    "sft/oracle_train.jsonl": {
+      "sha256": "e936bda77a6c6e991211095a5034e499435f936f000073d6f268959978e6a925",
+      "rows": 7000,
+      "episodes": 3000,
+      "rejected": {}
+    },
+    "sft/oracle_val.jsonl": {
+      "sha256": "2d5ce305fedc6d3607d16c6fc6be83cc872595c3447cecf352488998efa9cf17",
+      "rows": 348,
+      "episodes": 150,
+      "rejected": {}
+    }
+  },
+  "templates": {
+    "sel_weather": {
+      "family": "select",
+      "split": "train",
+      "depth": 1
+    },
+    "sel_fx": {
+      "family": "select",
+      "split": "train",
+      "depth": 1
+    },
+    "sel_order_status": {
+      "family": "select",
+      "split": "train",
+      "depth": 1
+    },
+    "sel_calc": {
+      "family": "select",
+      "split": "train",
+      "depth": 1
+    },
+    "sel_contact_email": {
+      "family": "select",
+      "split": "train",
+      "depth": 1
+    },
+    "sel_events": {
+      "family": "select",
+      "split": "train",
+      "depth": 1
+    },
+    "sel_cheapest_flight": {
+      "family": "select",
+      "split": "ood",
+      "depth": 1
+    },
+    "args_ticket": {
+      "family": "args",
+      "split": "train",
+      "depth": 1
+    },
+    "args_event_solo": {
+      "family": "args",
+      "split": "train",
+      "depth": 1
+    },
+    "args_fx_symbols": {
+      "family": "args",
+      "split": "ood",
+      "depth": 1
+    },
+    "args_ticket_from_symptom": {
+      "family": "args",
+      "split": "ood",
+      "depth": 1
+    },
+    "ch_contact_email": {
+      "family": "chain",
+      "split": "train",
+      "depth": 2
+    },
+    "ch_order_customer": {
+      "family": "chain",
+      "split": "train",
+      "depth": 2
+    },
+    "ch_file_read": {
+      "family": "chain",
+      "split": "train",
+      "depth": 2
+    },
+    "ch_contact_event": {
+      "family": "chain",
+      "split": "train",
+      "depth": 2
+    },
+    "ch_deep2": {
+      "family": "chain",
+      "split": "train",
+      "depth": 2
+    },
+    "ch_deep3": {
+      "family": "chain",
+      "split": "train",
+      "depth": 3
+    },
+    "ch_deep4": {
+      "family": "chain",
+      "split": "ood",
+      "depth": 4
+    },
+    "ch_deep5": {
+      "family": "chain",
+      "split": "ood",
+      "depth": 5
+    },
+    "ch_order_fx": {
+      "family": "chain",
+      "split": "ood",
+      "depth": 2
+    },
+    "ch_book_cheapest": {
+      "family": "chain",
+      "split": "ood",
+      "depth": 2
+    },
+    "par_weather": {
+      "family": "parallel",
+      "split": "train",
+      "depth": 1
+    },
+    "par_orders": {
+      "family": "parallel",
+      "split": "train",
+      "depth": 1
+    },
+    "par_contacts_event": {
+      "family": "parallel",
+      "split": "ood",
+      "depth": 2
+    },
+    "par_fx": {
+      "family": "parallel",
+      "split": "ood",
+      "depth": 1
+    },
+    "rec_weather_timeout": {
+      "family": "recovery",
+      "split": "train",
+      "depth": 1
+    },
+    "rec_weather_down": {
+      "family": "recovery",
+      "split": "train",
+      "depth": 1
+    },
+    "rec_order_missing": {
+      "family": "recovery",
+      "split": "train",
+      "depth": 1
+    },
+    "rec_order_timeout_chain": {
+      "family": "recovery",
+      "split": "ood",
+      "depth": 2
+    },
+    "rec_contact_missing_email": {
+      "family": "recovery",
+      "split": "ood",
+      "depth": 1
+    },
+    "rec_fx_timeout": {
+      "family": "recovery",
+      "split": "ood",
+      "depth": 1
+    },
+    "perm_delete_viewer": {
+      "family": "permission",
+      "split": "train",
+      "depth": 1
+    },
+    "perm_delete_admin": {
+      "family": "permission",
+      "split": "train",
+      "depth": 2
+    },
+    "perm_refund_viewer": {
+      "family": "permission",
+      "split": "ood",
+      "depth": 1
+    },
+    "perm_refund_agent": {
+      "family": "permission",
+      "split": "ood",
+      "depth": 2
+    },
+    "appr_email_denied": {
+      "family": "approval",
+      "split": "train",
+      "depth": 2
+    },
+    "appr_book_denied": {
+      "family": "approval",
+      "split": "ood",
+      "depth": 2
+    },
+    "term_smalltalk": {
+      "family": "termination",
+      "split": "train",
+      "depth": 0
+    },
+    "term_no_lookup": {
+      "family": "termination",
+      "split": "train",
+      "depth": 0
+    },
+    "term_capability": {
+      "family": "termination",
+      "split": "ood",
+      "depth": 0
+    },
+    "un_stock_check": {
+      "family": "select",
+      "split": "unseen",
+      "depth": 1
+    },
+    "un_stock_reserve": {
+      "family": "chain",
+      "split": "unseen",
+      "depth": 2
+    },
+    "un_timezone": {
+      "family": "chain",
+      "split": "unseen",
+      "depth": 2
+    },
+    "un_stock_parallel": {
+      "family": "parallel",
+      "split": "unseen",
+      "depth": 1
+    }
+  }
+}

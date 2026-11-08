@@ -1,0 +1,32 @@
+{
+  "name": "oracle",
+  "model": "models/Qwen2.5-0.5B-Instruct",
+  "adapter": "none",
+  "policy": "oracle",
+  "fewshot": false,
+  "temperature": 0.0,
+  "seed": 0,
+  "batch": 32,
+  "splits": [
+    "eval_id",
+    "eval_ood",
+    "eval_unseen",
+    "eval_renamed",
+    "eval_catalog_0",
+    "eval_catalog_5",
+    "eval_catalog_12"
+  ],
+  "wall_time_s": 0.22710919380187988,
+  "split_times_s": {
+    "eval_id": 0.03454899787902832,
+    "eval_ood": 0.0500187873840332,
+    "eval_unseen": 0.01975393295288086,
+    "eval_renamed": 0.02805304527282715,
+    "eval_catalog_0": 0.016150951385498047,
+    "eval_catalog_5": 0.017444133758544922,
+    "eval_catalog_12": 0.019530057907104492
+  },
+  "peak_mem_gb": 0.0,
+  "machine": "arm64",
+  "mlx_stats": null
+}

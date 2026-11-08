@@ -1,0 +1,10 @@
+{
+  "A": {"label": "A · Baseline (zero-shot)", "model": "models/Qwen2.5-0.5B-Instruct", "adapter": null},
+  "A_fewshot": {"label": "A+ · Baseline (few-shot prompt)", "model": "models/Qwen2.5-0.5B-Instruct", "adapter": null, "fewshot": true},
+  "B": {"label": "B · Teacher-distilled LoRA", "model": "models/Qwen2.5-0.5B-Instruct", "adapter": "runs/B_s0"},
+  "C": {"label": "C · Independent (oracle) LoRA", "model": "models/Qwen2.5-0.5B-Instruct", "adapter": "runs/C_s0"},
+  "D": {"label": "D · Combined LoRA (mixed)", "model": "models/Qwen2.5-0.5B-Instruct", "adapter": "runs/Dmix_s0"},
+  "Dseq": {"label": "D' · Combined LoRA (sequential B→C)", "model": "models/Qwen2.5-0.5B-Instruct", "adapter": "runs/Dseq_s0"},
+  "teacher": {"label": "Teacher · Qwen3.5-4B (4-bit)", "model": "models/Qwen3.5-4B-MLX-4bit", "adapter": null},
+  "oracle": {"label": "Oracle (programmatic upper bound)", "policy": "oracle"}
+}

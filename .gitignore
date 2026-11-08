@@ -1,0 +1,29 @@
+# environments / caches
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
+
+# model weights and large artifacts (never committed)
+models/
+runs/*/checkpoints/
+runs/**/*.safetensors
+scratch/
+logs/*.log
+
+# per-episode traces are large; published subsets live in web/public/data
+results/runs/*/traces.jsonl.gz
+
+# web
+web/node_modules/
+web/.next/
+
+# secrets
+.env
+.env.*
+
+# derived SFT files: regenerate with scripts/build_datasets.py / make_variants.py (hashes in manifests)
+data/v1/sft/*.jsonl
+# raw teacher logs are committed gzip-compressed (data/v1/teacher/*.jsonl.gz)
+data/v1/teacher/*.jsonl

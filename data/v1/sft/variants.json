@@ -1,0 +1,62 @@
+{
+  "C": {
+    "episodes": 1000,
+    "rows": 2315,
+    "sha256": "1ef97f8466906c19fa286a366c4e346f051c307914f98c106fc212e5d94858fa",
+    "families": {
+      "permission": 82,
+      "recovery": 116,
+      "approval": 39,
+      "chain": 245,
+      "select": 259,
+      "parallel": 85,
+      "termination": 88,
+      "args": 86
+    }
+  },
+  "C_25": {
+    "episodes": 250,
+    "rows": 584,
+    "sha256": "a47b755c5a2c0a58e16cbf1f8ac4afd09a56f1da71c89a7d82ae96ae29ad2c67",
+    "families": {
+      "permission": 20,
+      "recovery": 36,
+      "approval": 11,
+      "chain": 61,
+      "select": 65,
+      "parallel": 19,
+      "termination": 20,
+      "args": 18
+    }
+  },
+  "C_50": {
+    "episodes": 500,
+    "rows": 1149,
+    "sha256": "83278ddb3fb281c12401ba6b8d83a1cf9498fb6e4130f52799e73584f4b6c45e",
+    "families": {
+      "permission": 44,
+      "recovery": 59,
+      "approval": 20,
+      "chain": 116,
+      "select": 131,
+      "parallel": 49,
+      "termination": 35,
+      "args": 46
+    }
+  },
+  "C_full": {
+    "episodes": 3000,
+    "rows": 7000,
+    "sha256": "e936bda77a6c6e991211095a5034e499435f936f000073d6f268959978e6a925",
+    "families": {
+      "select": 750,
+      "args": 250,
+      "chain": 750,
+      "parallel": 250,
+      "recovery": 375,
+      "permission": 250,
+      "approval": 125,
+      "termination": 250
+    }
+  }
+}

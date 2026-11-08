@@ -1,0 +1,716 @@
+{
+ "configs": {
+  "oracle": {
+   "seeds": [
+    0
+   ],
+   "eval_id": {
+    "success": {
+     "mean": 1.0,
+     "lo": 1.0,
+     "hi": 1.0,
+     "n": 200,
+     "seeds": 1,
+     "seed_means": [
+      1.0
+     ]
+    },
+    "tool_selection": {
+     "mean": 1.0,
+     "lo": 1.0,
+     "hi": 1.0,
+     "n": 200,
+     "seeds": 1,
+     "seed_means": [
+      1.0
+     ]
+    },
+    "arg_correct": {
+     "mean": 1.0,
+     "lo": 1.0,
+     "hi": 1.0,
+     "n": 187,
+     "seeds": 1,
+     "seed_means": [
+      1.0
+     ]
+    },
+    "dependency_safe": {
+     "mean": 1.0,
+     "lo": 1.0,
+     "hi": 1.0,
+     "n": 200,
+     "seeds": 1,
+     "seed_means": [
+      1.0
+     ]
+    },
+    "strict_schema": {
+     "mean": 1.0,
+     "lo": 1.0,
+     "hi": 1.0,
+     "n": 200,
+     "seeds": 1,
+     "seed_means": [
+      1.0
+     ]
+    },
+    "hallucinated_tools": {
+     "mean": 0.0,
+     "lo": 0.0,
+     "hi": 0.0,
+     "n": 200,
+     "seeds": 1,
+     "seed_means": [
+      0.0
+     ]
+    },
+    "unnecessary_calls": {
+     "mean": 0.0,
+     "lo": 0.0,
+     "hi": 0.0,
+     "n": 200,
+     "seeds": 1,
+     "seed_means": [
+      0.0
+     ]
+    },
+    "invalid_args": {
+     "mean": 0.0,
+     "lo": 0.0,
+     "hi": 0.0,
+     "n": 200,
+     "seeds": 1,
+     "seed_means": [
+      0.0
+     ]
+    },
+    "parse_errors": {
+     "mean": 0.0,
+     "lo": 0.0,
+     "hi": 0.0,
+     "n": 200,
+     "seeds": 1,
+     "seed_means": [
+      0.0
+     ]
+    },
+    "turns": {
+     "mean": 2.29,
+     "lo": 2.21,
+     "hi": 2.37,
+     "n": 200,
+     "seeds": 1,
+     "seed_means": [
+      2.29
+     ]
+    },
+    "n_calls": {
+     "mean": 1.48,
+     "lo": 1.385,
+     "hi": 1.575,
+     "n": 200,
+     "seeds": 1,
+     "seed_means": [
+      1.48
+     ]
+    }
+   },
+   "eval_ood": {
+    "success": {
+     "mean": 1.0,
+     "lo": 1.0,
+     "hi": 1.0,
+     "n": 240,
+     "seeds": 1,
+     "seed_means": [
+      1.0
+     ]
+    },
+    "tool_selection": {
+     "mean": 1.0,
+     "lo": 1.0,
+     "hi": 1.0,
+     "n": 240,
+     "seeds": 1,
+     "seed_means": [
+      1.0
+     ]
+    },
+    "arg_correct": {
+     "mean": 1.0,
+     "lo": 1.0,
+     "hi": 1.0,
+     "n": 210,
+     "seeds": 1,
+     "seed_means": [
+      1.0
+     ]
+    },
+    "dependency_safe": {
+     "mean": 1.0,
+     "lo": 1.0,
+     "hi": 1.0,
+     "n": 240,
+     "seeds": 1,
+     "seed_means": [
+      1.0
+     ]
+    },
+    "strict_schema": {
+     "mean": 1.0,
+     "lo": 1.0,
+     "hi": 1.0,
+     "n": 240,
+     "seeds": 1,
+     "seed_means": [
+      1.0
+     ]
+    },
+    "hallucinated_tools": {
+     "mean": 0.0,
+     "lo": 0.0,
+     "hi": 0.0,
+     "n": 240,
+     "seeds": 1,
+     "seed_means": [
+      0.0
+     ]
+    },
+    "unnecessary_calls": {
+     "mean": 0.0,
+     "lo": 0.0,
+     "hi": 0.0,
+     "n": 240,
+     "seeds": 1,
+     "seed_means": [
+      0.0
+     ]
+    },
+    "invalid_args": {
+     "mean": 0.0,
+     "lo": 0.0,
+     "hi": 0.0,
+     "n": 240,
+     "seeds": 1,
+     "seed_means": [
+      0.0
+     ]
+    },
+    "parse_errors": {
+     "mean": 0.0,
+     "lo": 0.0,
+     "hi": 0.0,
+     "n": 240,
+     "seeds": 1,
+     "seed_means": [
+      0.0
+     ]
+    },
+    "turns": {
+     "mean": 2.8125,
+     "lo": 2.65,
+     "hi": 2.9791666666666665,
+     "n": 240,
+     "seeds": 1,
+     "seed_means": [
+      2.8125
+     ]
+    },
+    "n_calls": {
+     "mean": 1.9375,
+     "lo": 1.7791666666666666,
+     "hi": 2.1083333333333334,
+     "n": 240,
+     "seeds": 1,
+     "seed_means": [
+      1.9375
+     ]
+    }
+   },
+   "eval_unseen": {
+    "success": {
+     "mean": 1.0,
+     "lo": 1.0,
+     "hi": 1.0,
+     "n": 120,
+     "seeds": 1,
+     "seed_means": [
+      1.0
+     ]
+    },
+    "tool_selection": {
+     "mean": 1.0,
+     "lo": 1.0,
+     "hi": 1.0,
+     "n": 120,
+     "seeds": 1,
+     "seed_means": [
+      1.0
+     ]
+    },
+    "arg_correct": {
+     "mean": 1.0,
+     "lo": 1.0,
+     "hi": 1.0,
+     "n": 120,
+     "seeds": 1,
+     "seed_means": [
+      1.0
+     ]
+    },
+    "dependency_safe": {
+     "mean": 1.0,
+     "lo": 1.0,
+     "hi": 1.0,
+     "n": 120,
+     "seeds": 1,
+     "seed_means": [
+      1.0
+     ]
+    },
+    "strict_schema": {
+     "mean": 1.0,
+     "lo": 1.0,
+     "hi": 1.0,
+     "n": 120,
+     "seeds": 1,
+     "seed_means": [
+      1.0
+     ]
+    },
+    "hallucinated_tools": {
+     "mean": 0.0,
+     "lo": 0.0,
+     "hi": 0.0,
+     "n": 120,
+     "seeds": 1,
+     "seed_means": [
+      0.0
+     ]
+    },
+    "unnecessary_calls": {
+     "mean": 0.0,
+     "lo": 0.0,
+     "hi": 0.0,
+     "n": 120,
+     "seeds": 1,
+     "seed_means": [
+      0.0
+     ]
+    },
+    "invalid_args": {
+     "mean": 0.0,
+     "lo": 0.0,
+     "hi": 0.0,
+     "n": 120,
+     "seeds": 1,
+     "seed_means": [
+      0.0
+     ]
+    },
+    "parse_errors": {
+     "mean": 0.0,
+     "lo": 0.0,
+     "hi": 0.0,
+     "n": 120,
+     "seeds": 1,
+     "seed_means": [
+      0.0
+     ]
+    },
+    "turns": {
+     "mean": 2.25,
+     "lo": 2.175,
+     "hi": 2.3333333333333335,
+     "n": 120,
+     "seeds": 1,
+     "seed_means": [
+      2.25
+     ]
+    },
+    "n_calls": {
+     "mean": 1.75,
+     "lo": 1.675,
+     "hi": 1.825,
+     "n": 120,
+     "seeds": 1,
+     "seed_means": [
+      1.75
+     ]
+    }
+   },
+   "eval_renamed": {
+    "success": {
+     "mean": 1.0,
+     "lo": 1.0,
+     "hi": 1.0,
+     "n": 160,
+     "seeds": 1,
+     "seed_means": [
+      1.0
+     ]
+    },
+    "tool_selection": {
+     "mean": 1.0,
+     "lo": 1.0,
+     "hi": 1.0,
+     "n": 160,
+     "seeds": 1,
+     "seed_means": [
+      1.0
+     ]
+    },
+    "arg_correct": {
+     "mean": 1.0,
+     "lo": 1.0,
+     "hi": 1.0,
+     "n": 150,
+     "seeds": 1,
+     "seed_means": [
+      1.0
+     ]
+    },
+    "dependency_safe": {
+     "mean": 1.0,
+     "lo": 1.0,
+     "hi": 1.0,
+     "n": 160,
+     "seeds": 1,
+     "seed_means": [
+      1.0
+     ]
+    },
+    "strict_schema": {
+     "mean": 1.0,
+     "lo": 1.0,
+     "hi": 1.0,
+     "n": 160,
+     "seeds": 1,
+     "seed_means": [
+      1.0
+     ]
+    },
+    "hallucinated_tools": {
+     "mean": 0.0,
+     "lo": 0.0,
+     "hi": 0.0,
+     "n": 160,
+     "seeds": 1,
+     "seed_means": [
+      0.0
+     ]
+    },
+    "unnecessary_calls": {
+     "mean": 0.0,
+     "lo": 0.0,
+     "hi": 0.0,
+     "n": 160,
+     "seeds": 1,
+     "seed_means": [
+      0.0
+     ]
+    },
+    "invalid_args": {
+     "mean": 0.0,
+     "lo": 0.0,
+     "hi": 0.0,
+     "n": 160,
+     "seeds": 1,
+     "seed_means": [
+      0.0
+     ]
+    },
+    "parse_errors": {
+     "mean": 0.0,
+     "lo": 0.0,
+     "hi": 0.0,
+     "n": 160,
+     "seeds": 1,
+     "seed_means": [
+      0.0
+     ]
+    },
+    "turns": {
+     "mean": 2.3,
+     "lo": 2.20625,
+     "hi": 2.3875,
+     "n": 160,
+     "seeds": 1,
+     "seed_means": [
+      2.3
+     ]
+    },
+    "n_calls": {
+     "mean": 1.4875,
+     "lo": 1.38125,
+     "hi": 1.59375,
+     "n": 160,
+     "seeds": 1,
+     "seed_means": [
+      1.4875
+     ]
+    }
+   },
+   "all_main": {
+    "success": {
+     "mean": 1.0,
+     "lo": 1.0,
+     "hi": 1.0,
+     "n": 720,
+     "seeds": 1,
+     "seed_means": [
+      1.0
+     ]
+    },
+    "tool_selection": {
+     "mean": 1.0,
+     "lo": 1.0,
+     "hi": 1.0,
+     "n": 720,
+     "seeds": 1,
+     "seed_means": [
+      1.0
+     ]
+    },
+    "arg_correct": {
+     "mean": 1.0,
+     "lo": 1.0,
+     "hi": 1.0,
+     "n": 667,
+     "seeds": 1,
+     "seed_means": [
+      1.0
+     ]
+    },
+    "dependency_safe": {
+     "mean": 1.0,
+     "lo": 1.0,
+     "hi": 1.0,
+     "n": 720,
+     "seeds": 1,
+     "seed_means": [
+      1.0
+     ]
+    },
+    "strict_schema": {
+     "mean": 1.0,
+     "lo": 1.0,
+     "hi": 1.0,
+     "n": 720,
+     "seeds": 1,
+     "seed_means": [
+      1.0
+     ]
+    },
+    "hallucinated_tools": {
+     "mean": 0.0,
+     "lo": 0.0,
+     "hi": 0.0,
+     "n": 720,
+     "seeds": 1,
+     "seed_means": [
+      0.0
+     ]
+    },
+    "unnecessary_calls": {
+     "mean": 0.0,
+     "lo": 0.0,
+     "hi": 0.0,
+     "n": 720,
+     "seeds": 1,
+     "seed_means": [
+      0.0
+     ]
+    },
+    "invalid_args": {
+     "mean": 0.0,
+     "lo": 0.0,
+     "hi": 0.0,
+     "n": 720,
+     "seeds": 1,
+     "seed_means": [
+      0.0
+     ]
+    },
+    "parse_errors": {
+     "mean": 0.0,
+     "lo": 0.0,
+     "hi": 0.0,
+     "n": 720,
+     "seeds": 1,
+     "seed_means": [
+      0.0
+     ]
+    },
+    "turns": {
+     "mean": 2.459722222222222,
+     "lo": 2.397222222222222,
+     "hi": 2.5264236111111114,
+     "n": 720,
+     "seeds": 1,
+     "seed_means": [
+      2.459722222222222
+     ]
+    },
+    "n_calls": {
+     "mean": 1.6791666666666667,
+     "lo": 1.613888888888889,
+     "hi": 1.7486111111111111,
+     "n": 720,
+     "seeds": 1,
+     "seed_means": [
+      1.6791666666666667
+     ]
+    }
+   }
+  }
+ },
+ "comparisons": {},
+ "breakdowns": {
+  "oracle": {
+   "family": {
+    "termination": {
+     "success": 1.0,
+     "n_tasks": 38
+    },
+    "select": {
+     "success": 1.0,
+     "n_tasks": 160
+    },
+    "args": {
+     "success": 1.0,
+     "n_tasks": 54
+    },
+    "parallel": {
+     "success": 1.0,
+     "n_tasks": 106
+    },
+    "recovery": {
+     "success": 1.0,
+     "n_tasks": 105
+    },
+    "chain": {
+     "success": 1.0,
+     "n_tasks": 189
+    },
+    "approval": {
+     "success": 1.0,
+     "n_tasks": 38
+    },
+    "permission": {
+     "success": 1.0,
+     "n_tasks": 30
+    }
+   },
+   "depth": {
+    "0": {
+     "success": 1.0,
+     "n_tasks": 38
+    },
+    "1": {
+     "success": 1.0,
+     "n_tasks": 410
+    },
+    "2": {
+     "success": 1.0,
+     "n_tasks": 242
+    },
+    "4": {
+     "success": 1.0,
+     "n_tasks": 15
+    },
+    "5": {
+     "success": 1.0,
+     "n_tasks": 15
+    }
+   },
+   "graph_seen": {
+    "True": {
+     "success": 1.0,
+     "n_tasks": 420
+    },
+    "False": {
+     "success": 1.0,
+     "n_tasks": 300
+    }
+   },
+   "fault": {
+    "False": {
+     "success": 1.0,
+     "n_tasks": 615
+    },
+    "True": {
+     "success": 1.0,
+     "n_tasks": 105
+    }
+   },
+   "split": {
+    "eval_id": {
+     "success": 1.0,
+     "n_tasks": 200
+    },
+    "eval_ood": {
+     "success": 1.0,
+     "n_tasks": 240
+    },
+    "eval_unseen": {
+     "success": 1.0,
+     "n_tasks": 120
+    },
+    "eval_renamed": {
+     "success": 1.0,
+     "n_tasks": 160
+    }
+   }
+  }
+ },
+ "ablations": {
+  "catalog_size": {
+   "oracle": {
+    "0": {
+     "mean": 1.0,
+     "lo": 1.0,
+     "hi": 1.0,
+     "n": 96,
+     "seeds": 1,
+     "seed_means": [
+      1.0
+     ]
+    },
+    "5": {
+     "mean": 1.0,
+     "lo": 1.0,
+     "hi": 1.0,
+     "n": 96,
+     "seeds": 1,
+     "seed_means": [
+      1.0
+     ]
+    },
+    "12": {
+     "mean": 1.0,
+     "lo": 1.0,
+     "hi": 1.0,
+     "n": 96,
+     "seeds": 1,
+     "seed_means": [
+      1.0
+     ]
+    }
+   }
+  }
+ },
+ "efficiency": {
+  "oracle": {
+   "peak_mem_gb": 0.0,
+   "wall_time_s": 0.22710919380187988,
+   "episodes": 1008,
+   "mean_turns": 2.4176587301587302,
+   "gen_tokens_per_s": null,
+   "total_tokens_per_s": null,
+   "mean_episode_latency_s": 0.0,
+   "mean_gen_tokens_per_episode": 0.0
+  }
+ }
+}
