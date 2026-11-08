@@ -1,0 +1,55 @@
+{
+  "eval_id": {
+    "n": 200,
+    "request_overlap": 0,
+    "template_overlap": 18,
+    "graph_signature_overlap_frac": 1.0,
+    "unseen_tools_in_train": [],
+    "dropped_for_request_overlap": 113
+  },
+  "eval_ood": {
+    "n": 240,
+    "request_overlap": 0,
+    "template_overlap": 0,
+    "graph_signature_overlap_frac": 0.25,
+    "unseen_tools_in_train": [],
+    "dropped_for_request_overlap": 0
+  },
+  "eval_unseen": {
+    "n": 120,
+    "request_overlap": 0,
+    "template_overlap": 0,
+    "graph_signature_overlap_frac": 0.0,
+    "unseen_tools_in_train": [],
+    "dropped_for_request_overlap": 0
+  },
+  "eval_renamed": {
+    "n": 160,
+    "request_overlap": 0,
+    "template_overlap": 17,
+    "graph_signature_overlap_frac": 1.0,
+    "unseen_tools_in_train": [],
+    "dropped_for_request_overlap": 81
+  },
+  "eval_catalog_0": {
+    "n": 96,
+    "request_overlap": 0,
+    "template_overlap": 17,
+    "graph_signature_overlap_frac": 1.0,
+    "unseen_tools_in_train": []
+  },
+  "eval_catalog_5": {
+    "n": 96,
+    "request_overlap": 0,
+    "template_overlap": 17,
+    "graph_signature_overlap_frac": 1.0,
+    "unseen_tools_in_train": []
+  },
+  "eval_catalog_12": {
+    "n": 96,
+    "request_overlap": 0,
+    "template_overlap": 17,
+    "graph_signature_overlap_frac": 1.0,
+    "unseen_tools_in_train": []
+  }
+}
