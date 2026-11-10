@@ -84,3 +84,5 @@
 {"time": "2026-11-10T13:58:24Z", "event": "submitted", "key": "e1_s15_base_b", "job_id": "6af32300ab34849891abeebc", "url": "https://huggingface.co/jobs/JMBorrill/6af32300ab34849891abeebc"}
 {"time": "2026-11-10T13:58:25Z", "event": "reserve", "key": "e1_s15_fewshot", "flavor": "a10g-small", "timeout_min": 150, "price_per_min": 0.016667, "reserved_usd": 2.5167, "commit": "7cc6bedc041735afa6cecc3897acfa1f6707fa57", "configs": ["configs/study02/e1/e1_s15_fewshot.json"]}
 {"time": "2026-11-10T13:58:25Z", "event": "submitted", "key": "e1_s15_fewshot", "job_id": "6af32301ab34849891abeec1", "url": "https://huggingface.co/jobs/JMBorrill/6af32301ab34849891abeec1"}
+{"time": "2026-11-10T14:34:45Z", "event": "reserve", "key": "e1_s05_D100_r0_score", "flavor": "a10g-small", "timeout_min": 65, "price_per_min": 0.016667, "reserved_usd": 1.1, "commit": "bb276e71169d0e507b79bb369972fcd92f581457", "configs": ["configs/study02/e1/e1_s05_D100_r0.json"]}
+{"time": "2026-11-10T14:34:46Z", "event": "submitted", "key": "e1_s05_D100_r0_score", "job_id": "6af32b869737d9a9e090b05b", "url": "https://huggingface.co/jobs/JMBorrill/6af32b869737d9a9e090b05b"}

@@ -1,7 +1,7 @@
 {
  "cap_usd": 60.0,
  "reserve_usd": 3.0,
- "max_parallel": 16,
+ "max_parallel": 20,
  "bucket": "JMBorrill/ccl-study02",
  "image": "ghcr.io/astral-sh/uv:python3.11-bookworm",
  "repo": "https://github.com/JMBorrill/cognitive-core-lab",
