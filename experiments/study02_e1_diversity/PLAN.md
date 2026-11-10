@@ -139,4 +139,11 @@ Written after the environment was built and tested on CPU and before any model w
 
 ## Deviations
 
-None yet.
+1. **Quality gate, step 3.** The reference model (`Qwen2.5-7B-Instruct`, few-shot prompt) solved 3% of the
+   first 200 four-hop `test_comp` tasks through its own errors, so the run over all test families was stopped and
+   replaced by one over families of at most two hops. Reading its failures found no task defect and no family was
+   removed. The gate therefore vouches for shallow families only (`data/v2/gate/README.md`). Recorded before any
+   student was scored on a sealed split.
+2. **Gradient checkpointing for the 1.5B student.** Its six runs train with gradient checkpointing so that the
+   longest episodes fit on a 24 GB card. Gradients are the same (tested); only memory and speed change. Recorded
+   before those runs were submitted.

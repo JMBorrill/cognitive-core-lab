@@ -76,7 +76,9 @@ def e1() -> None:
             write("e1", {"name": f"e1_s05_D{d}_r{r}", "model": S05, "seed": r, "data": data, "train": train,
                          "score": score, "eval_batch": 128})
             if d in (25, 1600) and r < 3:
-                write("e1", {"name": f"e1_s15_D{d}_r{r}", "model": S15, "seed": r, "data": data, "train": train,
+                # the larger student needs gradient checkpointing to fit the longest episodes on a 24 GB card
+                write("e1", {"name": f"e1_s15_D{d}_r{r}", "model": S15, "seed": r, "data": data,
+                             "train": {**train, "grad_checkpoint": True},
                              "score": score, "eval_batch": 64})
     for tag, model, batch in (("s05", S05, 128), ("s15", S15, 64)):
         write("e1", {"name": f"e1_{tag}_base", "model": model, "seed": 0, "score": V2_ALL + V1_MAIN,

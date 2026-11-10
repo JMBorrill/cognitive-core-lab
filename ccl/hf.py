@@ -53,6 +53,7 @@ DEFAULTS = {
     # layers: None = every block, otherwise the list of block indices that receive adapters
     "lora": {"rank": 16, "alpha": 32, "dropout": 0.0, "layers": None, "target_modules": QWEN_LINEAR},
     "amp": "auto",  # bf16 autocast on CUDA, full precision on CPU
+    "grad_checkpoint": False,  # recompute block activations in the backward pass: same gradients, less memory
     "save_every": 100,
     "eval_every": 100,
     "val_batches": 20,
@@ -260,6 +261,8 @@ def train(cfg: dict, fresh: bool = False, model_tok=None, on_checkpoint=None) ->
     model = add_lora(model, cfg["lora"], cfg["seed"])
     params = [p for p in model.parameters() if p.requires_grad]
     n_train = sum(p.numel() for p in params)
+    if cfg["grad_checkpoint"]:
+        model.gradient_checkpointing_enable()
 
     # ---- data (stages allow sequential curricula; a single stage otherwise)
     stages = cfg["stages"] or [{"train_files": cfg["train_files"], "steps": cfg["steps"]}]

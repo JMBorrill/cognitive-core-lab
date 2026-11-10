@@ -180,6 +180,9 @@ def test_training_is_deterministic_and_resumes_exactly(tiny, tmp_path):
     assert (tmp_path / "full/DONE").exists() and full["trainable_params"] > 0
     # a finished run is not trained again
     assert hf.train({**cfg, "out_dir": str(tmp_path / "full")})["adapter_sha256"] == full["adapter_sha256"]
+    ckpt = hf.train({**cfg, "grad_checkpoint": True, "out_dir": str(tmp_path / "ckpt")}, fresh=True)
+    c = load_file(str(tmp_path / "ckpt/adapters.safetensors"))  # gradient checkpointing changes memory, not the result
+    assert all(torch.allclose(a[k], c[k], atol=1e-6) for k in a) and ckpt["trainable_params"] == full["trainable_params"]
     other = hf.train({**cfg, "seed": 6, "out_dir": str(tmp_path / "other")}, fresh=True)
     assert other["adapter_sha256"] != full["adapter_sha256"]
 
