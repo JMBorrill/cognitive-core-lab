@@ -1,0 +1,11 @@
+{
+ "key": "gate_reference_2",
+ "experiment": "gate",
+ "flavor": "a10g-small",
+ "timeout_min": 200,
+ "configs": [],
+ "stages": [],
+ "extra": [
+  "PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True python scripts/s2_gate.py --out /work/runs --bucket /out"
+ ]
+}

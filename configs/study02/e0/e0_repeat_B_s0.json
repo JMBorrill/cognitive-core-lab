@@ -1,0 +1,16 @@
+{
+ "experiment": "e0",
+ "name": "e0_repeat_B_s0",
+ "model": {
+  "repo": "Qwen/Qwen2.5-0.5B-Instruct",
+  "revision": "7ae557604adf67be50417f59c2c2f167def9a775"
+ },
+ "seed": 0,
+ "adapter_from": "e0_repro_B_s0",
+ "score": [
+  "v1/eval_id",
+  "v1/eval_ood",
+  "v1/eval_unseen",
+  "v1/eval_renamed"
+ ]
+}

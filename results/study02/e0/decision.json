@@ -1,0 +1,27 @@
+{
+ "bridge_passed": true,
+ "train": {
+  "steps": 250,
+  "batch_size": 4,
+  "grad_accum": 2,
+  "lr": 0.0001,
+  "warmup": 20,
+  "max_grad_norm": 1.0,
+  "weight_decay": 0.0,
+  "bias_correction": true,
+  "max_seq_len": 2048,
+  "save_every": 50,
+  "eval_every": 50,
+  "lora": {
+   "rank": 16,
+   "alpha": 32,
+   "dropout": 0.0,
+   "layers": null
+  }
+ },
+ "chosen_run": "e0_conv_C_lr0.0001_st250",
+ "flavor": "l4x1",
+ "flip_rate": 0.0,
+ "best_eval_ood_conventional": 0.425,
+ "proceed_to_experiment_1": true
+}

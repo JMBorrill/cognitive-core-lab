@@ -1,0 +1,40 @@
+{
+ "experiment": "e0",
+ "name": "e0_conv_C_lr5e-05_st250",
+ "model": {
+  "repo": "Qwen/Qwen2.5-0.5B-Instruct",
+  "revision": "7ae557604adf67be50417f59c2c2f167def9a775"
+ },
+ "seed": 0,
+ "data": {
+  "kind": "v1",
+  "variant": "C",
+  "sha256": "1ef97f8466906c19fa286a366c4e346f051c307914f98c106fc212e5d94858fa"
+ },
+ "train": {
+  "steps": 250,
+  "batch_size": 4,
+  "grad_accum": 2,
+  "lr": 5e-05,
+  "warmup": 20,
+  "max_grad_norm": 1.0,
+  "weight_decay": 0.0,
+  "bias_correction": true,
+  "max_seq_len": 2048,
+  "save_every": 50,
+  "eval_every": 50,
+  "lora": {
+   "rank": 16,
+   "alpha": 32,
+   "dropout": 0.0,
+   "layers": null
+  }
+ },
+ "score": [
+  "v1/val_pool",
+  "v1/eval_id",
+  "v1/eval_ood",
+  "v1/eval_unseen",
+  "v1/eval_renamed"
+ ]
+}

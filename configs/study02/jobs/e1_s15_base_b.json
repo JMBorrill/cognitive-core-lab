@@ -1,0 +1,12 @@
+{
+ "key": "e1_s15_base_b",
+ "experiment": "e1",
+ "flavor": "a10g-small",
+ "timeout_min": 150,
+ "configs": [
+  "configs/study02/e1/e1_s15_base.json"
+ ],
+ "stages": [
+  "score"
+ ]
+}

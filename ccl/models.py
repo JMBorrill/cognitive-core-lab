@@ -6,18 +6,7 @@ import time
 
 import mlx.core as mx
 
-CHAT_KW = {"enable_thinking": False}  # all models are run in non-thinking mode
-
-
-def render_prompt_ids(tokenizer, messages: list[dict]) -> list[int]:
-    """Single source of truth for prompt tokenisation (training and inference)."""
-    return tokenizer.apply_chat_template(messages, add_generation_prompt=True, tokenize=True, **CHAT_KW)
-
-
-def completion_ids(tokenizer, text: str) -> list[int]:
-    """Tokens of an assistant completion including the end-of-turn marker."""
-    end = "<|im_end|>"
-    return tokenizer.encode(text + end, add_special_tokens=False)
+from .sft import CHAT_KW, completion_ids, render_prompt_ids  # noqa: F401  (moved; re-exported)
 
 
 class MLXPolicy:

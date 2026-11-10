@@ -1,0 +1,11 @@
+{
+ "key": "e1_s05_base_c",
+ "experiment": "e1",
+ "flavor": "a10g-small",
+ "timeout_min": 30,
+ "configs": [],
+ "stages": [],
+ "extra": [
+  "python scripts/s2_score.py configs/study02/e1/e1_s05_base.json --out /work/runs --bucket /out --splits v2/dev v2/test_id v2/test_comp"
+ ]
+}

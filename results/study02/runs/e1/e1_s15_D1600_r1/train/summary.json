@@ -1,0 +1,20 @@
+{
+  "out_dir": "/work/runs/e1/e1_s15_D1600_r1/train",
+  "steps": 800,
+  "trainable_params": 18464768,
+  "train_time_s": 2782.466528533,
+  "resumed_from": 100,
+  "final_val_loss": 0.01738017577585099,
+  "peak_mem_gb": 10.029316608,
+  "adapter_sha256": "75bc53a150c6cfd011c9926c3d3fd8daa6892dd4bdf82a84090f583cdb721c81",
+  "data": [
+    {
+      "stage": 0,
+      "path": "/work/runs/_data/e1_r1_D1600.jsonl",
+      "sha256": "1d215f332d086b2a88b7b1c27a8e23e90979ab2f644a2cbd3c4e0a6a3fcf873d",
+      "examples": 3200,
+      "dropped_too_long": 0,
+      "weight": 1
+    }
+  ]
+}

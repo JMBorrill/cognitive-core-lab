@@ -19,6 +19,58 @@ Results, methodology and limitations are in **[docs/REPORT.md](docs/REPORT.md)**
 tables are in [results/tables.md](results/tables.md), and the completion matrix is in
 [docs/COMPLETION.md](docs/COMPLETION.md).
 
+## Study 02
+
+Study 01 leaves a gap: 86–91% on familiar templates, 30–36% on unseen ones. Study 02 asks what closes
+it, and whether the model can close it through verified self-practice. Experiments 0 (bridge to a
+PyTorch/CUDA stack) and 1 (diversity dose-response) have been run; results and the recommendation on
+Experiment 2 are in **[docs/study02/REPORT_E0_E1.md](docs/study02/REPORT_E0_E1.md)**.
+
+| | result |
+|---|---|
+| Experiment 0 | the PyTorch port reproduces Study 01 (B and C within 2.3 points on `eval_id` and `eval_ood`); the gap survives conventional LoRA settings |
+| Experiment 1, 0.5B | held-out compositions: 18.9% with 25 training families, 37.7% with 1,600, at the same 3,200 episodes (+18.9 points [15.7, 22.2]) |
+| Experiment 1, 1.5B | 50.0% and 76.9% (+26.9 points [22.2, 31.4]) |
+| reading | diversity of practised structure closes the gap to unpractised compositions; the 0.5B student is then limited by depth |
+| recommendation | Experiment 2 on the 1.5B student, after making rollouts cheaper and re-costing |
+| compute | 50.37 USD of a 60 USD cap |
+
+- [Proposal](docs/study02/PROPOSAL.md): hypotheses, design, statistics, cost, stop/go decisions
+- [Study 01 audit](docs/study02/STUDY01_AUDIT.md) and its [generated tables](docs/study02/audit_tables.md) (`python scripts/study02_audit.py`)
+- [Literature positioning](docs/study02/LITERATURE.md)
+- [Implementation plan](docs/study02/IMPLEMENTATION_PLAN.md): code, cloud GPU path, budget
+- Pre-registered plans: [Experiment 0](experiments/study02_e0_bridge/PLAN.md), [Experiment 1](experiments/study02_e1_diversity/PLAN.md)
+- Results: [Experiment 0 tables](results/study02/e0/tables.md), [Experiment 1 tables](results/study02/e1/tables.md),
+  [post-hoc analyses](results/study02/e1/posthoc.md), [cost](results/study02/cost.md) and [ledger](results/study02/ledger.jsonl),
+  [test-access log](results/study02/test_access.jsonl)
+
+```
+ccl/sft.py              tokenisation, episode packing, batch schedule (shared by the MLX and PyTorch trainers)
+ccl/hf.py               PyTorch/PEFT LoRA trainer with the Study 01 semantics, batched greedy policy
+ccl/world2.py           one declarative schema (12 domains, 37 entity types) -> 122 tools and generic simulators
+ccl/compose.py          task families as typed paths through the schema; hash-based hold-outs; instance builder
+ccl/s2.py               acceptance rule, Experiment 1 subsets, resumable evaluation
+scripts/build_v2.py     practice space, dev, sealed test splits, census, leakage audit  -> data/v2
+scripts/s2_train.py     train adapters from a run config (never reads a test split)
+scripts/s2_score.py     score final adapters on held-out splits; logs every access to a sealed split
+scripts/s2_gate.py      reference-model quality gate on the test families
+scripts/s2_launch.py    submit GPU jobs under a hard spending cap; ledger
+scripts/s2_analyze.py   pre-registered analyses -> results/study02
+```
+
+Reproduce on any Linux machine (CPU is enough for everything except training and scoring):
+
+```bash
+uv venv --python 3.11 .venv && uv pip install --python .venv/bin/python -r requirements-cuda.lock
+.venv/bin/python -m pytest -q                   # 57 tests; Study 01's MLX test is skipped without MLX
+.venv/bin/python scripts/build_v2.py            # ~40 s; reproduces data/v2 byte for byte
+.venv/bin/python scripts/s2_prepare_v1.py       # rebuilds the Study 01 training files and checks their hashes
+.venv/bin/python scripts/s2_train.py configs/study02/e1/e1_s05_D1600_r0.json --out runs2    # needs a GPU
+.venv/bin/python scripts/s2_score.py configs/study02/e1/e1_s05_D1600_r0.json --out runs2
+.venv/bin/python scripts/s2_analyze.py e0 && .venv/bin/python scripts/s2_analyze.py e1       # from results/study02/runs
+.venv/bin/python scripts/s2_analyze.py posthoc && .venv/bin/python scripts/s2_analyze.py books
+```
+
 ## Layout
 
 ```

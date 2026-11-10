@@ -1,0 +1,11 @@
+{
+ "key": "e1_s15_D25_r1_score",
+ "experiment": "e1",
+ "flavor": "a10g-small",
+ "timeout_min": 90,
+ "configs": [],
+ "stages": [],
+ "extra": [
+  "python scripts/s2_score.py configs/study02/e1/e1_s15_D25_r1.json --out /work/runs --bucket /out --batch 32 --splits own v2/test_comp v2/test_id v1/eval_id v1/eval_ood v1/eval_unseen v1/eval_renamed"
+ ]
+}

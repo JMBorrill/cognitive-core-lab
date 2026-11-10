@@ -1,0 +1,40 @@
+{
+ "name": "e1_s05_D100_r3",
+ "config_sha256": "83b7cf19d46e0c91e0a4f281d37f8fc48cd680bd0c95812beb5c00a28009f73f",
+ "data": {
+  "sha256": "8a9f7f3c039a30ffcff161ff9a350c244ff97c09f262bf30821d16cf47652cbe",
+  "episodes": 3200,
+  "rejected": 0,
+  "rows": 12704
+ },
+ "summary": {
+  "out_dir": "/work/runs/e1/e1_s05_D100_r3/train",
+  "steps": 800,
+  "trainable_params": 8798208,
+  "train_time_s": 973.7283928150005,
+  "resumed_from": 0,
+  "final_val_loss": 0.052579658043002846,
+  "peak_mem_gb": 18.840802816,
+  "adapter_sha256": "498375036d45c33216099d6007e09a470fe511dbdefd953b48faac1cbed93c59",
+  "data": [
+   {
+    "stage": 0,
+    "path": "/work/runs/_data/e1_r3_D100.jsonl",
+    "sha256": "8a9f7f3c039a30ffcff161ff9a350c244ff97c09f262bf30821d16cf47652cbe",
+    "examples": 3200,
+    "dropped_too_long": 0,
+    "weight": 1
+   }
+  ]
+ },
+ "seconds_this_invocation": 1008.9,
+ "python": "3.11.14",
+ "machine": "x86_64",
+ "job_id": "6af319149737d9a9e09076bc",
+ "accelerator": "gpu",
+ "commit": "1214d358462c59f30f9747361bca5bcf3b176da1",
+ "torch": "2.15.0+cu132",
+ "transformers": "5.22.2",
+ "peft": "0.21.2",
+ "gpu": "NVIDIA A10G"
+}

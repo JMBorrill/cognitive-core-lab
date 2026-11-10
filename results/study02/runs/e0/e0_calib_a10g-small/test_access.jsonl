@@ -1,0 +1,1 @@
+{"time": "2026-11-10T12:19:59Z", "run": "e0_calib_a10g-small", "split": "v1/eval_id", "tasks": 200, "to_score": 200, "adapter_sha256": "eb4dc6b753b1f63aaf68fcc52e46f541f27a1ed7c0b883bc1d30d5ac2d200719", "config_sha256": "780eb5930a813534d6da43a335ed54977ced448178c287fc6dc3d1dcbae04fa7", "commit": "229848dc4cd6918ce21d69009e7c0ca0201fe12b"}

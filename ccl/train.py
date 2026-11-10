@@ -10,7 +10,6 @@ Usage: python -m ccl.train configs/train/<name>.json [--fresh]
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import shutil
 import time
@@ -22,7 +21,9 @@ import mlx.optimizers as optim
 import numpy as np
 from mlx.utils import tree_flatten, tree_unflatten
 
-from .models import completion_ids, render_prompt_ids
+# Framework-free helpers live in ccl.sft (shared with the PyTorch backend); re-exported here.
+from .sft import batch_schedule, file_sha256, load_examples  # noqa: F401
+from .sft import episode_sequence as _episode_sequence  # noqa: F401
 
 DEFAULTS = {
     "model": "models/Qwen3.5-0.8B",
@@ -47,77 +48,6 @@ DEFAULTS = {
     "val_batches": 20,
     "memory_limit_gb": 11.0,
 }
-
-
-def file_sha256(path: str) -> str:
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
-
-
-def _episode_sequence(tokenizer, ex: dict) -> tuple[list[int], list[int]] | None:
-    """Pack all assistant turns of one episode into a single sequence with a loss mask.
-
-    Equivalent to one example per turn under teacher forcing, but the shared
-    prefix is processed once. Returns None if the chat template does not render
-    history prefix-consistently (caller then falls back to per-turn examples)."""
-    msgs = ex["messages"] + [{"role": "assistant", "content": ex["completion"]}]
-    seq, mask = [], []
-    for i, m in enumerate(msgs):
-        if m["role"] != "assistant":
-            continue
-        p = render_prompt_ids(tokenizer, msgs[:i])
-        if p[: len(seq)] != seq:
-            return None
-        mask += [0] * (len(p) - len(seq))
-        seq = list(p)
-        c = completion_ids(tokenizer, m["content"])
-        seq += c
-        mask += [1] * len(c)
-    return seq, mask
-
-
-def load_examples(path: str, tokenizer, max_len: int) -> tuple[list[tuple[list[int], list[int]]], int]:
-    """Return [(tokens, loss_mask)] (one per episode) and the number dropped for exceeding max_len.
-
-    SFT files hold one row per assistant turn; only the last turn of each episode is
-    needed because its `messages` contain the full canonical history."""
-    rows = [json.loads(l) for l in open(path)]
-    last = {}
-    for r in rows:
-        key = (r["meta"]["task_id"], r["meta"]["source"], r["meta"].get("sample", 0))
-        if key not in last or r["meta"]["turn"] > last[key]["meta"]["turn"]:
-            last[key] = r
-    out, dropped = [], 0
-    for r in last.values():
-        packed = _episode_sequence(tokenizer, r)
-        seqs = [packed] if packed else []
-        if packed is None:  # template not prefix-consistent: per-turn fallback
-            for q in rows:
-                if q["meta"]["task_id"] == r["meta"]["task_id"] and q["meta"]["source"] == r["meta"]["source"]:
-                    p = render_prompt_ids(tokenizer, q["messages"])
-                    c = completion_ids(tokenizer, q["completion"])
-                    seqs.append((p + c, [0] * len(p) + [1] * len(c)))
-        for t, m in seqs:
-            if len(t) > max_len:
-                dropped += 1
-            else:
-                out.append((t, m))
-    return out, dropped
-
-
-def batch_schedule(n_examples: int, batch_size: int, steps: int, seed: int) -> list[np.ndarray]:
-    """Deterministic list of index batches covering `steps` micro-batches (epoch-wise reshuffle)."""
-    rng = np.random.RandomState(seed)
-    out, perm = [], np.array([], dtype=int)
-    while len(out) < steps:
-        if len(perm) < batch_size:
-            perm = np.concatenate([perm, rng.permutation(n_examples)])
-        out.append(perm[:batch_size])
-        perm = perm[batch_size:]
-    return out
 
 
 def collate(examples, max_len: int):

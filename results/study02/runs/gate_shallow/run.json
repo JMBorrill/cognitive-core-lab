@@ -1,0 +1,22 @@
+{
+ "reference": {
+  "repo": "Qwen/Qwen2.5-7B-Instruct",
+  "revision": "a09a35458c702b33eeacc393d103063234e8bc28"
+ },
+ "generation": {
+  "prompt_tokens": 1841951,
+  "gen_tokens": 90676,
+  "gen_time_s": 2324.450118789,
+  "calls": 150,
+  "oom_splits": 6
+ },
+ "python": "3.11.14",
+ "machine": "x86_64",
+ "job_id": "6af315039737d9a9e0906975",
+ "accelerator": "gpu",
+ "commit": "2d7cfdb11d2cf09ade9e830216a270a9f8346798",
+ "torch": "2.15.0+cu132",
+ "transformers": "5.22.2",
+ "peft": "0.21.2",
+ "gpu": "NVIDIA A10G"
+}

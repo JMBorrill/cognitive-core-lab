@@ -33,3 +33,9 @@ archive/**/checkpoints
 archive/**/traces.jsonl.gz
 experiments/**/*.safetensors
 experiments/**/checkpoints
+
+# Study 02: local run directories, per-episode traces and weights pulled from the bucket
+runs2/
+results/study02/runs/**/traces.jsonl.gz
+results/study02/runs/**/*.safetensors
+results/study02/runs/**/checkpoints

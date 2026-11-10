@@ -1,0 +1,23 @@
+{
+ "experiment": "e1",
+ "name": "e1_s15_fewshot",
+ "model": {
+  "repo": "Qwen/Qwen2.5-1.5B-Instruct",
+  "revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
+ },
+ "seed": 0,
+ "fewshot": true,
+ "score": [
+  "v2/dev",
+  "v2/test_id",
+  "v2/test_comp",
+  "v2/test_depth",
+  "v2/test_tool",
+  "v2/test_domain",
+  "v1/eval_id",
+  "v1/eval_ood",
+  "v1/eval_unseen",
+  "v1/eval_renamed"
+ ],
+ "eval_batch": 64
+}

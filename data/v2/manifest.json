@@ -1,0 +1,746 @@
+{
+ "version": "v2",
+ "salt": "ccl-study02-v2",
+ "files": {
+  "practice/families.jsonl.gz": {
+   "sha256": "01c8b2512d369cbe32b233bf72bac0aed83a2c4f1f4bdf13273e72efca377fd3",
+   "n": 5364
+  },
+  "practice/tools.json": {
+   "sha256": "e7f1cf9c1b080a10b4127754b36a1d5db398a076d04d2ca71ab891a4a84fb40b",
+   "n": 85
+  },
+  "dev/dev.jsonl.gz": {
+   "sha256": "c7b6733a71bcbc22e1cc3fba3897b80093f2a7483b5950a9fe755c808f6033dd",
+   "n": 600
+  },
+  "dev/families.jsonl.gz": {
+   "sha256": "c5a0226c6b58470299035586a3e3058641abb4e4752ef3ffb949a09e1ce514ca",
+   "n": 300
+  },
+  "sealed/test_comp.jsonl.gz": {
+   "sha256": "47dc9744efe73bb572d6b9ac529432fe5d06351ade18b4c3a08ff970da9d4314",
+   "n": 1200
+  },
+  "sealed/test_depth.jsonl.gz": {
+   "sha256": "8336ac871b0411788feca63cf8c709a5115dace28cd4c391d1f6960f96b1fbf3",
+   "n": 400
+  },
+  "sealed/test_tool.jsonl.gz": {
+   "sha256": "ea0dbb5eb44c78366b7cbdffe45f5dbe4cbfeb0d5aa446d8c6b14bee47c537c2",
+   "n": 400
+  },
+  "sealed/test_domain.jsonl.gz": {
+   "sha256": "637f1837a968a4274f0a394a5e7558d6e60a641b165873482f2a4fa3f1e085e8",
+   "n": 400
+  },
+  "sealed/test_id.jsonl.gz": {
+   "sha256": "098cdf487357bcdb9e142ee1d8d72efaa30a320d3ac198134d1917f575fa3ffb",
+   "n": 400
+  },
+  "sealed/families.jsonl.gz": {
+   "sha256": "9812c6af413694a9e213095eab0e4115903814962608257eb918d063594d3b95",
+   "n": 1400
+  },
+  "sealed/partition.json": {
+   "sha256": "2ee7ba51fafca598acc270415fa79ae4242a3266c5ac667fdce85fa82f3a0acc"
+  }
+ },
+ "census": {
+  "practice": {
+   "families": 5364,
+   "base_graphs": 2103,
+   "hops": {
+    "1": 408,
+    "2": 758,
+    "3": 1320,
+    "4": 2878
+   },
+   "modifier": {
+    "denied": 139,
+    "fallback": 586,
+    "none": 2365,
+    "notfound": 180,
+    "notool": 1,
+    "refused": 4,
+    "retry": 2089
+   },
+   "shape": {
+    "chain": 128,
+    "chain+act": 36,
+    "chain+fanin+act": 4,
+    "chain+fanout": 39,
+    "chain+list": 3462,
+    "chain+list+act": 761,
+    "chain+list+fanin+act": 93,
+    "chain+list+fanout": 236,
+    "chain+list+twin": 165,
+    "chain+twin": 32,
+    "notool": 1,
+    "single": 117,
+    "single+act": 45,
+    "single+list": 87,
+    "single+list+act": 92,
+    "single+list+twin": 29,
+    "single+twin": 37
+   },
+   "tools": 79,
+   "edges": 229
+  },
+  "available:dev_comp": {
+   "families": 1185,
+   "base_graphs": 477,
+   "hops": {
+    "2": 95,
+    "3": 263,
+    "4": 827
+   },
+   "modifier": {
+    "denied": 25,
+    "fallback": 184,
+    "none": 499,
+    "retry": 477
+   },
+   "shape": {
+    "chain": 48,
+    "chain+act": 32,
+    "chain+fanout": 12,
+    "chain+list": 872,
+    "chain+list+act": 153,
+    "chain+list+fanin+act": 33,
+    "chain+list+fanout": 13,
+    "chain+list+twin": 13,
+    "chain+twin": 9
+   },
+   "tools": 70,
+   "edges": 170
+  },
+  "available:dev_tool": {
+   "families": 1865,
+   "base_graphs": 791,
+   "hops": {
+    "1": 23,
+    "2": 122,
+    "3": 392,
+    "4": 1328
+   },
+   "modifier": {
+    "denied": 53,
+    "fallback": 184,
+    "none": 826,
+    "notfound": 11,
+    "refused": 1,
+    "retry": 790
+   },
+   "shape": {
+    "chain": 36,
+    "chain+act": 5,
+    "chain+fanout": 20,
+    "chain+list": 1329,
+    "chain+list+act": 202,
+    "chain+list+fanin+act": 6,
+    "chain+list+fanout": 212,
+    "chain+list+twin": 27,
+    "chain+twin": 5,
+    "single": 6,
+    "single+act": 3,
+    "single+list": 3,
+    "single+list+act": 8,
+    "single+list+twin": 1,
+    "single+twin": 2
+   },
+   "tools": 76,
+   "edges": 197
+  },
+  "available:dev_domain": {
+   "families": 124,
+   "base_graphs": 41,
+   "hops": {
+    "1": 30,
+    "2": 44,
+    "3": 43,
+    "4": 7
+   },
+   "modifier": {
+    "denied": 9,
+    "fallback": 12,
+    "none": 56,
+    "notfound": 8,
+    "retry": 39
+   },
+   "shape": {
+    "chain": 6,
+    "chain+fanout": 3,
+    "chain+list": 32,
+    "chain+list+act": 44,
+    "chain+list+twin": 7,
+    "chain+twin": 2,
+    "single": 13,
+    "single+act": 5,
+    "single+list": 6,
+    "single+list+twin": 2,
+    "single+twin": 4
+   },
+   "tools": 8,
+   "edges": 13
+  },
+  "available:test_comp": {
+   "families": 3630,
+   "base_graphs": 1528,
+   "hops": {
+    "2": 220,
+    "3": 802,
+    "4": 2608
+   },
+   "modifier": {
+    "denied": 87,
+    "fallback": 431,
+    "none": 1584,
+    "retry": 1528
+   },
+   "shape": {
+    "chain": 97,
+    "chain+act": 5,
+    "chain+fanout": 17,
+    "chain+list": 2451,
+    "chain+list+act": 695,
+    "chain+list+fanin+act": 30,
+    "chain+list+fanout": 279,
+    "chain+list+twin": 46,
+    "chain+twin": 10
+   },
+   "tools": 78,
+   "edges": 276
+  },
+  "available:test_depth": {
+   "families": 5045,
+   "base_graphs": 1912,
+   "hops": {
+    "5": 3554,
+    "6": 1491
+   },
+   "modifier": {
+    "denied": 293,
+    "fallback": 928,
+    "none": 1912,
+    "retry": 1912
+   },
+   "shape": {
+    "chain+list": 2326,
+    "chain+list+act": 1905,
+    "chain+list+fanin+act": 363,
+    "chain+list+fanout": 451
+   },
+   "tools": 76,
+   "edges": 205
+  },
+  "available:test_tool": {
+   "families": 2795,
+   "base_graphs": 1130,
+   "hops": {
+    "1": 42,
+    "2": 193,
+    "3": 653,
+    "4": 1907
+   },
+   "modifier": {
+    "denied": 282,
+    "fallback": 189,
+    "none": 1175,
+    "notfound": 20,
+    "refused": 1,
+    "retry": 1128
+   },
+   "shape": {
+    "chain": 28,
+    "chain+act": 16,
+    "chain+fanout": 4,
+    "chain+list": 1397,
+    "chain+list+act": 1042,
+    "chain+list+fanin+act": 16,
+    "chain+list+fanout": 211,
+    "chain+list+twin": 34,
+    "chain+twin": 5,
+    "single": 12,
+    "single+act": 5,
+    "single+list": 6,
+    "single+list+act": 13,
+    "single+list+twin": 2,
+    "single+twin": 4
+   },
+   "tools": 86,
+   "edges": 266
+  },
+  "available:test_domain": {
+   "families": 244,
+   "base_graphs": 77,
+   "hops": {
+    "1": 64,
+    "2": 66,
+    "3": 63,
+    "4": 51
+   },
+   "modifier": {
+    "denied": 18,
+    "fallback": 22,
+    "none": 106,
+    "notfound": 22,
+    "refused": 1,
+    "retry": 75
+   },
+   "shape": {
+    "chain": 25,
+    "chain+fanout": 2,
+    "chain+list": 87,
+    "chain+list+act": 49,
+    "chain+list+twin": 12,
+    "chain+twin": 5,
+    "single": 25,
+    "single+act": 6,
+    "single+list": 12,
+    "single+list+act": 9,
+    "single+list+twin": 4,
+    "single+twin": 8
+   },
+   "tools": 14,
+   "edges": 20
+  },
+  "dev": {
+   "families": 300,
+   "base_graphs": 263,
+   "hops": {
+    "1": 30,
+    "2": 91,
+    "3": 95,
+    "4": 84
+   },
+   "modifier": {
+    "denied": 27,
+    "fallback": 34,
+    "none": 177,
+    "notfound": 4,
+    "refused": 1,
+    "retry": 57
+   },
+   "shape": {
+    "chain": 22,
+    "chain+act": 7,
+    "chain+fanout": 13,
+    "chain+list": 132,
+    "chain+list+act": 61,
+    "chain+list+fanin+act": 5,
+    "chain+list+fanout": 10,
+    "chain+list+twin": 14,
+    "chain+twin": 6,
+    "single": 11,
+    "single+act": 5,
+    "single+list": 4,
+    "single+list+act": 2,
+    "single+list+twin": 2,
+    "single+twin": 6
+   },
+   "tools": 79,
+   "edges": 162,
+   "tasks": 600,
+   "reserved_phrasing": 280
+  },
+  "test_comp": {
+   "families": 600,
+   "base_graphs": 453,
+   "hops": {
+    "2": 182,
+    "3": 206,
+    "4": 212
+   },
+   "modifier": {
+    "denied": 47,
+    "fallback": 67,
+    "none": 375,
+    "retry": 111
+   },
+   "shape": {
+    "chain": 30,
+    "chain+act": 3,
+    "chain+fanout": 15,
+    "chain+list": 358,
+    "chain+list+act": 99,
+    "chain+list+fanin+act": 3,
+    "chain+list+fanout": 37,
+    "chain+list+twin": 45,
+    "chain+twin": 10
+   },
+   "tools": 75,
+   "edges": 234,
+   "tasks": 1200,
+   "reserved_phrasing": 548
+  },
+  "test_depth": {
+   "families": 200,
+   "base_graphs": 197,
+   "hops": {
+    "5": 100,
+    "6": 100
+   },
+   "modifier": {
+    "denied": 22,
+    "fallback": 22,
+    "none": 122,
+    "retry": 34
+   },
+   "shape": {
+    "chain+list": 68,
+    "chain+list+act": 95,
+    "chain+list+fanin+act": 14,
+    "chain+list+fanout": 23
+   },
+   "tools": 73,
+   "edges": 162,
+   "tasks": 400,
+   "reserved_phrasing": 191
+  },
+  "test_tool": {
+   "families": 200,
+   "base_graphs": 484,
+   "hops": {
+    "1": 29,
+    "2": 55,
+    "3": 58,
+    "4": 58
+   },
+   "modifier": {
+    "denied": 25,
+    "fallback": 20,
+    "none": 111,
+    "notfound": 7,
+    "refused": 1,
+    "retry": 36
+   },
+   "shape": {
+    "chain": 6,
+    "chain+act": 8,
+    "chain+fanout": 1,
+    "chain+list": 65,
+    "chain+list+act": 66,
+    "chain+list+fanin+act": 2,
+    "chain+list+fanout": 10,
+    "chain+list+twin": 10,
+    "chain+twin": 3,
+    "single": 9,
+    "single+act": 3,
+    "single+list": 6,
+    "single+list+act": 5,
+    "single+list+twin": 2,
+    "single+twin": 4
+   },
+   "tools": 75,
+   "edges": 154,
+   "tasks": 400,
+   "reserved_phrasing": 186
+  },
+  "test_domain": {
+   "families": 200,
+   "base_graphs": 77,
+   "hops": {
+    "1": 50,
+    "2": 54,
+    "3": 51,
+    "4": 45
+   },
+   "modifier": {
+    "denied": 18,
+    "fallback": 22,
+    "none": 103,
+    "notfound": 9,
+    "retry": 48
+   },
+   "shape": {
+    "chain": 19,
+    "chain+fanout": 2,
+    "chain+list": 70,
+    "chain+list+act": 43,
+    "chain+list+twin": 12,
+    "chain+twin": 4,
+    "single": 21,
+    "single+act": 5,
+    "single+list": 9,
+    "single+list+act": 3,
+    "single+list+twin": 4,
+    "single+twin": 8
+   },
+   "tools": 14,
+   "edges": 20,
+   "tasks": 400,
+   "reserved_phrasing": 170
+  },
+  "test_id": {
+   "families": 200,
+   "base_graphs": 187,
+   "hops": {
+    "1": 49,
+    "2": 51,
+    "3": 50,
+    "4": 50
+   },
+   "modifier": {
+    "denied": 23,
+    "fallback": 23,
+    "none": 118,
+    "notfound": 5,
+    "retry": 31
+   },
+   "shape": {
+    "chain": 7,
+    "chain+act": 3,
+    "chain+fanout": 2,
+    "chain+list": 92,
+    "chain+list+act": 28,
+    "chain+list+fanin+act": 1,
+    "chain+list+fanout": 6,
+    "chain+list+twin": 10,
+    "chain+twin": 2,
+    "single": 15,
+    "single+act": 6,
+    "single+list": 9,
+    "single+list+act": 5,
+    "single+list+twin": 4,
+    "single+twin": 10
+   },
+   "tools": 75,
+   "edges": 153,
+   "tasks": 400,
+   "reserved_phrasing": 186
+  }
+ },
+ "quality_gate": {
+  "dev": {
+   "oracle": {
+    "success": 600,
+    "n": 600
+   },
+   "no-calls": {
+    "success": 0,
+    "n": 600,
+    "on_tasks_needing_tools": {
+     "success": 0,
+     "n": 598
+    }
+   },
+   "call-everything": {
+    "success": 0,
+    "n": 600,
+    "on_tasks_needing_tools": {
+     "success": 0,
+     "n": 600
+    }
+   }
+  },
+  "test_comp": {
+   "oracle": {
+    "success": 1200,
+    "n": 1200
+   },
+   "no-calls": {
+    "success": 0,
+    "n": 1200,
+    "on_tasks_needing_tools": {
+     "success": 0,
+     "n": 1200
+    }
+   },
+   "call-everything": {
+    "success": 0,
+    "n": 1200,
+    "on_tasks_needing_tools": {
+     "success": 0,
+     "n": 1200
+    }
+   }
+  },
+  "test_depth": {
+   "oracle": {
+    "success": 400,
+    "n": 400
+   },
+   "no-calls": {
+    "success": 0,
+    "n": 400,
+    "on_tasks_needing_tools": {
+     "success": 0,
+     "n": 400
+    }
+   },
+   "call-everything": {
+    "success": 0,
+    "n": 400,
+    "on_tasks_needing_tools": {
+     "success": 0,
+     "n": 400
+    }
+   }
+  },
+  "test_tool": {
+   "oracle": {
+    "success": 400,
+    "n": 400
+   },
+   "no-calls": {
+    "success": 0,
+    "n": 400,
+    "on_tasks_needing_tools": {
+     "success": 0,
+     "n": 398
+    }
+   },
+   "call-everything": {
+    "success": 0,
+    "n": 400,
+    "on_tasks_needing_tools": {
+     "success": 0,
+     "n": 400
+    }
+   }
+  },
+  "test_domain": {
+   "oracle": {
+    "success": 400,
+    "n": 400
+   },
+   "no-calls": {
+    "success": 0,
+    "n": 400,
+    "on_tasks_needing_tools": {
+     "success": 0,
+     "n": 400
+    }
+   },
+   "call-everything": {
+    "success": 0,
+    "n": 400,
+    "on_tasks_needing_tools": {
+     "success": 0,
+     "n": 400
+    }
+   }
+  },
+  "test_id": {
+   "oracle": {
+    "success": 400,
+    "n": 400
+   },
+   "no-calls": {
+    "success": 0,
+    "n": 400,
+    "on_tasks_needing_tools": {
+     "success": 0,
+     "n": 400
+    }
+   },
+   "call-everything": {
+    "success": 0,
+    "n": 400,
+    "on_tasks_needing_tools": {
+     "success": 0,
+     "n": 400
+    }
+   }
+  },
+  "practice_sample": {
+   "oracle": {
+    "success": 10728,
+    "n": 10728
+   },
+   "no-calls": {
+    "success": 2,
+    "n": 10728,
+    "on_tasks_needing_tools": {
+     "success": 0,
+     "n": 10718
+    }
+   },
+   "call-everything": {
+    "success": 0,
+    "n": 10728,
+    "on_tasks_needing_tools": {
+     "success": 0,
+     "n": 10726
+    }
+   }
+  }
+ },
+ "schema": {
+  "domains": 12,
+  "entities": 37,
+  "tools": 122,
+  "tools_by_kind": {
+   "action": 20,
+   "backup": 8,
+   "find": 18,
+   "get": 37,
+   "list": 39
+  }
+ },
+ "partition": {
+  "test_domains": 2,
+  "dev_domains": 1,
+  "test_tools": 8,
+  "dev_tools": 4,
+  "practice_tools": 85,
+  "test_edges": 63,
+  "dev_edges": 25,
+  "practice_edges": 229
+ },
+ "practice_tools_used_in_practice_graphs": 85,
+ "gate_decisions": {
+  "dropped": 0
+ },
+ "leakage_audit": {
+  "training_sample": {
+   "tasks": 10728,
+   "instances_per_family": 2
+  },
+  "splits": {
+   "dev": {
+    "n": 600,
+    "request_overlap": 0,
+    "record_id_overlap": 0,
+    "family_overlap_with_practice": 0,
+    "held_out_tools_in_catalogues": 4
+   },
+   "test_comp": {
+    "n": 1200,
+    "request_overlap": 0,
+    "record_id_overlap": 0,
+    "family_overlap_with_practice": 0,
+    "held_out_tools_in_catalogues": 0
+   },
+   "test_depth": {
+    "n": 400,
+    "request_overlap": 0,
+    "record_id_overlap": 0,
+    "family_overlap_with_practice": 0,
+    "held_out_tools_in_catalogues": 0
+   },
+   "test_tool": {
+    "n": 400,
+    "request_overlap": 0,
+    "record_id_overlap": 0,
+    "family_overlap_with_practice": 0,
+    "held_out_tools_in_catalogues": 8
+   },
+   "test_domain": {
+    "n": 400,
+    "request_overlap": 0,
+    "record_id_overlap": 0,
+    "family_overlap_with_practice": 0,
+    "held_out_tools_in_catalogues": 0
+   },
+   "test_id": {
+    "n": 400,
+    "request_overlap": 0,
+    "record_id_overlap": 0,
+    "family_overlap_with_practice": 200,
+    "held_out_tools_in_catalogues": 0
+   }
+  }
+ }
+}

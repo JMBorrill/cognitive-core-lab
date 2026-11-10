@@ -66,3 +66,60 @@ def wilson(k: int, n: int, z: float = 1.96) -> tuple[float, float]:
     c = (p + z * z / (2 * n)) / den
     h = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / den
     return (c - h, c + h)
+
+
+# ------------------------------------------------------------------ Study 02: families as the unit
+
+def cluster_bootstrap(y, n_boot: int = 10_000, seed: int = 0) -> np.ndarray:
+    """Hierarchical bootstrap for arms scored on the same held-out families.
+
+    y has shape (arms, replicates, families, tasks) with 0/1 entries. Each resample draws
+    replicates (training seeds), then families, then tasks within each drawn family, all with
+    replacement; the same draw is applied to every arm, so differences between arms are paired
+    on replicate index, family and task. Returns the resampled arm means, shape (n_boot, arms)."""
+    y = np.asarray(y, dtype=float)
+    a, r, f, m = y.shape
+    rng = np.random.default_rng(seed)
+    fam = np.arange(f)[:, None]
+    out = np.empty((n_boot, a))
+    for b in range(n_boot):
+        ri, fi, ti = rng.integers(0, r, r), rng.integers(0, f, f), rng.integers(0, m, (f, m))
+        out[b] = y[:, ri][:, :, fi][:, :, fam, ti].mean(axis=(1, 2, 3))
+    return out
+
+
+def interval(samples, point: float, alpha: float = 0.05) -> dict:
+    s = np.asarray(samples, dtype=float)
+    return {"mean": float(point), "lo": float(np.quantile(s, alpha / 2)), "hi": float(np.quantile(s, 1 - alpha / 2))}
+
+
+def variance_components(y) -> dict:
+    """Method-of-moments components of success for one arm, on the probability scale.
+
+    y: (replicates, families, tasks). `within` is task-to-task variance inside a
+    (replicate, family) cell; `seed_family` is how much a family's success moves between
+    replicates; `seed` is the replicate effect on the split mean left after that; `family_sd`
+    is the spread of family means. The same estimators as scripts/study02_audit.py."""
+    y = np.asarray(y, dtype=float)
+    r, f, m = y.shape
+    cell = y.mean(axis=2)
+    within = float(np.mean(cell * (1 - cell)) * m / max(m - 1, 1))
+    seed_family = float(np.mean(cell.var(axis=0, ddof=1)) - within / m)
+    rep_means = cell.mean(axis=1)
+    seed = float(rep_means.var(ddof=1) - max(seed_family, 0) / f - within / (f * m))
+    return {"within": within, "seed_family": seed_family, "seed": seed,
+            "seed_sd": float(np.sqrt(max(seed, 0.0))), "replicate_means_sd": float(rep_means.std(ddof=1)),
+            "family_sd": float(cell.mean(axis=0).std(ddof=1))}
+
+
+def arm_family_variance(ya, yb) -> dict:
+    """How much the difference between two arms varies from family to family, after removing
+    replicate and task noise. ya, yb: (replicates, families, tasks)."""
+    ya, yb = np.asarray(ya, dtype=float), np.asarray(yb, dtype=float)
+    diff = yb.mean(axis=(0, 2)) - ya.mean(axis=(0, 2))
+    noise = 0.0
+    for y in (ya, yb):
+        c = variance_components(y)
+        noise += max(c["seed_family"], 0) / y.shape[0] + c["within"] / (y.shape[0] * y.shape[2])
+    return {"mean_diff": float(diff.mean()), "raw_sd": float(diff.std(ddof=1)),
+            "arm_family": float(diff.var(ddof=1) - noise)}

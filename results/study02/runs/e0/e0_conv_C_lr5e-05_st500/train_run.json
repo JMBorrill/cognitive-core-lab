@@ -1,0 +1,37 @@
+{
+ "name": "e0_conv_C_lr5e-05_st500",
+ "config_sha256": "e3aa757045085740c721bd0cfc6dc4e1be2732160cde270d47f983a68b6f7f2e",
+ "data": {
+  "sha256": "1ef97f8466906c19fa286a366c4e346f051c307914f98c106fc212e5d94858fa"
+ },
+ "summary": {
+  "out_dir": "/work/runs/e0/e0_conv_C_lr5e-05_st500/train",
+  "steps": 500,
+  "trainable_params": 8798208,
+  "train_time_s": 315.18886947100054,
+  "resumed_from": 0,
+  "final_val_loss": 0.004233137401667576,
+  "peak_mem_gb": 8.654011904,
+  "adapter_sha256": "79ede79ca8ef8e8bd51fc6efccbde72c51d08c07c9b4e807ea80f118294dd612",
+  "data": [
+   {
+    "stage": 0,
+    "path": "/work/repo/data/v1/sft/variant_C.jsonl",
+    "sha256": "1ef97f8466906c19fa286a366c4e346f051c307914f98c106fc212e5d94858fa",
+    "examples": 1000,
+    "dropped_too_long": 0,
+    "weight": 1
+   }
+  ]
+ },
+ "seconds_this_invocation": 332.0,
+ "python": "3.11.14",
+ "machine": "x86_64",
+ "job_id": "6af30c5c9737d9a9e090536c",
+ "accelerator": "gpu",
+ "commit": "798bc683391b667a59d2172e7367fc23d1a20241",
+ "torch": "2.15.0+cu132",
+ "transformers": "5.22.2",
+ "peft": "0.21.2",
+ "gpu": "NVIDIA A10G"
+}

@@ -1,0 +1,13 @@
+{
+ "key": "e1_s15_D25_r1",
+ "experiment": "e1",
+ "flavor": "a10g-small",
+ "timeout_min": 160,
+ "configs": [
+  "configs/study02/e1/e1_s15_D25_r1.json"
+ ],
+ "stages": [
+  "train",
+  "score"
+ ]
+}

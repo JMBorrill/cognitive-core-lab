@@ -1,0 +1,20 @@
+{
+  "out_dir": "/work/runs/e0/e0_repro_B_s1/train",
+  "steps": 250,
+  "trainable_params": 5865472,
+  "train_time_s": 120.36338134999824,
+  "resumed_from": 0,
+  "final_val_loss": 0.4082151298870284,
+  "peak_mem_gb": 7.291977728,
+  "adapter_sha256": "a0a01c799752b636e6832f9c2cdc7ae3bf0cb1b8b601b42f78c4344e340fff40",
+  "data": [
+    {
+      "stage": 0,
+      "path": "/work/repo/data/v1/sft/variant_B.jsonl",
+      "sha256": "d84b49db8cce70960c586192719b8bdc9afcb554384d5627b0f8ad8f9e72cf4d",
+      "examples": 1000,
+      "dropped_too_long": 0,
+      "weight": 1
+    }
+  ]
+}
