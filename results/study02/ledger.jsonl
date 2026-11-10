@@ -173,3 +173,4 @@
 {"time": "2026-11-10T15:43:40Z", "event": "reconcile", "provider_used_usd": 41.737493, "ledger_settled_usd": 20.4202}
 {"time": "2026-11-10T15:43:40Z", "event": "reserve", "key": "e1_s05_D100_r0_score_b", "flavor": "a10g-small", "timeout_min": 35, "price_per_min": 0.016667, "reserved_usd": 0.6, "commit": "a23be3e016bda760ad8e46eeef5a4c09121931f5", "configs": ["configs/study02/e1/e1_s05_D100_r0.json"]}
 {"time": "2026-11-10T15:43:40Z", "event": "submitted", "key": "e1_s05_D100_r0_score_b", "job_id": "6af33bac9737d9a9e090de98", "url": "https://huggingface.co/jobs/JMBorrill/6af33bac9737d9a9e090de98"}
+{"time": "2026-11-10T15:44:21Z", "event": "reconcile", "provider_used_usd": 42.037499, "ledger_settled_usd": 20.4202}
