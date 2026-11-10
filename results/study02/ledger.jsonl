@@ -2,3 +2,7 @@
 {"time": "2026-11-10T12:03:35Z", "event": "submitted", "key": "e0_calib_l4x1", "job_id": "6af308179737d9a9e090414c", "url": "https://huggingface.co/jobs/JMBorrill/6af308179737d9a9e090414c"}
 {"time": "2026-11-10T12:16:50Z", "event": "settled", "key": "e0_calib_l4x1", "job_id": "6af308179737d9a9e090414c", "stage": "COMPLETED", "message": null, "billable_secs": 768, "running_secs": 768, "total_secs": 772, "cost_usd": 0.1733, "reserved_usd": 0.28}
 {"time": "2026-11-10T12:16:50Z", "event": "reconcile", "provider_used_usd": 0.186662, "ledger_settled_usd": 0.1733}
+{"time": "2026-11-10T12:18:20Z", "event": "reserve", "key": "e0_calib_a10g-small", "flavor": "a10g-small", "timeout_min": 20, "price_per_min": 0.016667, "reserved_usd": 0.35, "commit": "229848dc4cd6918ce21d69009e7c0ca0201fe12b", "configs": ["configs/study02/e0/e0_calib_a10g-small.json"]}
+{"time": "2026-11-10T12:18:21Z", "event": "submitted", "key": "e0_calib_a10g-small", "job_id": "6af30b8c9737d9a9e0905012", "url": "https://huggingface.co/jobs/JMBorrill/6af30b8c9737d9a9e0905012"}
+{"time": "2026-11-10T12:21:44Z", "event": "settled", "key": "e0_calib_a10g-small", "job_id": "6af30b8c9737d9a9e0905012", "stage": "COMPLETED", "message": null, "billable_secs": 164, "running_secs": 159, "total_secs": 164, "cost_usd": 0.0667, "reserved_usd": 0.35}
+{"time": "2026-11-10T12:21:44Z", "event": "reconcile", "provider_used_usd": 0.25333, "ledger_settled_usd": 0.24}

@@ -197,6 +197,15 @@ def test_batched_greedy_generation_equals_unbatched_and_ignores_model_sampling_d
     hf.train(cfg, fresh=True)
     model, tok = hf.load_policy_model(tiny["path"], tmp_path / "run", "cpu")
     base, _ = hf.load_policy_model(tiny["path"], None, "cpu")
+    # the adapter is merged into the weights for inference; that is the same function as the unmerged model
+    raw, _ = hf.load_base(tiny["path"], "cpu")
+    raw = hf.add_lora(raw, json.loads((tmp_path / "run/adapter_config.json").read_text())["lora"], 0)
+    hf.load_adapter(raw, tmp_path / "run/adapters.safetensors")
+    ids = torch.tensor([render_prompt_ids(tok, episode(0, 2)[1]["messages"])])
+    with torch.no_grad():
+        assert torch.allclose(raw.eval()(input_ids=ids).logits, model(input_ids=ids).logits, atol=1e-5)
+        assert not torch.allclose(base(input_ids=ids).logits, model(input_ids=ids).logits, atol=1e-3)
+    assert hf.merge_lora(raw) > 0 and hf.merge_lora(raw) == 0
     convs = [episode(i, 2)[t]["messages"] for i in range(5) for t in range(2)]  # prompts of different lengths
     pol = hf.HFPolicy(model, tok, "tiny", max_tokens=12)
     together = pol.generate(convs)

@@ -116,8 +116,21 @@ def load_policy_model(model_path: str, adapter_dir: str | Path | None, device: s
         acfg = json.loads((ad / "adapter_config.json").read_text())
         model = add_lora(model, acfg["lora"], seed=0)
         load_adapter(model, ad / "adapters.safetensors")
+        merge_lora(model)
     model.eval()
     return model, tok
+
+
+def merge_lora(model) -> int:
+    """Fold every low-rank update into its base weight (W + scale * B A). The model computes the same
+    function with one matrix product per layer instead of three, which makes scoring cheaper."""
+    from peft.tuners.lora import LoraLayer
+    n = 0
+    for m in model.modules():
+        if isinstance(m, LoraLayer) and not m.merged:
+            m.merge()
+            n += 1
+    return n
 
 
 # ------------------------------------------------------------------ optimisation

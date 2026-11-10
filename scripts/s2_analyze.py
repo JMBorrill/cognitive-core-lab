@@ -276,11 +276,13 @@ def e1() -> None:
     def names(tag, d, reps):
         return [f"e1_{tag}_D{d}_r{r}" for r in reps]
 
-    def covered(kind):
+    held_edges = set(json.loads((s2.V2 / "sealed/partition.json").read_text())["test_edges"])
+
+    def covered(kinds):
+        """Does the run's training set contain every tool (and every practised edge) of a test family?"""
         def ok(run, fam):
             r, d = run.split("_")[-1], run.split("_")[-2]
-            have = set(sets[f"{r}_{d}"][kind])
-            return set(sealed[fam][kind]) <= have
+            return all(set(sealed[fam][k]) - held_edges <= set(sets[f"{r}_{d}"][k]) for k in kinds)
         return ok
 
     for tag, levels, reps in (("s05", LEVELS, range(5)), ("s15", [25, 1600], range(3))):
@@ -355,12 +357,16 @@ def e1() -> None:
                "| endpoint | " + " | ".join(f"D = {d}" for d in have) + " | D1600 - D25 |", "|---|" + "---|" * (len(have) + 1)]
         R["secondary"] = {}
         for label2, key, mask in (("strict success (no unnecessary or dependency-unsafe call)", "strict_success", None),
-                                  ("families whose tools all occur in the run's training set", "success", covered("tools")),
-                                  ("...share of test_comp families that qualify", None, covered("tools"))):
+                                  ("families whose tools all occur in the run's training set", "success", covered(["tools"])),
+                                  ("...share of test_comp families that qualify", None, covered(["tools"])),
+                                  ("families whose tools and practised edges all occur in it", "success",
+                                   covered(["tools", "edges"])),
+                                  ("...share of test_comp families that qualify (tools and edges)", None,
+                                   covered(["tools", "edges"]))):
             if key is None:
                 share = [float(np.mean([[mask(n, f) for f in cube([n], "v2/test_comp")[1]] for n in names(tag, d, reps)]))
                          for d in have]
-                R["secondary"]["tool_covered_share"] = dict(zip(map(str, have), share))
+                R["secondary"][label2] = dict(zip(map(str, have), share))
                 md.append(f"| {label2} | " + " | ".join(pct(v) for v in share) + " | |")
                 continue
             ys = [cube(names(tag, d, reps), "v2/test_comp", key, mask)[0] for d in have]
