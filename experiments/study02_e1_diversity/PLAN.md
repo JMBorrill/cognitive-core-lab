@@ -77,6 +77,48 @@ settings.
 
 About 28 GPU-hours on a 24 GB GPU. Shares a $60 cap with Experiment 0.
 
+## Clarifications recorded before the first run (2026-11-10)
+
+Written after the environment was built and tested on CPU and before any model was trained or evaluated on it.
+
+1. **Family.** A family is one gold dependency graph: role, expected status, the calls and their dependencies,
+   and the faults. Study 01's `graph_signature` is used with one refinement: a tool that fails once (retry) and
+   a tool that is down (fallback) are different families, because they demand different behaviour. Wording,
+   concrete values, the attribute asked for, the rule that picks from a list, distractor tools and the order of
+   independent calls never make a new family. Each base graph has at most one retry and one fallback variant, and
+   "the same question about two records" is a family only for paths of at most two calls
+   (`ccl/compose.py`).
+2. **Drawing the subsets.** Replicate *r* draws one seeded order of the practice space
+   (`ccl.s2.e1_order`). The subset for *D* families is the first *D* entries, so the levels are nested. Every
+   prefix has the same composition: modifier classes in fixed proportions (55% none, 15% retry, 10% fallback,
+   10% denial, 10% not-found, refusal and no-tool, renormalised where a class does not exist), and hops as even
+   as that mix allows. With 414 one-hop families in the practice space, 188 of them single-call failure or
+   refusal families, this gives 18% / 25% / 28% / 29% for 1 to 4 hops at every level, and 2.8 to 2.9 gold calls
+   per task at every level. Realised compositions, tool coverage and edge coverage of every subset are in
+   `results/study02/e1/training_sets.json`.
+3. **What a higher level changes besides D.** A subset of 25 families shows 39 to 50 of the 80 gold tools and
+   about 40 of the 235 practised edges; a subset of 1,600 shows all tools and nearly all edges. D is therefore
+   not separable from tool and edge coverage by design. Both are recorded per run, and the pre-registered
+   secondary endpoint (families whose tools all occur in the run's training set) is reported next to the primary
+   one, together with the same restriction on edges.
+4. **Own-family split.** 400 new instances of the run's own training families, from the evaluation value pool.
+   Replicate *r* uses the same 400 families at D = 400 and D = 1,600.
+5. **Reference split.** `test_id` (200 practice families, 2 new instances each) is scored for every run as well.
+6. **Pairing in the bootstrap.** Replicate *r* shares its seed and its nested subsets across levels, so the
+   bootstrap resamples replicate indices once per draw and applies them to every level, then families, then
+   tasks within families (`ccl.stats.cluster_bootstrap`).
+7. **Stability rule.** As in Experiment 0, applied to steps 1-800.
+8. **Validation loss** during training is computed on oracle trajectories for the first 80 `dev` tasks. It is
+   monitored only. No setting is tuned in Experiment 1.
+9. **Evaluation batch.** 64 episodes in lock-step for the 0.5B student, 32 for the 1.5B student.
+10. **Quality gate, step 3.** `Qwen/Qwen2.5-7B-Instruct` with the few-shot prompt attempts the first task of
+    every test family and the second task of every family whose first attempt failed. A family is removed only
+    if reading its failures shows a defect in the task (an inconsistent world, an ambiguous request, a gold graph
+    that penalises a defensible solution). Failing because the task is hard is not a reason. A defect that
+    comes from the generator is fixed in the generator, and the data are rebuilt and re-checked. Every decision
+    is logged in `data/v2/gate/`.
+11. **Budget.** Hard cap of 60 USD for Experiments 0 and 1 together, enforced by `scripts/s2_launch.py`.
+
 ## Frozen inputs
 
 - `data/v2/manifest.json` SHA-256: *to be recorded before the first run*

@@ -52,6 +52,33 @@ success differs.
 
 About 5 GPU-hours. Shares the $60 cap with Experiment 1.
 
+## Clarifications recorded before the first job (2026-11-10)
+
+Approved for implementation on 2026-11-10 with a hard cap of 60 USD for Experiments 0 and 1 together. The points
+below fill in details the plan left open. They were written after the code was tested on CPU and before any GPU
+job was submitted, so no result influenced them.
+
+1. **Optimizer.** MLX's `AdamW`, which Study 01 used, applies no bias correction by default
+   (`p -= lr * m / (sqrt(v) + eps)`); PyTorch's does. Over 250 steps the uncorrected update is 2 to 6 times
+   larger at the same nominal learning rate. Step B therefore uses the uncorrected update
+   (`bias_correction: false`), which is what "the Study 01 settings" were. Step C uses the standard
+   bias-corrected AdamW, since that is the conventional choice.
+2. **Step C keeps everything else from step B**: 20 warm-up steps, cosine decay to 10% of the peak, gradient
+   clipping at 1.0, 8 episodes per step as 4 x 2, maximum length 2,048, dropout 0.
+3. **Precision.** Base weights in float32 with bfloat16 autocast on the GPU, for training and for generation.
+4. **Decoding.** Greedy, 256 new tokens at most, 64 episodes in lock-step. The model's own generation defaults
+   (sampling and a repetition penalty of 1.05) are switched off, as they were under MLX.
+5. **Step A flavours.** `l4x1` (0.80 USD/h) and `a10g-small` (1.00 USD/h). Each calibration run trains variant C
+   for 50 steps and scores `eval_id`.
+6. **Stability rule.** The rule of `scripts/stability_log.py`: the 5-step moving average of the loss after
+   step 20 never exceeds 1.5 times its value at step 10, and the median pre-clip gradient norm of the last 20
+   steps is below 10 times the median of the first 10.
+7. **Step C selection metric.** Executable success on the 150 tasks of `data/v1/tasks/val_pool.jsonl`, greedy.
+   A setting is "unstable" if it fails the rule in point 6.
+8. **Step D.** `e0_repro_B_s0` is scored a second time in a separate job.
+9. **Cost of a run** is compared with the estimate of the implementation plan (5 GPU-hours and 4 USD for the
+   whole of Experiment 0).
+
 ## Deviations
 
 None yet.

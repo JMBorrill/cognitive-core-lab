@@ -1,0 +1,56 @@
+{
+ "experiment": "e0",
+ "name": "e0_repro_B_s0",
+ "model": {
+  "repo": "Qwen/Qwen2.5-0.5B-Instruct",
+  "revision": "7ae557604adf67be50417f59c2c2f167def9a775"
+ },
+ "seed": 0,
+ "data": {
+  "kind": "v1",
+  "variant": "B",
+  "sha256": "d84b49db8cce70960c586192719b8bdc9afcb554384d5627b0f8ad8f9e72cf4d"
+ },
+ "train": {
+  "steps": 250,
+  "batch_size": 4,
+  "grad_accum": 2,
+  "lr": 1e-05,
+  "warmup": 20,
+  "max_grad_norm": 1.0,
+  "weight_decay": 0.0,
+  "bias_correction": false,
+  "max_seq_len": 2048,
+  "save_every": 50,
+  "eval_every": 50,
+  "lora": {
+   "rank": 16,
+   "alpha": 320,
+   "dropout": 0.0,
+   "layers": [
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23
+   ]
+  }
+ },
+ "score": [
+  "v1/eval_id",
+  "v1/eval_ood",
+  "v1/eval_unseen",
+  "v1/eval_renamed"
+ ]
+}
