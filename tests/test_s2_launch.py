@@ -97,7 +97,9 @@ def test_a_closed_budget_refuses_and_a_stage_has_its_own_cap_and_ledger():
     ok, why = L.may_submit(L.read_ledger(old_ledger), old, 0.01)  # 6.6 USD are left under the old cap
     assert not ok and "closed" in why
     stage, ledger = L.load_budget("e2_stage1")
-    assert stage["cap_usd"] == 15.0 and 0 < stage["reserve_usd"] < stage["cap_usd"] and not stage.get("closed")
+    assert stage["cap_usd"] == 15.0 and 0 < stage["reserve_usd"] < stage["cap_usd"]
+    assert stage["closed"] and not L.may_submit(L.read_ledger(ledger), stage, 0.01)[0]  # Stage 1 has ended
+    stage = {**stage, "closed": False}  # the rule as it applied while the stage ran
     assert ledger != old_ledger and ledger.parent.name == "e2"
     # the provider's total before the stage's first job is what the closed ledger adds up to
     assert stage["provider_baseline_usd"] == pytest.approx(L.books(L.read_ledger(old_ledger))["settled_usd"], abs=0.001)
