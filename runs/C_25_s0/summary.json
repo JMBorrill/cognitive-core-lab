@@ -1,0 +1,20 @@
+{
+  "out_dir": "runs/C_25_s0",
+  "steps": 250,
+  "trainable_params": 5865472,
+  "train_time_s": 2312.394751749991,
+  "resumed_from": 0,
+  "final_val_loss": 0.00946281638121801,
+  "peak_mem_gb": 3.796275904,
+  "adapter_sha256": "1fa38da12bef36817e07f4141c71ba7f7e9beb84ccb1812e9edd8733a931107d",
+  "data": [
+    {
+      "stage": 0,
+      "path": "data/v1/sft/variant_C_25.jsonl",
+      "sha256": "a47b755c5a2c0a58e16cbf1f8ac4afd09a56f1da71c89a7d82ae96ae29ad2c67",
+      "examples": 250,
+      "dropped_too_long": 0,
+      "weight": 1
+    }
+  ]
+}

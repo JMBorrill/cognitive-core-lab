@@ -1,0 +1,37 @@
+{
+  "name": "B_s0",
+  "model": "models/Qwen2.5-0.5B-Instruct",
+  "adapter": "runs/B_s0",
+  "policy": "mlx",
+  "fewshot": false,
+  "temperature": 0.0,
+  "seed": 0,
+  "batch": 64,
+  "splits": [
+    "eval_id",
+    "eval_ood",
+    "eval_unseen",
+    "eval_renamed",
+    "eval_catalog_0",
+    "eval_catalog_5",
+    "eval_catalog_12"
+  ],
+  "wall_time_s": 945.7264561653137,
+  "split_times_s": {
+    "eval_id": 179.71733593940735,
+    "eval_ood": 242.16149806976318,
+    "eval_unseen": 125.45940613746643,
+    "eval_renamed": 137.72717380523682,
+    "eval_catalog_0": 70.83702278137207,
+    "eval_catalog_5": 75.7577691078186,
+    "eval_catalog_12": 113.9714047908783
+  },
+  "peak_mem_gb": 3.307031656,
+  "machine": "arm64",
+  "mlx_stats": {
+    "prompt_tokens": 1243243,
+    "gen_tokens": 93741,
+    "gen_time_s": 944.1218057080696,
+    "calls": 58
+  }
+}

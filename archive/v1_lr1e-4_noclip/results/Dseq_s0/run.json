@@ -1,0 +1,37 @@
+{
+  "name": "Dseq_s0",
+  "model": "models/Qwen2.5-0.5B-Instruct",
+  "adapter": "runs/Dseq_s0",
+  "policy": "mlx",
+  "fewshot": false,
+  "temperature": 0.0,
+  "seed": 0,
+  "batch": 64,
+  "splits": [
+    "eval_id",
+    "eval_ood",
+    "eval_unseen",
+    "eval_renamed",
+    "eval_catalog_0",
+    "eval_catalog_5",
+    "eval_catalog_12"
+  ],
+  "wall_time_s": 873.6563830375671,
+  "split_times_s": {
+    "eval_id": 166.88189888000488,
+    "eval_ood": 213.58578991889954,
+    "eval_unseen": 113.52287530899048,
+    "eval_renamed": 137.00841212272644,
+    "eval_catalog_0": 65.7970449924469,
+    "eval_catalog_5": 82.56045484542847,
+    "eval_catalog_12": 94.21436595916748
+  },
+  "peak_mem_gb": 3.197286754,
+  "machine": "arm64",
+  "mlx_stats": {
+    "prompt_tokens": 1276330,
+    "gen_tokens": 72488,
+    "gen_time_s": 871.8932862100773,
+    "calls": 61
+  }
+}

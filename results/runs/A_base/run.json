@@ -1,0 +1,37 @@
+{
+  "name": "A_base",
+  "model": "models/Qwen2.5-0.5B-Instruct",
+  "adapter": "none",
+  "policy": "mlx",
+  "fewshot": false,
+  "temperature": 0.0,
+  "seed": 0,
+  "batch": 64,
+  "splits": [
+    "eval_id",
+    "eval_ood",
+    "eval_unseen",
+    "eval_renamed",
+    "eval_catalog_0",
+    "eval_catalog_5",
+    "eval_catalog_12"
+  ],
+  "wall_time_s": 856.601469039917,
+  "split_times_s": {
+    "eval_id": 165.64562702178955,
+    "eval_ood": 229.8204128742218,
+    "eval_unseen": 106.85870313644409,
+    "eval_renamed": 116.94460988044739,
+    "eval_catalog_0": 63.85857892036438,
+    "eval_catalog_5": 69.08114290237427,
+    "eval_catalog_12": 104.29829621315002
+  },
+  "peak_mem_gb": 2.975628976,
+  "machine": "arm64",
+  "mlx_stats": {
+    "prompt_tokens": 1501407,
+    "gen_tokens": 107276,
+    "gen_time_s": 854.1575862119789,
+    "calls": 71
+  }
+}

@@ -173,6 +173,8 @@ def validate_args(spec: ToolSpec, args) -> dict:
         }[p.type]
         if not ok:
             raise ToolError("invalid_argument", f"{p.name} must be of type {p.type}")
+        if p.type == "array" and not all(isinstance(x, str) for x in v):
+            raise ToolError("invalid_argument", f"{p.name} must be a list of strings")
         if p.enum and v not in p.enum:
             raise ToolError("invalid_argument", f"{p.name} must be one of {list(p.enum)}")
         if p.pattern and not re.match(p.pattern, v):
@@ -395,4 +397,8 @@ class Simulator:
         plan = self.faults.transient.get(key, [])
         if n < len(plan) and plan[n]:
             raise ToolError(plan[n], "request timed out, try again", retryable=True)
-        return SIMULATORS[key](self.world, canonical_args)
+        try:
+            return SIMULATORS[key](self.world, canonical_args)
+        except (TypeError, ValueError, KeyError, AttributeError) as e:
+            # malformed model input must surface as a tool error, never crash the episode loop
+            raise ToolError("invalid_argument", f"could not process arguments: {type(e).__name__}") from e

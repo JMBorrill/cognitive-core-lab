@@ -37,6 +37,7 @@ DEFAULTS = {
     "lr": 1e-4,
     "warmup": 30,
     "weight_decay": 0.0,
+    "max_grad_norm": 1.0,  # global-norm clipping; None disables (v1 runs had none and diverged at lr 1e-4)
     "max_seq_len": 2048,
     "lora": {"rank": 16, "scale": 20.0, "dropout": 0.0},
     "num_layers": -1,
@@ -240,11 +241,16 @@ def train(cfg: dict, fresh: bool = False) -> dict:
             lsum += lv.item() * nt.item()
             nsum += nt.item()
         grads = tree_map_scale(grads, 1.0 / len(micro))
+        if cfg.get("max_grad_norm"):
+            grads, gnorm = optim.clip_grad_norm(grads, cfg["max_grad_norm"])
+        else:
+            gnorm = mx.sqrt(sum((g * g).sum() for _, g in tree_flatten(grads)))
         opt.update(model, grads)
         mx.eval(model.trainable_parameters(), opt.state)
         tok_count += seq_tokens
         s = step + 1
-        rec = {"step": s, "loss": lsum / max(1, nsum), "lr": float(sched(s)), "supervised_tokens": nsum,
+        rec = {"step": s, "loss": lsum / max(1, nsum), "lr": float(sched(s)), "grad_norm": gnorm.item(),
+               "supervised_tokens": nsum,
                "seq_tokens": seq_tokens, "tok_per_s": tok_count / (time.perf_counter() - t_start),
                "peak_mem_gb": mx.get_peak_memory() / 1e9}
         if s % cfg["eval_every"] == 0 or s == total_steps:

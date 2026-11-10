@@ -1,0 +1,28 @@
+[train] step 10/250 loss 0.2081 tok/s 528 mem 3.89GB
+[train] step 20/250 loss 0.1178 tok/s 505 mem 4.11GB
+[train] step 30/250 loss 0.2985 tok/s 488 mem 4.11GB
+[train] step 40/250 loss 0.1094 tok/s 482 mem 4.11GB
+[train] step 50/250 loss 0.0629 val 0.0773 tok/s 478 mem 4.11GB
+[train] step 60/250 loss 0.0843 tok/s 449 mem 4.11GB
+{
+  "interrupted_at": 60
+}
+[train] step 10/250 loss 0.2213 tok/s 474 mem 3.89GB
+[train] step 20/250 loss 0.3251 tok/s 468 mem 4.11GB
+[train] step 30/250 loss 13.3329 tok/s 465 mem 4.11GB
+[train] step 40/250 loss 8.1684 tok/s 463 mem 4.11GB
+[train] step 50/250 loss 11.3108 val 9.3385 tok/s 462 mem 4.11GB
+[train] step 60/250 loss 8.3985 tok/s 432 mem 4.11GB
+{
+  "interrupted_at": 60
+}
+[train] step 10/250 loss 0.2266 tok/s 455 mem 3.89GB
+[train] step 20/250 loss 6.4965 tok/s 448 mem 4.11GB
+[train] step 30/250 loss 8.7512 tok/s 446 mem 4.11GB
+[train] step 40/250 loss 13.8017 tok/s 445 mem 4.11GB
+[train] step 50/250 loss 12.8060 val 13.0358 tok/s 443 mem 4.11GB
+[train] step 60/250 loss 16.0156 tok/s 420 mem 4.11GB
+{
+  "interrupted_at": 60
+}
+[pilot] done

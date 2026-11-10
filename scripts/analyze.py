@@ -41,6 +41,7 @@ def aligned(rows_by_seed: dict[int, list[dict]], split: str, metric: str, where=
     """Per-seed lists of metric values over the same ordered task IDs."""
     per = {s: {r["task_id"]: r for r in rows if r["split"] == split and (where is None or where(r))}
            for s, rows in rows_by_seed.items()}
+    per = {s: v for s, v in per.items() if v}  # seeds not evaluated on this split (e.g. catalogue splits: seed 0 only)
     common = sorted(set.intersection(*(set(v) for v in per.values()))) if per else []
     return common, [[float(per[s][t][metric]) for t in common] for s in sorted(per)]
 
@@ -70,7 +71,8 @@ def main():
             summary["configs"][c][split] = res
 
     # Paired comparisons (seed-averaged per task) against the baseline and between trained configs.
-    pairs = [("A_base", x) for x in cfgs if x != "A_base"] + [("B", "C"), ("B", "Dmix"), ("C", "Dmix"),
+    pairs = [("A_base", x) for x in cfgs if x != "A_base"] + [("A_fewshot", x) for x in ("B", "C", "Dmix", "Dseq")] + [
+                                                               ("B", "C"), ("B", "Dmix"), ("C", "Dmix"),
                                                                ("Dmix", "Dseq"), ("C", "C_matched"), ("B", "C_matched")]
     for a, b in pairs:
         if a not in runs or b not in runs:
@@ -85,6 +87,13 @@ def main():
             xb = np.array([vb[ib.index(t)] for t in common])
             summary["comparisons"][f"{b}_vs_{a}|{split}"] = paired_diff(xa, xb)
 
+    # Holm-Bonferroni over every paired test reported (family-wise error control).
+    keys = sorted(summary["comparisons"], key=lambda k: summary["comparisons"][k]["p"])
+    m, running = len(keys), 0.0
+    for i, k in enumerate(keys):
+        running = max(running, min(1.0, (m - i) * summary["comparisons"][k]["p"]))
+        summary["comparisons"][k]["p_holm"] = running
+
     # Breakdowns: family, depth, graph novelty, faults, renamed (pooled across main splits, seed-averaged).
     for c in cfgs:
         bd = defaultdict(dict)
@@ -96,6 +105,13 @@ def main():
                 groups[str(r[key])].append(r["success"])
             bd[key] = {g: {"success": float(np.mean(v)), "n_tasks": len(v) // nseeds} for g, v in groups.items()}
         summary["breakdowns"][c] = bd
+
+    # Post-hoc (added after seeing results; see REPORT §7): un_timezone is answerable from world knowledge and
+    # its gold graph demands a geocode call the prompt never requires, so every model (incl. the teacher) scores 0.
+    for c in cfgs:
+        vals = aligned(runs[c], "eval_unseen", "success", where=lambda r: r["template"] != "un_timezone")[1]
+        if vals and len(vals[0]):
+            summary["ablations"].setdefault("posthoc_unseen_excl_timezone", {})[c] = hierarchical_ci(vals)
 
     # Catalogue-size ablation.
     for c in cfgs:
@@ -160,12 +176,21 @@ def render_tables(s, cfgs) -> str:
         out.append(f"| {c} | " + " | ".join(fmt(r.get(m)) for m in cols) + " | "
                    + " | ".join(fmt(r.get(m), pct=False) for m in cnt) + " |")
     out.append("\n## Paired differences in success (percentage points; seed-averaged per task)\n")
-    out.append("| comparison | split | diff [95% CI] | p (sign-flip) | n |")
-    out.append("|---|---|---|---|---|")
+    out.append("p_holm: Holm-Bonferroni adjusted over all %d tests in this table. The smallest attainable "
+               "permutation p is ~0.0002 (5,000 sign-flips).\n" % len(s["comparisons"]))
+    out.append("| comparison | split | diff [95% CI] | p (sign-flip) | p_holm | n |")
+    out.append("|---|---|---|---|---|---|")
     for k, v in s["comparisons"].items():
         name, split = k.split("|")
         out.append(f"| {name} | {split} | {v['diff'] * 100:+.1f} [{v['lo'] * 100:+.1f}, {v['hi'] * 100:+.1f}] | "
-                   f"{v['p']:.4f} | {v['n']} |")
+                   f"{v['p']:.4f} | {v['p_holm']:.4f} | {v['n']} |")
+    if "posthoc_unseen_excl_timezone" in s["ablations"]:
+        out.append("\n## Post-hoc: eval_unseen excluding the flawed un_timezone template (success %, n=90 tasks)\n")
+        out.append("Added after results were seen; reported alongside, never instead of, the pre-registered eval_unseen.\n")
+        out.append("| config | success |")
+        out.append("|---|---|")
+        for c, r in s["ablations"]["posthoc_unseen_excl_timezone"].items():
+            out.append(f"| {c} | {fmt(r)} |")
     if "catalog_size" in s["ablations"]:
         out.append("\n## Catalogue-size ablation (success %, eval_catalog_k: k distractor tools)\n")
         out.append("| config | k=0 | k=5 | k=12 |")

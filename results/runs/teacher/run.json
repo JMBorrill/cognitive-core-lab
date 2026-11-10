@@ -1,0 +1,31 @@
+{
+  "name": "teacher",
+  "model": "models/Qwen3.5-4B-MLX-4bit",
+  "adapter": "none",
+  "policy": "mlx",
+  "fewshot": false,
+  "temperature": 0.0,
+  "seed": 0,
+  "batch": 24,
+  "splits": [
+    "eval_id",
+    "eval_ood",
+    "eval_unseen",
+    "eval_renamed"
+  ],
+  "wall_time_s": 5800.985553979874,
+  "split_times_s": {
+    "eval_id": 1379.9290721416473,
+    "eval_ood": 2593.770915746689,
+    "eval_unseen": 705.1025819778442,
+    "eval_renamed": 1122.0036540031433
+  },
+  "peak_mem_gb": 13.169686792,
+  "machine": "arm64",
+  "mlx_stats": {
+    "prompt_tokens": 974288,
+    "gen_tokens": 70122,
+    "gen_time_s": 5795.845316712861,
+    "calls": 82
+  }
+}

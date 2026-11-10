@@ -1,0 +1,31 @@
+{
+  "name": "C_50_s0",
+  "model": "models/Qwen2.5-0.5B-Instruct",
+  "adapter": "runs/C_50_s0",
+  "policy": "mlx",
+  "fewshot": false,
+  "temperature": 0.0,
+  "seed": 0,
+  "batch": 64,
+  "splits": [
+    "eval_id",
+    "eval_ood",
+    "eval_unseen",
+    "eval_renamed"
+  ],
+  "wall_time_s": 620.3030760288239,
+  "split_times_s": {
+    "eval_id": 151.10027503967285,
+    "eval_ood": 244.97102403640747,
+    "eval_unseen": 94.02203607559204,
+    "eval_renamed": 130.11431193351746
+  },
+  "peak_mem_gb": 3.10422708,
+  "machine": "arm64",
+  "mlx_stats": {
+    "prompt_tokens": 945639,
+    "gen_tokens": 60296,
+    "gen_time_s": 619.0347941631917,
+    "calls": 39
+  }
+}

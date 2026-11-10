@@ -45,9 +45,11 @@ scripts/
 configs/                model registry and training configs
 data/v1/                versioned tasks and SFT data (hashes in manifest.json)
 results/                per-run metrics and aggregated results
+archive/                failed training configurations, preserved with loss curves (not used in comparisons)
+experiments/            LR pilot and LoRA stability study (pre-registered PLAN.md in each)
 web/                    Next.js research showcase (replay + live modes)
 tests/                  pytest suite
-docs/                   report, model selection, completion matrix, case study
+docs/                   report, model selection, completion matrix, case study, CV summary
 ```
 
 ## Reproduce

@@ -27,3 +27,8 @@ web/.next/
 data/v1/sft/*.jsonl
 # raw teacher logs are committed gzip-compressed (data/v1/teacher/*.jsonl.gz)
 data/v1/teacher/*.jsonl
+archive/**/*.safetensors
+archive/**/checkpoints
+archive/**/traces.jsonl.gz
+experiments/**/*.safetensors
+experiments/**/checkpoints

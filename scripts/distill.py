@@ -94,7 +94,7 @@ def main():
         "tasks_offered": len(tasks), "summary": summary,
         "accepted_episodes": sum(s["accepted"] for s in summary.values()),
         "accepted_by_family": dict(by_family),
-        "sft_rows": len(rows), "sft_sha256": sha, "timings_s": timings,
+        "sft_rows": len(rows), "sft_sha256": sha, "timings_s": timings,  # last invocation only (not cumulative across resumes)
         "token_stats": stats1 | {"note": "pass-1 counters; pass 2 continues on the same object"},
         "cost": {"api_usd": 0.0, "note": "local inference on Apple M4 16GB; cost is wall-clock only"},
     }

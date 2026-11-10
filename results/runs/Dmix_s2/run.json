@@ -1,0 +1,31 @@
+{
+  "name": "Dmix_s2",
+  "model": "models/Qwen2.5-0.5B-Instruct",
+  "adapter": "runs/Dmix_s2",
+  "policy": "mlx",
+  "fewshot": false,
+  "temperature": 0.0,
+  "seed": 0,
+  "batch": 64,
+  "splits": [
+    "eval_id",
+    "eval_ood",
+    "eval_unseen",
+    "eval_renamed"
+  ],
+  "wall_time_s": 810.7807950973511,
+  "split_times_s": {
+    "eval_id": 160.6111102104187,
+    "eval_ood": 360.96562790870667,
+    "eval_unseen": 120.49587798118591,
+    "eval_renamed": 168.5937201976776
+  },
+  "peak_mem_gb": 3.48910428,
+  "machine": "arm64",
+  "mlx_stats": {
+    "prompt_tokens": 1175235,
+    "gen_tokens": 71132,
+    "gen_time_s": 809.2568171618623,
+    "calls": 52
+  }
+}

@@ -1,0 +1,4 @@
+experiments/grad_diag/a_last16_s20_lr1e-5: ma10 0.295 max_ma>20 0.211 (i True) | gn med 1-10 26.6 81-100 5.0 (ii True) | stable True | val {50: 0.3475, 100: 0.3579} | loss@100 0.129
+experiments/grad_diag/b_all_s2_lr1e-4: ma10 0.306 max_ma>20 1.098 (i False) | gn med 1-10 21.6 81-100 45.8 (ii True) | stable False | val {50: 0.4775, 100: 0.361} | loss@100 0.186
+[autopilot] choice: a_last16_s20_lr1e-5 Mon  9 Nov 2026 08:47:24 GMT
+[autopilot] pipeline exited rc=0 Tue 10 Nov 2026 00:58:08 GMT

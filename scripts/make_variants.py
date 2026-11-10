@@ -31,8 +31,12 @@ STEPS = 250
 N_EP = 1000
 OFFERED = 1600  # tasks offered to the teacher: the first 1,600 of the training pool
 BASE = {"model": "models/Qwen2.5-0.5B-Instruct", "val_file": str(DATA / "sft/oracle_val.jsonl"),
-        "steps": STEPS, "batch_size": 4, "grad_accum": 2, "lr": 1e-4, "warmup": 20,
+        "steps": STEPS, "batch_size": 4, "grad_accum": 2, "lr": 1e-5, "max_grad_norm": 1.0, "warmup": 20,
         "lora": {"rank": 16, "scale": 20.0, "dropout": 0.0}, "save_every": 50, "eval_every": 50}
+# LoRA stability settings chosen by the pre-registered study in experiments/grad_diag (if present)
+_OVR = ROOT / "configs/train_overrides.json" if "ROOT" in globals() else Path("configs/train_overrides.json")
+if _OVR.exists():
+    BASE.update(json.loads(_OVR.read_text()))
 
 
 def episodes(rows):

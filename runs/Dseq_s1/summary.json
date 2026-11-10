@@ -1,0 +1,28 @@
+{
+  "out_dir": "runs/Dseq_s1",
+  "steps": 250,
+  "trainable_params": 5865472,
+  "train_time_s": 2476.4062943750178,
+  "resumed_from": 0,
+  "final_val_loss": 0.00393639686094626,
+  "peak_mem_gb": 4.01251408,
+  "adapter_sha256": "9ddb37cae95ec339f6b6890ba7f6af40a3dd9c86bddb01aba2d4678651266b7b",
+  "data": [
+    {
+      "stage": 0,
+      "path": "data/v1/sft/variant_B.jsonl",
+      "sha256": "d84b49db8cce70960c586192719b8bdc9afcb554384d5627b0f8ad8f9e72cf4d",
+      "examples": 1000,
+      "dropped_too_long": 0,
+      "weight": 1
+    },
+    {
+      "stage": 1,
+      "path": "data/v1/sft/variant_C.jsonl",
+      "sha256": "1ef97f8466906c19fa286a366c4e346f051c307914f98c106fc212e5d94858fa",
+      "examples": 1000,
+      "dropped_too_long": 0,
+      "weight": 1
+    }
+  ]
+}

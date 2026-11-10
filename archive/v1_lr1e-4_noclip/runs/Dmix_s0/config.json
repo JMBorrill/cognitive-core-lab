@@ -1,0 +1,49 @@
+{
+  "model": "models/Qwen2.5-0.5B-Instruct",
+  "train_files": [
+    "data/v1/sft/variant_B.jsonl",
+    "data/v1/sft/variant_C.jsonl"
+  ],
+  "val_file": "data/v1/sft/oracle_val.jsonl",
+  "stages": null,
+  "out_dir": "runs/Dmix_s0",
+  "seed": 0,
+  "steps": 250,
+  "batch_size": 4,
+  "grad_accum": 2,
+  "lr": 0.0001,
+  "warmup": 20,
+  "weight_decay": 0.0,
+  "max_seq_len": 2048,
+  "lora": {
+    "rank": 16,
+    "scale": 20.0,
+    "dropout": 0.0
+  },
+  "num_layers": -1,
+  "grad_checkpoint": true,
+  "save_every": 50,
+  "eval_every": 50,
+  "val_batches": 20,
+  "memory_limit_gb": 11.0,
+  "total_steps": 250,
+  "trainable_params": 8798208,
+  "data": [
+    {
+      "stage": 0,
+      "path": "data/v1/sft/variant_B.jsonl",
+      "sha256": "d84b49db8cce70960c586192719b8bdc9afcb554384d5627b0f8ad8f9e72cf4d",
+      "examples": 1000,
+      "dropped_too_long": 0,
+      "weight": 1
+    },
+    {
+      "stage": 0,
+      "path": "data/v1/sft/variant_C.jsonl",
+      "sha256": "1ef97f8466906c19fa286a366c4e346f051c307914f98c106fc212e5d94858fa",
+      "examples": 1000,
+      "dropped_too_long": 0,
+      "weight": 1
+    }
+  ]
+}

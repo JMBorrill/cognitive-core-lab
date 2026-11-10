@@ -58,5 +58,35 @@
       "approval": 125,
       "termination": 250
     }
+  },
+  "B": {
+    "episodes": 1000,
+    "rows": 2102,
+    "sha256": "d84b49db8cce70960c586192719b8bdc9afcb554384d5627b0f8ad8f9e72cf4d",
+    "families": {
+      "chain": 146,
+      "select": 303,
+      "args": 121,
+      "recovery": 131,
+      "parallel": 122,
+      "termination": 131,
+      "permission": 45,
+      "approval": 1
+    }
+  },
+  "C_matched": {
+    "episodes": 1000,
+    "rows": 2091,
+    "sha256": "4e2b03d5d42f98106be1edb2b1b929a41e56ce61555a05ed0a90946d181b9236",
+    "families": {
+      "chain": 146,
+      "select": 303,
+      "args": 121,
+      "recovery": 131,
+      "parallel": 122,
+      "termination": 131,
+      "permission": 45,
+      "approval": 1
+    }
   }
 }

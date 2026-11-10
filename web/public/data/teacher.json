@@ -1,0 +1,78 @@
+{
+ "teacher": {
+  "repo": "mlx-community/Qwen3.5-4B-MLX-4bit",
+  "upstream": "Qwen/Qwen3.5-4B",
+  "licence": "apache-2.0",
+  "local_path": "models/Qwen3.5-4B-MLX-4bit"
+ },
+ "generation": {
+  "pass1": {
+   "temperature": 0.0
+  },
+  "pass2": {
+   "temperature": 0.7,
+   "top_p": 0.95,
+   "seed": 1
+  },
+  "max_tokens": 256,
+  "thinking": false,
+  "batch_size": 16,
+  "prompt": "identical system prompt and catalogue rendering as the student (ccl.runtime)"
+ },
+ "tasks_offered": 1600,
+ "summary": {
+  "pass1": {
+   "episodes": 1600,
+   "accepted": 939,
+   "acceptance_rate": 0.5869,
+   "rejection_reasons": {
+    "not_success": 458,
+    "unnecessary_calls": 304,
+    "dependency_unsafe": 185,
+    "invalid_args": 117,
+    "parse_error": 187
+   }
+  },
+  "pass2": {
+   "episodes": 661,
+   "accepted": 72,
+   "acceptance_rate": 0.1089,
+   "rejection_reasons": {
+    "not_success": 443,
+    "parse_error": 214,
+    "unnecessary_calls": 270,
+    "dependency_unsafe": 143,
+    "invalid_args": 84
+   }
+  }
+ },
+ "accepted_episodes": 1011,
+ "accepted_by_family": {
+  "permission": 47,
+  "termination": 131,
+  "select": 308,
+  "args": 122,
+  "parallel": 124,
+  "recovery": 132,
+  "chain": 146,
+  "approval": 1
+ },
+ "sft_rows": 2127,
+ "sft_sha256": "3155514b49cac029b2598521780a0fe730c97f98beaf0f3fb1012882ed25553c",
+ "timings_s": {
+  "pass1_s": 13333,
+  "pass2_s": 7054,
+  "source": "wall-clock from file timestamps (pass1: 13:51:16-17:33:29, pass2: 17:33:29-19:31:03 on 2026-11-08), including one OOM restart (pass 1) and one crash restart (pass 2). distill.py only times the final invocation, which ran nothing after resumes, so its own timings were discarded."
+ },
+ "token_stats": {
+  "prompt_tokens": 0,
+  "gen_tokens": 0,
+  "gen_time_s": 0.0,
+  "calls": 0,
+  "note": "pass-1 counters; pass 2 continues on the same object"
+ },
+ "cost": {
+  "api_usd": 0.0,
+  "note": "local inference on Apple M4 16GB; cost is wall-clock only"
+ }
+}

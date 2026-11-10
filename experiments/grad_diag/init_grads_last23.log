@@ -1,0 +1,15 @@
+lora layers 23
+dtypes Counter({'mlx.core.float32': 322}) base mlx.core.bfloat16
+mb00 loss 0.387 sup   309 width   609 gnorm        961.6 worst model.layers.4.self_attn.v_proj.lora_b nonfinite False
+mb01 loss 0.446 sup   234 width   641 gnorm       1501.6 worst model.layers.4.self_attn.v_proj.lora_b nonfinite False
+mb02 loss 0.447 sup   312 width   769 gnorm       3783.7 worst model.layers.4.self_attn.v_proj.lora_b nonfinite False
+mb03 loss 0.466 sup   356 width   705 gnorm       1491.8 worst model.layers.4.self_attn.v_proj.lora_b nonfinite False
+mb04 loss 0.435 sup   265 width   769 gnorm        105.8 worst model.layers.4.self_attn.v_proj.lora_b nonfinite False
+mb05 loss 0.638 sup   325 width   705 gnorm        742.8 worst model.layers.4.self_attn.v_proj.lora_b nonfinite False
+mb06 loss 0.592 sup   358 width   865 gnorm        569.1 worst model.layers.4.self_attn.v_proj.lora_b nonfinite False
+mb07 loss 0.361 sup   369 width   737 gnorm       1783.3 worst model.layers.4.self_attn.v_proj.lora_b nonfinite False
+mb08 loss 0.558 sup   258 width   577 gnorm        181.0 worst model.layers.4.self_attn.v_proj.lora_b nonfinite False
+mb09 loss 0.338 sup   368 width   769 gnorm        950.8 worst model.layers.4.self_attn.v_proj.lora_b nonfinite False
+mb10 loss 0.421 sup   271 width   609 gnorm        550.3 worst model.layers.4.self_attn.v_proj.lora_b nonfinite False
+mb11 loss 0.383 sup   340 width   705 gnorm        256.6 worst model.layers.4.self_attn.v_proj.lora_b nonfinite False
+per-layer grad norm: {1: 81.5, 2: 71.1, 3: 87.6, 4: 102.2, 5: 91.8, 6: 102.2, 7: 119.1, 8: 34.4, 9: 16.0, 10: 16.1, 11: 16.8, 12: 14.8, 13: 13.6, 14: 11.1, 15: 11.4, 16: 9.0, 17: 6.7, 18: 4.8, 19: 5.4, 20: 5.4, 21: 4.8, 22: 3.6, 23: 7.0}

@@ -1,0 +1,28 @@
+{
+  "out_dir": "runs/Dmix_s0",
+  "steps": 250,
+  "trainable_params": 5865472,
+  "train_time_s": 2234.912892707973,
+  "resumed_from": 0,
+  "final_val_loss": 0.014305083406384296,
+  "peak_mem_gb": 4.012498608,
+  "adapter_sha256": "3533d0103d9ef3a454ef1582c9773466213b74d5785fe9534b3c70c354502c07",
+  "data": [
+    {
+      "stage": 0,
+      "path": "data/v1/sft/variant_B.jsonl",
+      "sha256": "d84b49db8cce70960c586192719b8bdc9afcb554384d5627b0f8ad8f9e72cf4d",
+      "examples": 1000,
+      "dropped_too_long": 0,
+      "weight": 1
+    },
+    {
+      "stage": 0,
+      "path": "data/v1/sft/variant_C.jsonl",
+      "sha256": "1ef97f8466906c19fa286a366c4e346f051c307914f98c106fc212e5d94858fa",
+      "examples": 1000,
+      "dropped_too_long": 0,
+      "weight": 1
+    }
+  ]
+}

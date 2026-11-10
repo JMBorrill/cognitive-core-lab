@@ -1,0 +1,10 @@
+{
+  "fine_tune_type": "lora",
+  "num_layers": 24,
+  "lora_parameters": {
+    "rank": 16,
+    "scale": 20.0,
+    "dropout": 0.0
+  },
+  "base_model": "models/Qwen2.5-0.5B-Instruct"
+}

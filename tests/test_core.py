@@ -219,3 +219,14 @@ def test_bootstrap_and_paired_diff():
     assert d["lo"] > 0 and d["p"] < 0.01
     h = hierarchical_ci([a, a[::-1], a])
     assert h["seeds"] == 3 and h["lo"] <= h["mean"] <= h["hi"]
+
+
+def test_malformed_array_items_are_tool_errors_not_crashes():
+    spec = TOOLS["create_event"]
+    bad = {"title": "x", "date": "2026-11-09", "start_time": "10:00", "attendee_ids": [{"id": "C-1"}]}
+    with pytest.raises(ToolError) as e:
+        validate_args(spec, bad)
+    assert e.value.code == "invalid_argument"
+    with pytest.raises(ToolError) as e:  # simulator guard, even if validation is bypassed
+        Simulator({"contacts": {}, "events": []}).execute(spec, bad)
+    assert e.value.code == "invalid_argument"

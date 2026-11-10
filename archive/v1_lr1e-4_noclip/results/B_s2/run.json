@@ -1,0 +1,31 @@
+{
+  "name": "B_s2",
+  "model": "models/Qwen2.5-0.5B-Instruct",
+  "adapter": "runs/B_s2",
+  "policy": "mlx",
+  "fewshot": false,
+  "temperature": 0.0,
+  "seed": 0,
+  "batch": 64,
+  "splits": [
+    "eval_id",
+    "eval_ood",
+    "eval_unseen",
+    "eval_renamed"
+  ],
+  "wall_time_s": 568.0128388404846,
+  "split_times_s": {
+    "eval_id": 160.33533883094788,
+    "eval_ood": 198.78657579421997,
+    "eval_unseen": 97.76062202453613,
+    "eval_renamed": 111.05495095252991
+  },
+  "peak_mem_gb": 3.008695496,
+  "machine": "arm64",
+  "mlx_stats": {
+    "prompt_tokens": 853283,
+    "gen_tokens": 46706,
+    "gen_time_s": 566.8325977970089,
+    "calls": 42
+  }
+}
