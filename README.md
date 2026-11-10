@@ -57,6 +57,7 @@ docs/                   report, model selection, completion matrix, case study, 
 Requirements: Apple Silicon Mac (tested on M4, 16 GB), Python 3.11, `uv`, Node 22 (showcase only).
 
 ```bash
+git clone https://github.com/JMBorrill/cognitive-core-lab.git && cd cognitive-core-lab
 uv venv --python 3.11 .venv && uv pip install --python .venv/bin/python -r requirements.lock
 # weights (pinned revisions; not committed)
 .venv/bin/hf download Qwen/Qwen2.5-0.5B-Instruct --revision 7ae557604adf --local-dir models/Qwen2.5-0.5B-Instruct
