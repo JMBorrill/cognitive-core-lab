@@ -8,10 +8,14 @@ autocast. That was the cost of Experiment 1. This engine changes how the same co
   R3  a group of episodes is sized by tokens, not by a fixed count;
   R4  a practice attempt may be stopped at its first parse error, unknown tool or invalid argument,
       because the acceptance rule can no longer admit it;
-  R6  while one token per row is decoded, attention is computed per key-value head (`grouped_attention`).
-      The student has 12 query heads on 2 key-value heads, and with an attention mask present the library
-      copies the whole cache out to 12 heads in every layer at every step, which was three quarters of the
-      first Stage 1 calibration's time. (R5, a vLLM fallback, was not needed.)
+
+R6, off by default and NOT validated: while one token per row is decoded, attention can be computed per
+key-value head (`grouped_attention`, `Engine(grouped=True)`). The student has 12 query heads on 2 key-value
+heads, and with an attention mask present the library copies the whole cache out to 12 heads in every layer
+at every step, which is most of this engine's time. The first version of R6 was calibrated in Stage 1 and
+failed: 113 of 400 outcomes changed. It rounded attention scores to bfloat16 before the softmax, where the
+library's GPU kernel keeps them in float32. The function below now computes both products in float32, which
+has not been run on a GPU. It may be used only after a calibration of its own (plan, deviation 1).
 
 How R2 stays exact. Each turn the canonical prompt of every episode is rendered as before
 (`ccl.sft.render_prompt_ids`) and compared with the tokens that episode already has in the cache. The
@@ -53,8 +57,9 @@ def grouped_attention(stock):
     """An attention function for single-token decoding with grouped-query attention and a mask.
 
     The G query heads that share a key-value head are folded into the query dimension, so keys and values are
-    read once as they lie in the cache and never expanded to all heads. The same sums as the stock function,
-    in another order; every other case (no mask, several query positions, no grouping) goes to `stock`."""
+    never expanded to all heads. Scores, softmax and the weighted sum are computed in float32 whatever the
+    model's dtype, and the result is rounded once. Every other case (no mask, several query positions, no
+    grouping) goes to `stock`."""
     def attend(module, query, key, value, attention_mask, dropout=0.0, scaling=None, **kwargs):
         g = getattr(module, "num_key_value_groups", 1)
         if g == 1 or query.shape[2] != 1 or attention_mask is None or attention_mask.dtype != torch.bool \
@@ -62,9 +67,9 @@ def grouped_attention(stock):
             return stock(module, query, key, value, attention_mask, dropout=dropout, scaling=scaling, **kwargs)
         b, h, _, d = query.shape
         q = query.reshape(b, h // g, g, d)  # head j * g + i is query i of key-value head j (as in repeat_kv)
-        scores = torch.matmul(q, key.transpose(-1, -2)) * (scaling if scaling is not None else d ** -0.5)
-        scores = scores.float().masked_fill(~attention_mask, float("-inf"))  # the mask is (rows, 1, 1, keys)
-        out = torch.matmul(torch.softmax(scores, dim=-1).to(value.dtype), value)
+        scores = torch.matmul(q.float(), key.float().transpose(-1, -2)) * (scaling if scaling is not None else d ** -0.5)
+        scores = scores.masked_fill(~attention_mask, float("-inf"))  # the mask is (rows, 1, 1, keys)
+        out = torch.matmul(torch.softmax(scores, dim=-1), value.float()).to(value.dtype)
         return out.reshape(b, h, 1, d).transpose(1, 2).contiguous(), None
     return attend
 
@@ -102,7 +107,7 @@ class Engine:
 
     def __init__(self, model, tokenizer, name: str, max_tokens: int = 256, temperature: float = 0.0,
                  top_p: float = 0.95, seed=0, token_budget: int = 160_000, max_rows: int = 128,
-                 turn_reserve: int = 600, grouped: bool = True):
+                 turn_reserve: int = 600, grouped: bool = False):
         self.model, self.tokenizer, self.name, self.grouped = model, tokenizer, name, grouped
         self.max_tokens, self.temperature, self.top_p, self.seed = max_tokens, temperature, top_p, seed
         self.token_budget, self.max_rows, self.turn_reserve = token_budget, max_rows, turn_reserve

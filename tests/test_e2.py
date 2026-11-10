@@ -73,9 +73,8 @@ def test_cached_decoding_equals_full_re_encoding_token_for_token(tiny_policy):
     for max_tokens in (12, 40):  # 40 runs past some end-of-turn tokens
         ref = reference(model, tok, make(), max_tokens)
         eng = engine.Engine(model, tok, "new", max_tokens=max_tokens)
-        with engine._Grouped():  # as `run` does
-            got = eng._run_group(make())
-            alone = [eng._run_group([e])[0].said for e in make()]  # a row does not depend on its group
+        got = eng._run_group(make())
+        alone = [eng._run_group([e])[0].said for e in make()]  # a row does not depend on its group
         assert [e.said for e in got] == [e.said for e in ref]
         assert [e.messages for e in got] == [e.messages for e in ref]
         assert eng.stats["refed_tokens"] > 0  # some cached tokens were replaced by the canonical ones
@@ -111,8 +110,9 @@ def test_grouped_attention_equals_the_stock_function_and_is_what_decoding_uses(t
     path, adapter = tiny_policy
     model, tok = hf.load_policy_model(path, adapter, "cpu")
     make = lambda: [Scripted(i, turns=1 + i % 3) for i in range(6)]  # noqa: E731
-    on = engine.Engine(model, tok, "on", max_tokens=20)
-    off = engine.Engine(model, tok, "off", max_tokens=20, grouped=False)
+    on = engine.Engine(model, tok, "on", max_tokens=20, grouped=True)
+    off = engine.Engine(model, tok, "off", max_tokens=20)
+    assert not off.grouped  # off unless asked for: it has not passed a calibration on a GPU
     before = fns["sdpa"]
     with engine._Grouped():
         assert fns["sdpa"] is not before

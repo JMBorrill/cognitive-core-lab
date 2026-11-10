@@ -161,10 +161,10 @@ def cmd_calib(a) -> None:
         tasks = s2.e1_own_tasks(fams, tools, cfg["data"]["replicate"], cfg["data"]["D"])
         # on this GPU, in bfloat16: the cached engine against full re-encoding by the Experiment 1 policy
         probe = sorted(tasks, key=lambda t: -t.depth)[:24]
-        new = engine.Engine(model, tok, name).run(probe)
+        new = engine.Engine(model, tok, name, grouped=a.grouped).run(probe)
         old = run_batch(probe, hf.HFPolicy(model, tok, name), batch_size=24)
         same = [[t["raw"] for t in x.trace.turns] == [t["raw"] for t in y.trace.turns] for x, y in zip(new, old)]
-        eng = engine.Engine(model, tok, name, token_budget=a.token_budget, max_rows=a.max_rows)
+        eng = engine.Engine(model, tok, name, token_budget=a.token_budget, max_rows=a.max_rows, grouped=a.grouped)
         timing = s2.evaluate(eng, tasks, "own", out, name)
         rows = [json.loads(l) for l in open(out / "metrics.jsonl")]
         with gzip.open(ROOT / f"results/study02/runs/e1/{run}/metrics.jsonl.gz", "rt") as f:
@@ -177,7 +177,7 @@ def cmd_calib(a) -> None:
             "success_experiment_1": sum(before[r["task_id"]] for r in both) / max(1, len(both)),
             "changed_outcome": sum(r["success"] != before[r["task_id"]] for r in both),
             "same_text_as_full_re_encoding": f"{sum(same)}/{len(same)}", "engine": eng.stats,
-            "token_budget": a.token_budget, "max_rows": a.max_rows})
+            "token_budget": a.token_budget, "max_rows": a.max_rows, "grouped_attention": a.grouped})
         del model
         r = json.loads((out / "result.json").read_text())
         if r["changed_outcome"] > a.max_changed * r["episodes_compared"]:  # stops the job before anything is built on it
@@ -344,6 +344,7 @@ def main():
     ap.add_argument("--token-budget", type=int, default=160_000)
     ap.add_argument("--max-rows", type=int, default=128)
     ap.add_argument("--tag", default="", help="calib: suffix of the result directories")
+    ap.add_argument("--grouped", action="store_true", help="calib: with R6, which is otherwise off everywhere")
     ap.add_argument("--max-changed", type=float, default=1.0, help="calib: fail above this share of changed outcomes")
     a = ap.parse_args()
     globals()[f"cmd_{a.command}"](a)

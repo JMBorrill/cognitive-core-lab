@@ -441,7 +441,21 @@ Recorded in [`configs/study02/e2/frozen.json`](../../configs/study02/e2/frozen.j
    beside the first (`calib2_*`); the job stops if more than 5% of outcomes change. `dev` and the yield probe
    use the revised engine. Both calibrations are reported, and the budget is recalculated from the second
    measurement whatever it is. R5 (vLLM) was not tried.
+   **Outcome (21:05 UTC).** The second calibration failed on outcomes and the job stopped itself after
+   the first adapter, four minutes in: 0.294 s per episode, but 113 of 400 outcomes changed and success fell
+   from 87.5% to 62.3% (`calib2_e1_s15_D1600_r0`). R6 as written rounded attention scores to bfloat16 before
+   the softmax, where the library's GPU kernel keeps them in float32; on CPU both paths round, which is why
+   the CPU checks had passed. **R6 is switched off.** It was one revision, it failed, and it is not tried
+   again in Stage 1. `dev` and the yield probe run on the engine as first calibrated (R1-R4), and the budget
+   is recalculated from the first calibration: 0.65 s per episode, 2.5 times faster than Experiment 1. A
+   corrected R6 (both products in float32) is in the code, off by default and not run on a GPU; calibrating
+   it is a proposal for the next block, not a result.
 2. **Gradient checkpointing stays on for every micro-batch.** The Stage 0 option to switch it off for short
    micro-batches ("to be measured") was measured on a cycle-1 buffer: 3.60 s per step with it always on; with
    it on above 6,000 tokens only, and off, training ran out of memory on the 24 GB card. No Experiment 2
    adapter is trained with the option, and its saving is removed from the cost model.
+3. **Teacher candidates** (recorded 21:05 UTC, before any teacher job). On the calibrated engine a decoding
+   step costs time in proportion to episodes times context, and a mixture-of-experts model adds a loop over
+   its experts at every step, so `Qwen3-30B-A3B-Instruct-2507` cannot be qualified inside this stage's time
+   limits. `Qwen/Qwen3-14B` is tested first; `Qwen/Qwen3-32B` (dense, Apache-2.0) replaces the 30B model as
+   the second candidate and is tested only if the first does not qualify and the cap allows.
