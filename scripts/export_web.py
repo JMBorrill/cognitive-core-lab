@@ -22,6 +22,14 @@ from ccl.data import load_tasks  # noqa: E402
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "web" / "public" / "data"
 RUNS = ROOT / "results" / "runs"
+DOCS_URL = "https://github.com/JMBorrill/cognitive-core-lab/blob/master/docs/"
+
+
+def link_docs(markdown: str) -> str:
+    """The showcase serves report.md without its sibling docs: point relative .md links at GitHub."""
+    return re.sub(r"\]\((?!https?:|#|/)([\w./-]+\.md(?:#[\w-]+)?)\)", lambda m: f"]({DOCS_URL}{m.group(1)})", markdown)
+
+
 SPLITS = ["eval_id", "eval_ood", "eval_unseen", "eval_renamed"]
 # Seed-0 run used for replayed traces of each configuration.
 REPLAY = {"A": "A_base", "A_fewshot": "A_fewshot", "B": "B_s0", "C": "C_s0", "D": "Dmix_s0", "Dseq": "Dseq_s0",
@@ -163,7 +171,10 @@ def main():
                      ("data/v1/manifest.json", "datasets.json"), ("data/v1/leakage_audit.json", "leakage.json"),
                      ("docs/REPORT.md", "report.md")]:
         if (ROOT / src).exists():
-            shutil.copy(ROOT / src, OUT / dst)
+            if dst == "report.md":
+                (OUT / dst).write_text(link_docs((ROOT / src).read_text()))
+            else:
+                shutil.copy(ROOT / src, OUT / dst)
     print("exported:", sorted(p.name for p in OUT.iterdir()), "configs with results:",
           [k for k, v in available.items() if v])
 

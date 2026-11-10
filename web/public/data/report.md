@@ -58,7 +58,7 @@ programmatic source?
 ### 2.1 Models
 - **Student / foundation checkpoint:** `Qwen/Qwen2.5-0.5B-Instruct` @ `7ae557604adf` (Apache-2.0). Every
   configuration starts from these exact weights. The selection rationale and measured alternatives are in
-  [MODEL_SELECTION.md](MODEL_SELECTION.md).
+  [MODEL_SELECTION.md](https://github.com/JMBorrill/cognitive-core-lab/blob/master/docs/MODEL_SELECTION.md).
 - **Teacher:** `Qwen/Qwen3.5-4B` as the MLX 4-bit conversion `mlx-community/Qwen3.5-4B-MLX-4bit` @
   `32f3e8ecf654` (Apache-2.0), run locally in non-thinking mode. No hosted API was available.
 - **Oracle:** a programmatic policy (`ccl/oracle.py`) that reads the task's gold dependency graph and reacts

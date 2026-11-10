@@ -22,7 +22,8 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 
 from ccl.data import read_jsonl, write_jsonl  # noqa: E402
 
@@ -34,7 +35,7 @@ BASE = {"model": "models/Qwen2.5-0.5B-Instruct", "val_file": str(DATA / "sft/ora
         "steps": STEPS, "batch_size": 4, "grad_accum": 2, "lr": 1e-5, "max_grad_norm": 1.0, "warmup": 20,
         "lora": {"rank": 16, "scale": 20.0, "dropout": 0.0}, "save_every": 50, "eval_every": 50}
 # LoRA stability settings chosen by the pre-registered study in experiments/grad_diag (if present)
-_OVR = ROOT / "configs/train_overrides.json" if "ROOT" in globals() else Path("configs/train_overrides.json")
+_OVR = ROOT / "configs/train_overrides.json"
 if _OVR.exists():
     BASE.update(json.loads(_OVR.read_text()))
 
