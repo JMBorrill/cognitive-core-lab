@@ -217,7 +217,8 @@ def loss_fn(model, toks, mask, amp="auto"):
 
 def _latest_ckpt(out: Path) -> Path | None:
     cks = sorted(out.glob("checkpoints/step_*"), key=lambda p: int(p.name.split("_")[1]))
-    cks = [c for c in cks if c.suffix != ".tmp"]
+    # state.json is written and mirrored last, so a checkpoint without it was cut off and is ignored
+    cks = [c for c in cks if c.suffix != ".tmp" and (c / "state.json").exists()]
     return cks[-1] if cks else None
 
 
