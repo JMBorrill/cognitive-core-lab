@@ -3,144 +3,144 @@
  "salt": "ccl-study02-v2",
  "files": {
   "practice/families.jsonl.gz": {
-   "sha256": "673b3eb83f38aaff8ff5683035487ac0dad25f77ef2f43763ca55babfa8fada3",
-   "n": 5780
+   "sha256": "01c8b2512d369cbe32b233bf72bac0aed83a2c4f1f4bdf13273e72efca377fd3",
+   "n": 5364
   },
   "practice/tools.json": {
-   "sha256": "93867e9e78efa020c1840ea2f72adc943ed56a5bba6680c6cb70c961262334f3",
-   "n": 86
+   "sha256": "e7f1cf9c1b080a10b4127754b36a1d5db398a076d04d2ca71ab891a4a84fb40b",
+   "n": 85
   },
   "dev/dev.jsonl.gz": {
-   "sha256": "62630527db30c3162996fd315077cbd3765a902400c29b007b692e769510506c",
+   "sha256": "c7b6733a71bcbc22e1cc3fba3897b80093f2a7483b5950a9fe755c808f6033dd",
    "n": 600
   },
   "dev/families.jsonl.gz": {
-   "sha256": "7e6c78286f4bd04d13f29a3df413fe624b897b837a28c7cabc4b4447007d85bc",
+   "sha256": "c5a0226c6b58470299035586a3e3058641abb4e4752ef3ffb949a09e1ce514ca",
    "n": 300
   },
   "sealed/test_comp.jsonl.gz": {
-   "sha256": "07617945e725ec95e71ce92628cabf8da7226518aa6597d5657aeac35aef2920",
+   "sha256": "47dc9744efe73bb572d6b9ac529432fe5d06351ade18b4c3a08ff970da9d4314",
    "n": 1200
   },
   "sealed/test_depth.jsonl.gz": {
-   "sha256": "4af4ec3bd1f3293466a3a3995f1be8171f5af01fb48e2914173dff47e286401c",
+   "sha256": "8336ac871b0411788feca63cf8c709a5115dace28cd4c391d1f6960f96b1fbf3",
    "n": 400
   },
   "sealed/test_tool.jsonl.gz": {
-   "sha256": "6ec4f0ce8ab660bc1865ef57a48877ae2a9e99c0d20621c1d984586641f80f63",
+   "sha256": "ea0dbb5eb44c78366b7cbdffe45f5dbe4cbfeb0d5aa446d8c6b14bee47c537c2",
    "n": 400
   },
   "sealed/test_domain.jsonl.gz": {
-   "sha256": "8c01025cbd673de83e0da5e822c319cc54110a957b21ce49a7cabd1b4e663be3",
+   "sha256": "637f1837a968a4274f0a394a5e7558d6e60a641b165873482f2a4fa3f1e085e8",
    "n": 400
   },
   "sealed/test_id.jsonl.gz": {
-   "sha256": "5ac3a7db64a840728c0bbf6810bc41197d294fdaad9fef9eed19023929684b90",
+   "sha256": "098cdf487357bcdb9e142ee1d8d72efaa30a320d3ac198134d1917f575fa3ffb",
    "n": 400
   },
   "sealed/families.jsonl.gz": {
-   "sha256": "caf0274844b2a9a8dad8eabe4f31952b8ea0ce616e8e633eb13715bbca7a6739",
+   "sha256": "9812c6af413694a9e213095eab0e4115903814962608257eb918d063594d3b95",
    "n": 1400
   },
   "sealed/partition.json": {
-   "sha256": "b88908b4da6aed3f0bf5820d9829a2678bd8973922b3a616be0243de4a122324"
+   "sha256": "2ee7ba51fafca598acc270415fa79ae4242a3266c5ac667fdce85fa82f3a0acc"
   }
  },
  "census": {
   "practice": {
-   "families": 5780,
-   "base_graphs": 2279,
+   "families": 5364,
+   "base_graphs": 2103,
    "hops": {
-    "1": 414,
-    "2": 772,
-    "3": 1405,
-    "4": 3189
+    "1": 408,
+    "2": 758,
+    "3": 1320,
+    "4": 2878
    },
    "modifier": {
-    "denied": 151,
-    "fallback": 628,
-    "none": 2548,
-    "notfound": 183,
+    "denied": 139,
+    "fallback": 586,
+    "none": 2365,
+    "notfound": 180,
     "notool": 1,
     "refused": 4,
-    "retry": 2265
+    "retry": 2089
    },
    "shape": {
-    "chain": 126,
-    "chain+act": 34,
+    "chain": 128,
+    "chain+act": 36,
     "chain+fanin+act": 4,
-    "chain+fanout": 34,
-    "chain+list": 3785,
-    "chain+list+act": 825,
-    "chain+list+fanin+act": 105,
-    "chain+list+fanout": 250,
-    "chain+list+twin": 172,
-    "chain+twin": 31,
+    "chain+fanout": 39,
+    "chain+list": 3462,
+    "chain+list+act": 761,
+    "chain+list+fanin+act": 93,
+    "chain+list+fanout": 236,
+    "chain+list+twin": 165,
+    "chain+twin": 32,
     "notool": 1,
     "single": 117,
     "single+act": 45,
-    "single+list": 90,
-    "single+list+act": 94,
-    "single+list+twin": 30,
+    "single+list": 87,
+    "single+list+act": 92,
+    "single+list+twin": 29,
     "single+twin": 37
    },
-   "tools": 80,
-   "edges": 235
+   "tools": 79,
+   "edges": 229
   },
   "available:dev_comp": {
-   "families": 1247,
-   "base_graphs": 506,
+   "families": 1185,
+   "base_graphs": 477,
    "hops": {
-    "2": 99,
-    "3": 267,
-    "4": 881
+    "2": 95,
+    "3": 263,
+    "4": 827
    },
    "modifier": {
-    "denied": 26,
-    "fallback": 186,
-    "none": 529,
-    "retry": 506
+    "denied": 25,
+    "fallback": 184,
+    "none": 499,
+    "retry": 477
    },
    "shape": {
-    "chain": 44,
-    "chain+act": 31,
-    "chain+fanout": 14,
-    "chain+list": 920,
-    "chain+list+act": 167,
-    "chain+list+fanin+act": 35,
+    "chain": 48,
+    "chain+act": 32,
+    "chain+fanout": 12,
+    "chain+list": 872,
+    "chain+list+act": 153,
+    "chain+list+fanin+act": 33,
     "chain+list+fanout": 13,
-    "chain+list+twin": 14,
+    "chain+list+twin": 13,
     "chain+twin": 9
    },
-   "tools": 72,
-   "edges": 181
+   "tools": 70,
+   "edges": 170
   },
   "available:dev_tool": {
-   "families": 2002,
-   "base_graphs": 855,
+   "families": 1865,
+   "base_graphs": 791,
    "hops": {
     "1": 23,
-    "2": 125,
-    "3": 408,
-    "4": 1446
+    "2": 122,
+    "3": 392,
+    "4": 1328
    },
    "modifier": {
-    "denied": 54,
-    "fallback": 191,
-    "none": 891,
+    "denied": 53,
+    "fallback": 184,
+    "none": 826,
     "notfound": 11,
     "refused": 1,
-    "retry": 854
+    "retry": 790
    },
    "shape": {
     "chain": 36,
     "chain+act": 5,
     "chain+fanout": 20,
-    "chain+list": 1434,
-    "chain+list+act": 205,
+    "chain+list": 1329,
+    "chain+list+act": 202,
     "chain+list+fanin+act": 6,
-    "chain+list+fanout": 240,
-    "chain+list+twin": 28,
+    "chain+list+fanout": 212,
+    "chain+list+twin": 27,
     "chain+twin": 5,
     "single": 6,
     "single+act": 3,
@@ -149,8 +149,8 @@
     "single+list+twin": 1,
     "single+twin": 2
    },
-   "tools": 77,
-   "edges": 205
+   "tools": 76,
+   "edges": 197
   },
   "available:dev_domain": {
    "families": 124,
@@ -185,81 +185,81 @@
    "edges": 13
   },
   "available:test_comp": {
-   "families": 3798,
-   "base_graphs": 1600,
+   "families": 3630,
+   "base_graphs": 1528,
    "hops": {
-    "2": 233,
-    "3": 821,
-    "4": 2744
+    "2": 220,
+    "3": 802,
+    "4": 2608
    },
    "modifier": {
-    "denied": 92,
-    "fallback": 448,
-    "none": 1658,
-    "retry": 1600
+    "denied": 87,
+    "fallback": 431,
+    "none": 1584,
+    "retry": 1528
    },
    "shape": {
-    "chain": 100,
-    "chain+act": 8,
-    "chain+fanout": 23,
-    "chain+list": 2576,
-    "chain+list+act": 714,
+    "chain": 97,
+    "chain+act": 5,
+    "chain+fanout": 17,
+    "chain+list": 2451,
+    "chain+list+act": 695,
     "chain+list+fanin+act": 30,
-    "chain+list+fanout": 289,
-    "chain+list+twin": 47,
-    "chain+twin": 11
+    "chain+list+fanout": 279,
+    "chain+list+twin": 46,
+    "chain+twin": 10
    },
-   "tools": 79,
-   "edges": 284
+   "tools": 78,
+   "edges": 276
   },
   "available:test_depth": {
-   "families": 5559,
-   "base_graphs": 2109,
+   "families": 5045,
+   "base_graphs": 1912,
    "hops": {
-    "5": 3951,
-    "6": 1608
+    "5": 3554,
+    "6": 1491
    },
    "modifier": {
-    "denied": 326,
-    "fallback": 1015,
-    "none": 2109,
-    "retry": 2109
+    "denied": 293,
+    "fallback": 928,
+    "none": 1912,
+    "retry": 1912
    },
    "shape": {
-    "chain+list": 2515,
-    "chain+list+act": 2123,
-    "chain+list+fanin+act": 413,
-    "chain+list+fanout": 508
+    "chain+list": 2326,
+    "chain+list+act": 1905,
+    "chain+list+fanin+act": 363,
+    "chain+list+fanout": 451
    },
-   "tools": 77,
-   "edges": 212
+   "tools": 76,
+   "edges": 205
   },
   "available:test_tool": {
-   "families": 2933,
-   "base_graphs": 1187,
+   "families": 2795,
+   "base_graphs": 1130,
    "hops": {
     "1": 42,
-    "2": 196,
-    "3": 670,
-    "4": 2025
+    "2": 193,
+    "3": 653,
+    "4": 1907
    },
    "modifier": {
-    "denied": 298,
-    "fallback": 196,
-    "none": 1233,
+    "denied": 282,
+    "fallback": 189,
+    "none": 1175,
     "notfound": 20,
     "refused": 1,
-    "retry": 1185
+    "retry": 1128
    },
    "shape": {
     "chain": 28,
     "chain+act": 16,
     "chain+fanout": 4,
-    "chain+list": 1470,
-    "chain+list+act": 1098,
-    "chain+list+fanin+act": 18,
-    "chain+list+fanout": 217,
-    "chain+list+twin": 35,
+    "chain+list": 1397,
+    "chain+list+act": 1042,
+    "chain+list+fanin+act": 16,
+    "chain+list+fanout": 211,
+    "chain+list+twin": 34,
     "chain+twin": 5,
     "single": 12,
     "single+act": 5,
@@ -268,8 +268,8 @@
     "single+list+twin": 2,
     "single+twin": 4
    },
-   "tools": 87,
-   "edges": 274
+   "tools": 86,
+   "edges": 266
   },
   "available:test_domain": {
    "families": 244,
@@ -307,7 +307,7 @@
   },
   "dev": {
    "families": 300,
-   "base_graphs": 266,
+   "base_graphs": 263,
    "hops": {
     "1": 30,
     "2": 91,
@@ -323,15 +323,15 @@
     "retry": 57
    },
    "shape": {
-    "chain": 20,
-    "chain+act": 8,
-    "chain+fanout": 9,
-    "chain+list": 144,
-    "chain+list+act": 54,
-    "chain+list+fanin+act": 4,
-    "chain+list+fanout": 11,
-    "chain+list+twin": 13,
-    "chain+twin": 7,
+    "chain": 22,
+    "chain+act": 7,
+    "chain+fanout": 13,
+    "chain+list": 132,
+    "chain+list+act": 61,
+    "chain+list+fanin+act": 5,
+    "chain+list+fanout": 10,
+    "chain+list+twin": 14,
+    "chain+twin": 6,
     "single": 11,
     "single+act": 5,
     "single+list": 4,
@@ -339,44 +339,44 @@
     "single+list+twin": 2,
     "single+twin": 6
    },
-   "tools": 77,
-   "edges": 169,
+   "tools": 79,
+   "edges": 162,
    "tasks": 600,
-   "reserved_phrasing": 296
+   "reserved_phrasing": 280
   },
   "test_comp": {
    "families": 600,
-   "base_graphs": 448,
+   "base_graphs": 453,
    "hops": {
-    "2": 184,
+    "2": 182,
     "3": 206,
-    "4": 210
+    "4": 212
    },
    "modifier": {
-    "denied": 48,
-    "fallback": 70,
-    "none": 374,
-    "retry": 108
+    "denied": 47,
+    "fallback": 67,
+    "none": 375,
+    "retry": 111
    },
    "shape": {
-    "chain": 33,
-    "chain+act": 2,
-    "chain+fanout": 17,
-    "chain+list": 336,
-    "chain+list+act": 118,
+    "chain": 30,
+    "chain+act": 3,
+    "chain+fanout": 15,
+    "chain+list": 358,
+    "chain+list+act": 99,
     "chain+list+fanin+act": 3,
-    "chain+list+fanout": 35,
+    "chain+list+fanout": 37,
     "chain+list+twin": 45,
-    "chain+twin": 11
+    "chain+twin": 10
    },
-   "tools": 78,
-   "edges": 236,
+   "tools": 75,
+   "edges": 234,
    "tasks": 1200,
-   "reserved_phrasing": 553
+   "reserved_phrasing": 548
   },
   "test_depth": {
    "families": 200,
-   "base_graphs": 194,
+   "base_graphs": 197,
    "hops": {
     "5": 100,
     "6": 100
@@ -388,19 +388,19 @@
     "retry": 34
    },
    "shape": {
-    "chain+list": 57,
-    "chain+list+act": 109,
-    "chain+list+fanin+act": 13,
-    "chain+list+fanout": 21
+    "chain+list": 68,
+    "chain+list+act": 95,
+    "chain+list+fanin+act": 14,
+    "chain+list+fanout": 23
    },
-   "tools": 74,
-   "edges": 169,
+   "tools": 73,
+   "edges": 162,
    "tasks": 400,
-   "reserved_phrasing": 205
+   "reserved_phrasing": 191
   },
   "test_tool": {
    "families": 200,
-   "base_graphs": 221,
+   "base_graphs": 484,
    "hops": {
     "1": 29,
     "2": 55,
@@ -411,28 +411,31 @@
     "denied": 25,
     "fallback": 20,
     "none": 111,
-    "notfound": 8,
+    "notfound": 7,
+    "refused": 1,
     "retry": 36
    },
    "shape": {
-    "chain": 5,
-    "chain+act": 7,
-    "chain+list": 83,
-    "chain+list+act": 62,
-    "chain+list+fanout": 6,
-    "chain+list+twin": 7,
-    "chain+twin": 1,
-    "single": 8,
-    "single+act": 4,
-    "single+list": 5,
-    "single+list+act": 6,
+    "chain": 6,
+    "chain+act": 8,
+    "chain+fanout": 1,
+    "chain+list": 65,
+    "chain+list+act": 66,
+    "chain+list+fanin+act": 2,
+    "chain+list+fanout": 10,
+    "chain+list+twin": 10,
+    "chain+twin": 3,
+    "single": 9,
+    "single+act": 3,
+    "single+list": 6,
+    "single+list+act": 5,
     "single+list+twin": 2,
     "single+twin": 4
    },
-   "tools": 76,
-   "edges": 145,
+   "tools": 75,
+   "edges": 154,
    "tasks": 400,
-   "reserved_phrasing": 191
+   "reserved_phrasing": 186
   },
   "test_domain": {
    "families": 200,
@@ -471,7 +474,7 @@
   },
   "test_id": {
    "families": 200,
-   "base_graphs": 265,
+   "base_graphs": 187,
    "hops": {
     "1": 49,
     "2": 51,
@@ -486,26 +489,26 @@
     "retry": 31
    },
    "shape": {
-    "chain": 5,
-    "chain+act": 4,
-    "chain+fanout": 3,
-    "chain+list": 84,
-    "chain+list+act": 35,
-    "chain+list+fanin+act": 3,
+    "chain": 7,
+    "chain+act": 3,
+    "chain+fanout": 2,
+    "chain+list": 92,
+    "chain+list+act": 28,
+    "chain+list+fanin+act": 1,
     "chain+list+fanout": 6,
     "chain+list+twin": 10,
-    "chain+twin": 1,
-    "single": 18,
-    "single+act": 7,
-    "single+list": 11,
-    "single+list+act": 4,
-    "single+list+twin": 3,
-    "single+twin": 6
+    "chain+twin": 2,
+    "single": 15,
+    "single+act": 6,
+    "single+list": 9,
+    "single+list+act": 5,
+    "single+list+twin": 4,
+    "single+twin": 10
    },
-   "tools": 77,
-   "edges": 157,
+   "tools": 75,
+   "edges": 153,
    "tasks": 400,
-   "reserved_phrasing": 193
+   "reserved_phrasing": 186
   }
  },
  "quality_gate": {
@@ -585,7 +588,7 @@
     "n": 400,
     "on_tasks_needing_tools": {
      "success": 0,
-     "n": 400
+     "n": 398
     }
    },
    "call-everything": {
@@ -643,23 +646,23 @@
   },
   "practice_sample": {
    "oracle": {
-    "success": 11560,
-    "n": 11560
+    "success": 10728,
+    "n": 10728
    },
    "no-calls": {
     "success": 2,
-    "n": 11560,
+    "n": 10728,
     "on_tasks_needing_tools": {
      "success": 0,
-     "n": 11550
+     "n": 10718
     }
    },
    "call-everything": {
     "success": 0,
-    "n": 11560,
+    "n": 10728,
     "on_tasks_needing_tools": {
      "success": 0,
-     "n": 11558
+     "n": 10726
     }
    }
   }
@@ -681,18 +684,18 @@
   "dev_domains": 1,
   "test_tools": 8,
   "dev_tools": 4,
-  "practice_tools": 86,
-  "test_edges": 65,
-  "dev_edges": 26,
-  "practice_edges": 235
+  "practice_tools": 85,
+  "test_edges": 63,
+  "dev_edges": 25,
+  "practice_edges": 229
  },
- "practice_tools_used_in_practice_graphs": 86,
+ "practice_tools_used_in_practice_graphs": 85,
  "gate_decisions": {
   "dropped": 0
  },
  "leakage_audit": {
   "training_sample": {
-   "tasks": 11560,
+   "tasks": 10728,
    "instances_per_family": 2
   },
   "splits": {

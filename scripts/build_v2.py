@@ -88,7 +88,7 @@ def distractors(source: str, part: dict) -> list[str]:
     if what == "tool":
         pool |= set(part[f"{kind}_tools"])
     elif what == "domain":
-        pool |= {k for k, t in TOOLS2.items() if t.domain in part[f"{kind}_domains"]}
+        pool |= {k for k in TOOLS2 if C.tool_domains(k) <= set(part[f"{kind}_domains"])}
     return sorted(pool)
 
 
@@ -138,7 +138,7 @@ def main():
     held_dom = set(part["test_domains"]) | set(part["dev_domains"])
     for f in fams["practice"]:
         assert not set(f["tools"]) & held_tools and not set(f["edges"]) & held_edges
-        assert not {TOOLS2[t].domain for t in f["tools"]} & held_dom and f["hops"] <= C.PRACTICE_HOPS
+        assert not {x for t in f["tools"] for x in C.tool_domains(t)} & held_dom and f["hops"] <= C.PRACTICE_HOPS
 
     manifest = {"version": "v2", "salt": C.SALT, "files": {}, "census": {}, "quality_gate": {},
                 "schema": {"domains": len(DOMAINS), "entities": len(ENTITIES), "tools": len(TOOLS2),

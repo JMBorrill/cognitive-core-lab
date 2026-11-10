@@ -77,7 +77,6 @@
  "list_supplier_vehicles",
  "list_technician_instruments",
  "list_technician_work_orders",
- "list_unit_assets",
  "list_vehicle_drivers",
  "list_vehicle_trips",
  "list_venue_shows",

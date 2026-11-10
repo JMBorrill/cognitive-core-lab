@@ -175,7 +175,8 @@ def _walk(plan: dict, nodes: list, b=None, attr: str | None = None) -> dict:
         src = add(f"get_{ent.name}", [src], {ent.id_field: rec[ent.id_field]} if b else None)
     if end[0] == "answer":
         if b:
-            a = ent.attr(attr) if attr else b.rng.choice(ent.attrs)  # a twin asks the same attribute twice
+            # a twin asks the same attribute twice; never the one a match rule has just stated
+            a = ent.attr(attr) if attr else b.rng.choice([x for x in ent.attrs if (id(rec), x.name) != b.stated])
             out["asks"], out["attr"] = [(a.phrase, np_, b.fact(rec[a.name]))], a.name
     elif end[0] == "fanout":
         out["asks"], out["about"] = [], np_
@@ -264,6 +265,8 @@ def compile_plan(plan: dict, b=None) -> dict:
     nodes: list = []
     info = [_walk(plan, nodes, b)]
     if plan.get("twin"):
+        if b:
+            b.avoid = info[0].get("attr")
         info.append(_walk(plan, nodes, b, info[0].get("attr")))
     all_tools = sorted({n["tool"] for n in nodes})  # before a modifier trims the graph
     act = info[0].get("action")
@@ -404,6 +407,12 @@ def describe(plan: dict) -> dict:
 
 # ------------------------------------------------------------------ hold-outs and splits
 
+def tool_domains(key: str) -> set[str]:
+    """Every domain a tool touches: that of its records and, for a list tool, that of the parent whose ID it takes."""
+    t = TOOLS2[key]
+    return {t.domain} | ({ENTITIES[t.parent].domain} if t.parent else set())
+
+
 def partition(descs: list[dict]) -> dict:
     """Assign domains, tools and edges to the practice space, `dev` and the sealed test splits by hash.
 
@@ -414,13 +423,13 @@ def partition(descs: list[dict]) -> dict:
     held_dom = test_dom | dev_dom
     test_tools, dev_tools = set(), set()
     for kind in TEST_TOOL_QUOTA:
-        cands = sorted((k for k, t in TOOLS2.items() if t.kind == kind and t.domain not in held_dom),
+        cands = sorted((k for k, t in TOOLS2.items() if t.kind == kind and not tool_domains(k) & held_dom),
                        key=lambda k: _h(SALT, "tool", k))
         test_tools |= set(cands[:TEST_TOOL_QUOTA[kind]])
         dev_tools |= set(cands[TEST_TOOL_QUOTA[kind]:TEST_TOOL_QUOTA[kind] + DEV_TOOL_QUOTA[kind]])
     for s in (test_tools, dev_tools):  # a mirror follows the lookup it mirrors
         s |= {BACKUP_OF[k] for k in s if k in BACKUP_OF}
-    practice_tools = {k for k, t in TOOLS2.items() if t.domain not in held_dom} - test_tools - dev_tools
+    practice_tools = {k for k in TOOLS2 if not tool_domains(k) & held_dom} - test_tools - dev_tools
     edges = sorted({e for d in descs if d["hops"] <= PRACTICE_HOPS for e in d["edges"]
                     if set(e.split(">")) <= practice_tools}, key=lambda e: _h(SALT, "edge", e))
     out_deg, in_deg = defaultdict(int), defaultdict(int)
@@ -446,7 +455,7 @@ def partition(descs: list[dict]) -> dict:
 def classify(d: dict, part: dict) -> str | None:
     """The split a graph belongs to, from its tools, edges and number of hops; None if it mixes hold-outs."""
     tools, edges = set(d["tools"]), set(d["edges"])
-    doms = {TOOLS2[t].domain for t in tools}
+    doms = {x for t in tools for x in tool_domains(t)}
     shallow = d["hops"] <= PRACTICE_HOPS
     for name, held in (("test", set(part["test_domains"])), ("dev", set(part["dev_domains"]))):
         if doms & held:
@@ -553,6 +562,8 @@ class Builder:
         self.reserved_phrasing = pool == "eval" and rng.random() < 0.5
         self.used_reserved = False
         self.rules: list[str] = []
+        self.stated: tuple | None = None  # (record, attribute) whose value the request spells out
+        self.avoid: str | None = None  # attribute that the second half of a twin will be asked for
 
     def variant(self) -> int:
         if self.reserved_phrasing and self.rng.random() < 0.6:
@@ -632,7 +643,7 @@ class Builder:
         record the path came from, and it singles out exactly one record."""
         pid, cid = prec[parent.id_field], child.id_field
         rules = [(how, a) for how in ("min", "max") for a in child.attrs if a.rank]
-        if child.match:
+        if child.match and child.match != self.avoid:
             rules.append(("match", child.attr(child.match)))
         how, a = self.rng.choice(rules)
         kids = [self.record(child, **{ref_field: pid}) for _ in range(self.rng.choice([2, 3, 3, 4]))]
@@ -665,6 +676,7 @@ class Builder:
             lo_hi = ("earliest", "latest") if a.kind[0] == "date" else ("lowest", "highest")
             np_ = RANK_P[self.variant()].format(w=lo_hi[how == "max"], **words)
         self.rules.append(how)
+        self.stated = (id(pick), a.name) if how == "match" else None
         return pick, np_
 
     def date_phrase(self) -> tuple[str, str]:

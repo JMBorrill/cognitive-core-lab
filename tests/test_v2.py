@@ -76,7 +76,8 @@ def test_every_family_is_in_exactly_one_split_and_the_space_is_large_enough(spac
 def test_split_definitions_hold_for_every_family(space):
     part, fams = space["partition"], space["families"]
     practice_tools, practice_edges = set(part["practice_tools"]), set(part["practice_edges"])
-    dom = lambda f: {TOOLS2[t].domain for t in f["tools"]}  # noqa: E731
+    dom = lambda f: {x for t in f["tools"] for x in C.tool_domains(t)}  # noqa: E731
+    assert not {x for t in practice_tools for x in C.tool_domains(t)} & (set(part["test_domains"]) | set(part["dev_domains"]))
     for f in fams["practice"]:
         assert set(f["tools"]) <= practice_tools and set(f["edges"]) <= practice_edges and 1 <= f["hops"] <= 4
     for f in fams["test_comp"]:
@@ -224,7 +225,7 @@ def test_no_held_out_structure_reaches_training_inputs():
     held_tools = set(part["test_tools"]) | set(part["dev_tools"])
     held_edges = set(part["test_edges"]) | set(part["dev_edges"])
     held_domains = set(part["test_domains"]) | set(part["dev_domains"])
-    assert not set(tools) & held_tools and not {TOOLS2[t].domain for t in tools} & held_domains
+    assert not set(tools) & held_tools and not {x for t in tools for x in C.tool_domains(t)} & held_domains
     practice_ids = {f["id"] for f in fams}
     assert not practice_ids & {f["id"] for f in dev}
     assert not practice_ids & {f["id"] for f in sealed if f["eval_split"] != "test_id"}
