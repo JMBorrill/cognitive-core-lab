@@ -7,11 +7,11 @@
     python scripts/s2_launch.py logs JOB_ID | cancel JOB_ID
 
 How the cap holds. Before a job is submitted its worst case (timeout x price per minute) is written to
-the ledger as a reservation, and the submission is refused if money already spent, plus every open
-reservation, plus the new one would exceed the cap minus a small reserve. The provider stops a job at its
-timeout, so a job can never cost more than its reservation. When a job ends, the reservation is replaced
-by its cost computed from the reported duration (rounded up), and the total is compared with the
-provider's own usage figure; the larger of the two counts as spent. Jobs are never retried automatically.
+the ledger as a reservation, and the submission is refused if the billed cost of closed jobs, plus every
+open reservation, plus the new one would exceed the cap minus a small reserve. The provider stops a job at
+its timeout, so a job can never cost more than its reservation. When a job ends, the reservation is replaced
+by the cost the provider billed for it, and the provider's running total is recorded; should that total ever
+exceed the ledger's own sum, it is the one that counts. Jobs are never retried automatically.
 
 The account's token is injected by the session's network proxy; this script never reads or stores it.
 """
@@ -50,7 +50,12 @@ def append(event: dict, path: Path = LEDGER) -> None:
 
 
 def books(ledger: list[dict]) -> dict:
-    """Money settled, money reserved by open jobs, and the open jobs themselves."""
+    """Money spent by closed jobs, money reserved by open jobs, and the open jobs themselves.
+
+    A closed job counts at the provider's billed cost once that is known (`provider_cost` events), otherwise
+    at the ledger's own estimate. An open job counts at its full reservation, which it cannot exceed. Their
+    sum is an upper bound on the final bill; the provider's running total is a lower bound, and the larger of
+    the two is what counts as committed."""
     jobs: dict[str, dict] = {}
     for e in ledger:
         j = jobs.setdefault(e.get("key", "-"), {})
@@ -62,24 +67,28 @@ def books(ledger: list[dict]) -> dict:
             j.update(open=False, cost=0.0)
         elif e["event"] == "settled":
             j.update(open=False, cost=e["cost_usd"])
-    provider = max((e["provider_used_usd"] for e in ledger if e["event"] == "reconcile"), default=0.0)
-    settled = sum(j.get("cost", 0.0) for j in jobs.values())
-    return {"settled_usd": round(settled, 4), "provider_used_usd": provider,
-            "spent_usd": round(max(settled, provider), 4),
-            "reserved_usd": round(sum(j["reserved"] for j in jobs.values() if j.get("open")), 4),
-            "open": {k: j for k, j in jobs.items() if j.get("open")}}
+        elif e["event"] == "provider_cost":
+            j.update(cost=e["cost_usd"])
+    provider = next((e["provider_used_usd"] for e in reversed(ledger) if e["event"] == "reconcile"), 0.0)
+    settled = sum(j.get("cost", 0.0) for j in jobs.values() if not j.get("open"))
+    reserved = sum(j["reserved"] for j in jobs.values() if j.get("open"))
+    return {"settled_usd": round(settled, 4), "provider_used_usd": provider, "reserved_usd": round(reserved, 4),
+            "committed_usd": round(max(settled + reserved, provider), 4),
+            "open": {k: j for k, j in jobs.items() if j.get("open")},
+            "closed": {k: j for k, j in jobs.items() if "reserved" in j and not j.get("open")}}
 
 
 def may_submit(ledger: list[dict], budget: dict, reservation: float) -> tuple[bool, str]:
     """The budget rule. Pure, so that it can be tested without a network."""
     b = books(ledger)
     limit = budget["cap_usd"] - budget["reserve_usd"]
-    total = b["spent_usd"] + b["reserved_usd"] + reservation
+    total = b["committed_usd"] + reservation
     if len(b["open"]) >= budget["max_parallel"]:
         return False, f"{len(b['open'])} jobs already open (max_parallel {budget['max_parallel']})"
     if total > limit + 1e-9:
-        return False, (f"refused: spent {b['spent_usd']:.2f} + reserved {b['reserved_usd']:.2f} + this job "
-                       f"{reservation:.2f} = {total:.2f} USD exceeds {limit:.2f} "
+        return False, (f"refused: {b['committed_usd']:.2f} USD already committed (closed jobs {b['settled_usd']:.2f}, "
+                       f"open reservations {b['reserved_usd']:.2f}, provider total {b['provider_used_usd']:.2f}) + this "
+                       f"job {reservation:.2f} = {total:.2f} exceeds {limit:.2f} "
                        f"(cap {budget['cap_usd']:.2f} minus reserve {budget['reserve_usd']:.2f})")
     return True, f"ok: {total:.2f} of {limit:.2f} USD committed after this job"
 
@@ -108,8 +117,10 @@ def live_price_per_min(flavor: str) -> float:
     return hw["unitCostMicroUSD"] / 1e6
 
 
-def provider_used_usd() -> float:
-    return get_json("/api/settings/billing/usage/jobs")["usage"]["usedMicroUsd"] / 1e6
+def provider_usage() -> tuple[float, dict[str, float]]:
+    """The provider's own figures: total used this period, and the billed cost of each job so far."""
+    u = get_json("/api/settings/billing/usage/jobs")["usage"]
+    return u["usedMicroUsd"] / 1e6, {d["jobId"]: d["totalCostMicroUsd"] / 1e6 for d in u.get("jobDetails", [])}
 
 
 def api():
@@ -185,23 +196,24 @@ def submit(spec_path: str, dry_run: bool) -> None:
 
 def settle() -> None:
     a = api()
-    for key, j in books(read_ledger())["open"].items():
+    total, billed = provider_usage()
+    state = books(read_ledger())
+    for key, j in state["open"].items():
         if "job_id" not in j:
             continue
         info = a.inspect_job(job_id=j["job_id"])
         d = info.durations
         print(f"[settle] {key} {j['job_id']}: {info.status.stage} {info.status.message or ''} durations={d}")
         if info.status.stage in TERMINAL:
-            # Billed per started minute while starting or running.
-            secs = (d.running_secs or 0) if d else 0  # a job cancelled while queued never ran and costs nothing
-            if not secs and info.started_at and info.finished_at:
-                secs = (info.finished_at - info.started_at).total_seconds()
+            secs = (d.running_secs or 0) if d else 0
+            cost = billed.get(j["job_id"], job_cost_usd(secs, j["price"]))  # the provider's bill where it has one
             append({"event": "settled", "key": key, "job_id": j["job_id"], "stage": info.status.stage,
-                    "message": info.status.message, "billable_secs": secs,
-                    "running_secs": d.running_secs if d else None, "total_secs": d.total_secs if d else None,
-                    "cost_usd": job_cost_usd(secs, j["price"]), "reserved_usd": j["reserved"]})
-    append({"event": "reconcile", "provider_used_usd": provider_used_usd(),
-            "ledger_settled_usd": books(read_ledger())["settled_usd"]})
+                    "message": info.status.message, "running_secs": secs, "cost_usd": round(cost, 4),
+                    "cost_source": "provider" if j["job_id"] in billed else "estimate", "reserved_usd": j["reserved"]})
+    for key, j in state["closed"].items():  # replace earlier estimates by the billed cost
+        if j.get("job_id") in billed and abs(billed[j["job_id"]] - j.get("cost", 0.0)) > 0.0005:
+            append({"event": "provider_cost", "key": key, "job_id": j["job_id"], "cost_usd": round(billed[j["job_id"]], 4)})
+    append({"event": "reconcile", "provider_used_usd": total, "ledger_settled_usd": books(read_ledger())["settled_usd"]})
     status()
 
 
@@ -209,9 +221,9 @@ def status() -> None:
     budget = json.loads(BUDGET.read_text())
     b = books(read_ledger())
     print(json.dumps({"cap_usd": budget["cap_usd"], "reserve_usd": budget["reserve_usd"],
-                      **{k: v for k, v in b.items() if k != "open"}, "open_jobs": sorted(b["open"]),
-                      "available_usd": round(budget["cap_usd"] - budget["reserve_usd"] - b["spent_usd"]
-                                             - b["reserved_usd"], 2)}, indent=1))
+                      **{k: v for k, v in b.items() if k not in ("open", "closed")}, "open_jobs": sorted(b["open"]),
+                      "available_usd": round(budget["cap_usd"] - budget["reserve_usd"] - b["committed_usd"], 2)},
+                     indent=1))
 
 
 def pull(experiment: str) -> None:

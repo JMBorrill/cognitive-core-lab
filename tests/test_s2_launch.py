@@ -31,7 +31,7 @@ def test_submission_is_refused_when_the_cap_would_be_exceeded():
     ledger = [reserve("a", 1200), {"event": "submitted", "key": "a", "job_id": "1"},
               reserve("b", 1200), {"event": "submitted", "key": "b", "job_id": "2"}]
     b = L.books(ledger)
-    assert b["reserved_usd"] == pytest.approx(2 * 1201 * L4, abs=1e-3) and b["spent_usd"] == 0
+    assert b["reserved_usd"] == pytest.approx(2 * 1201 * L4, abs=1e-3) and b["settled_usd"] == 0
     ok, why = L.may_submit(ledger, BUDGET, L.reservation_usd(1800, L4))  # 32.03 + 24.01 = 56.04 <= 57
     assert ok, why
     ok, why = L.may_submit(ledger, BUDGET, L.reservation_usd(1900, L4))  # 32.03 + 25.35 = 57.38 > 57
@@ -39,17 +39,22 @@ def test_submission_is_refused_when_the_cap_would_be_exceeded():
     assert not L.may_submit([], BUDGET, 57.01)[0] and L.may_submit([], BUDGET, 57.0)[0]
 
 
-def test_settlement_releases_the_unused_reservation_and_provider_usage_counts_if_larger():
+def test_closed_jobs_count_at_the_billed_cost_and_open_jobs_at_their_reservation():
     ledger = [reserve("a", 600), {"event": "submitted", "key": "a", "job_id": "1"},
               {"event": "settled", "key": "a", "job_id": "1", "cost_usd": 2.0}]
     b = L.books(ledger)
-    assert b["reserved_usd"] == 0 and b["spent_usd"] == 2.0 and not b["open"]
-    ledger.append({"event": "reconcile", "provider_used_usd": 2.6, "ledger_settled_usd": 2.0})
-    assert L.books(ledger)["spent_usd"] == 2.6  # the provider's figure wins when it is higher
-    ledger.append({"event": "reconcile", "provider_used_usd": 1.5, "ledger_settled_usd": 2.0})
-    assert L.books(ledger)["spent_usd"] == 2.6
+    assert b["reserved_usd"] == 0 and b["settled_usd"] == 2.0 and not b["open"] and b["committed_usd"] == 2.0
+    ledger.append({"event": "provider_cost", "key": "a", "job_id": "1", "cost_usd": 2.6})
+    assert L.books(ledger)["settled_usd"] == 2.6  # the provider's bill replaces the estimate
+    ledger += [reserve("b", 300), {"event": "submitted", "key": "b", "job_id": "2"}]
+    # a job in progress is in the provider's running total and in its own reservation: it is counted once
+    ledger.append({"event": "reconcile", "provider_used_usd": 4.1, "ledger_settled_usd": 2.6})
+    b = L.books(ledger)
+    assert b["committed_usd"] == pytest.approx(2.6 + L.reservation_usd(300, L4), abs=1e-3)
+    ledger.append({"event": "reconcile", "provider_used_usd": 9.0, "ledger_settled_usd": 2.6})
+    assert L.books(ledger)["committed_usd"] == 9.0  # if the provider's total is ever larger, it counts
     ledger += [reserve("c", 60), {"event": "submit_failed", "key": "c", "error": "x"}]
-    assert L.books(ledger)["reserved_usd"] == 0  # a job that never started holds no money
+    assert L.books(ledger)["reserved_usd"] == pytest.approx(L.reservation_usd(300, L4), abs=1e-3)
 
 
 def test_parallel_jobs_are_limited_and_the_committed_budget_file_is_sane():
