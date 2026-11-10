@@ -185,3 +185,20 @@ WP1 and WP2 are independent and need no GPU or credentials. WP3 is the first ste
 3. Review of Experiment 0 against its plan; freeze `data/v2` and the Experiment 1 plan.
 4. Experiment 1; stop/go review.
 5. Pre-register Experiment 2 with the measured variance and costs; pilot; full run.
+
+## 10. What was measured when Experiments 0 and 1 ran (2026-11-10)
+
+This section replaces the estimates above where they differ. Details are in the
+[report](REPORT_E0_E1.md) and in `results/study02/cost.md`.
+
+| planned | found |
+|---|---|
+| Jobs may need a PRO subscription | They need only a positive prepaid credit balance. The account is in prepaid mode, so the balance is a hard cap. |
+| `hf jobs run ... -v hf://buckets/...:/out` | Used through `huggingface_hub.run_job` with a bucket `Volume`. The mount is authorised by the submitter's identity, so jobs carry no token. |
+| L4 at 0.80 USD/h as the default | L4s queued for twelve minutes without starting while A10Gs (1.00 USD/h) started in seconds. The A10G trains at the same speed and scores 1.7 times faster, so it is cheaper per run. |
+| training at 7,000 tokens/s | 7,500 (all blocks) to 10,000 (16 blocks) tokens/s for the 0.5B student. Training is not GPU-bound at 4 episodes per micro-batch. |
+| scoring 3,520 episodes in about 10 minutes | Scoring dominates the cost of a run, because every turn re-reads the whole conversation. Three changes made it affordable: the adapter is merged into the weights, tasks of similar length are scored together, and a minimal greedy loop replaces the library's `generate` (identical outputs). |
+| job start-up negligible | Installing the pinned CUDA stack takes 30 seconds on most nodes and took 10 minutes on one. Runs are batched into a few jobs. |
+| adapters in a private model repository | Adapters, checkpoints and traces stay in the storage bucket `JMBorrill/ccl-study02`; their SHA-256 is in each run's `summary.json`. |
+| monitoring through the billing page | `GET /api/settings/billing/usage/jobs` returns the provider's own usage in micro-dollars. The launcher reconciles against it after every job and counts the larger of its ledger and that figure as spent. |
+| teacher / reference model from Qwen3.5-9B upward | `Qwen/Qwen2.5-7B-Instruct` was used for the quality gate and is too weak for four-hop tasks (3% solved). Experiment 2 needs a stronger teacher than this, or a teacher restricted to shallow seed tasks as the proposal already specifies. |
