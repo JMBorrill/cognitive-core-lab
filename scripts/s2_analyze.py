@@ -475,6 +475,61 @@ def e1() -> None:
     print("\n".join(md))
 
 
+# ------------------------------------------------------------------ sensitivity check
+
+def glmm() -> None:
+    """Mixed-effects logistic regression of test_comp success on log2 D, with family and replicate as random
+    effects (the sensitivity check named in the proposal). Needs statsmodels; writes results/study02/e1/glmm.json."""
+    import pandas as pd
+    from statsmodels.genmod.bayes_mixed_glm import BinomialBayesMixedGLM
+    out = {}
+    for tag, levels, reps in (("s05", LEVELS, range(5)), ("s15", [25, 1600], range(3))):
+        rows = []
+        for d in levels:
+            for r in reps:
+                rows += [{"y": int(x["success"]), "log2D": float(np.log2(d)), "family": x["template"], "rep": f"r{r}",
+                          "hops": x["hops"]} for x in load("e1", f"e1_{tag}_D{d}_r{r}") if x["split"] == "v2/test_comp"]
+        if not rows:
+            continue
+        df = pd.DataFrame(rows)
+        df["x"] = df["log2D"] - df["log2D"].mean()
+        fit = BinomialBayesMixedGLM.from_formula("y ~ x", {"family": "0 + C(family)", "rep": "0 + C(rep)"}, df).fit_vb()
+        slope, se = float(fit.fe_mean[1]), float(fit.fe_sd[1])
+        span = float(np.log2(1600) - np.log2(25))
+        p = lambda z: 1 / (1 + np.exp(-z))  # noqa: E731
+        lo_x, hi_x = float(np.log2(25) - df["log2D"].mean()), float(np.log2(1600) - df["log2D"].mean())
+        out[tag] = {"n": len(df), "intercept": float(fit.fe_mean[0]), "slope_logit_per_doubling": slope, "slope_sd": se,
+                    "slope_95": [slope - 1.96 * se, slope + 1.96 * se], "odds_ratio_D1600_vs_D25": float(np.exp(slope * span)),
+                    "odds_ratio_95": [float(np.exp((slope - 1.96 * se) * span)), float(np.exp((slope + 1.96 * se) * span))],
+                    "typical_family_success_D25": float(p(fit.fe_mean[0] + slope * lo_x)),
+                    "typical_family_success_D1600": float(p(fit.fe_mean[0] + slope * hi_x)),
+                    "random_effect_sd": {n: float(np.exp(m)) for n, m in zip(fit.model.vcp_names, fit.vcp_mean)}}
+    (OUT / "e1" / "glmm.json").write_text(json.dumps(out, indent=1) + "\n")
+    print(json.dumps(out, indent=1))
+
+
+def unsolved() -> None:
+    """test_comp families that no trained run ever solved, as a late check on the tasks themselves."""
+    fams = {f["id"]: f for f in s2.read_gz(s2.V2 / "sealed/families.jsonl.gz")}
+    wins: dict = defaultdict(int)
+    tries: dict = defaultdict(int)
+    for d in sorted((RUNS / "e1").glob("e1_s*_D*_r*")):
+        for x in load("e1", d.name):
+            if x["split"] == "v2/test_comp":
+                wins[x["template"]] += int(x["success"])
+                tries[x["template"]] += 1
+    never = sorted(f for f in tries if wins[f] == 0)
+    from collections import Counter
+    res = {"families": len(tries), "attempts_per_family": int(np.median(list(tries.values()))), "never_solved": len(never),
+           "never_solved_by_hops": dict(sorted(Counter(fams[f]["hops"] for f in never).items())),
+           "all_by_hops": dict(sorted(Counter(fams[f]["hops"] for f in tries).items())),
+           "never_solved_by_shape": dict(Counter(fams[f]["shape"] for f in never).most_common()),
+           "never_solved_by_modifier": dict(Counter(fams[f]["mod"] for f in never).most_common()),
+           "all_by_modifier": dict(Counter(fams[f]["mod"] for f in tries).most_common()), "ids": never}
+    (OUT / "e1" / "unsolved_families.json").write_text(json.dumps(res, indent=1) + "\n")
+    print(json.dumps({k: v for k, v in res.items() if k != "ids"}, indent=1))
+
+
 # ------------------------------------------------------------------ bookkeeping
 
 def books() -> None:
@@ -520,4 +575,4 @@ def books() -> None:
 
 
 if __name__ == "__main__":
-    {"e0": e0, "e1": e1, "books": books}[sys.argv[1]]()
+    {"e0": e0, "e1": e1, "books": books, "glmm": glmm, "unsolved": unsolved}[sys.argv[1]]()

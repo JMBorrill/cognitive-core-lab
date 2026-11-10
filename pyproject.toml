@@ -10,6 +10,8 @@ dependencies = ["mlx==0.32.4", "mlx-lm==0.32.2", "numpy>=1.26", "huggingface_hub
 dev = ["pytest>=8"]
 # Study 02 backend (Linux/CUDA); exact versions in requirements-cuda.lock. Study 01 keeps the MLX stack above.
 cuda = ["torch>=2.15", "transformers>=5.22", "peft>=0.21", "safetensors", "tokenizers", "huggingface_hub>=2.4"]
+# only for the mixed-effects sensitivity check (scripts/s2_analyze.py glmm)
+analysis = ["statsmodels>=0.15", "pandas"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
