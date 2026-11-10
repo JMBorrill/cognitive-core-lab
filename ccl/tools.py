@@ -144,8 +144,9 @@ TOOLS: dict[str, ToolSpec] = {
 }
 
 HELDOUT_DOMAINS = frozenset({"inventory", "maps"})
-MUTATING = frozenset({"create_event", "send_email", "issue_refund", "delete_file", "create_ticket",
-                      "book_flight", "reserve_stock"})
+# A plain set so that later tool tables (ccl.world2) can register their own state-changing tools.
+MUTATING = {"create_event", "send_email", "issue_refund", "delete_file", "create_ticket",
+            "book_flight", "reserve_stock"}
 
 
 # ---------------------------------------------------------------- validation
