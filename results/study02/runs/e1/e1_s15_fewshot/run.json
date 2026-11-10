@@ -1,0 +1,44 @@
+{
+ "name": "e1_s15_fewshot",
+ "experiment": "e1",
+ "config_sha256": "544fd7195848f42270bf2b460ee43d632b16d1cfcf83ec5a5ad0009b19801227",
+ "adapter_sha256": null,
+ "fewshot": true,
+ "eval_batch": 64,
+ "scoring": [
+  {
+   "split": "v2/dev",
+   "tasks": 600,
+   "run_now": 0,
+   "seconds": 0.0
+  },
+  {
+   "split": "v2/test_id",
+   "tasks": 400,
+   "run_now": 0,
+   "seconds": 0.0
+  },
+  {
+   "split": "v2/test_comp",
+   "tasks": 1200,
+   "run_now": 800,
+   "seconds": 1695.2
+  }
+ ],
+ "generation": {
+  "prompt_tokens": 1122695,
+  "gen_tokens": 91022,
+  "gen_time_s": 1672.6381535029986,
+  "calls": 33,
+  "oom_splits": 8
+ },
+ "python": "3.11.14",
+ "machine": "x86_64",
+ "job_id": "6af333359737d9a9e090c5df",
+ "accelerator": "gpu",
+ "commit": "47db539e622fd024584401822a9a677d2fb52eac",
+ "torch": "2.15.0+cu132",
+ "transformers": "5.22.2",
+ "peft": "0.21.2",
+ "gpu": "NVIDIA A10G"
+}

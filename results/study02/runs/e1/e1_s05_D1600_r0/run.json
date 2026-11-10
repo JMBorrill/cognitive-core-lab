@@ -1,0 +1,92 @@
+{
+ "name": "e1_s05_D1600_r0",
+ "experiment": "e1",
+ "config_sha256": "ab55525f8be1952369bbab0f3b17e03453934427d09da3ff87255cfffd064b28",
+ "adapter_sha256": "abc63168756fdbb85e3d73672e275bfb0626d8d258114bd382e23d6cb33cb29f",
+ "fewshot": false,
+ "eval_batch": 128,
+ "scoring": [
+  {
+   "split": "own",
+   "tasks": 400,
+   "run_now": 400,
+   "seconds": 289.0
+  },
+  {
+   "split": "v2/dev",
+   "tasks": 600,
+   "run_now": 600,
+   "seconds": 568.6
+  },
+  {
+   "split": "v2/test_id",
+   "tasks": 400,
+   "run_now": 400,
+   "seconds": 232.2
+  },
+  {
+   "split": "v2/test_comp",
+   "tasks": 1200,
+   "run_now": 1200,
+   "seconds": 981.8
+  },
+  {
+   "split": "v2/test_depth",
+   "tasks": 400,
+   "run_now": 400,
+   "seconds": 426.7
+  },
+  {
+   "split": "v2/test_tool",
+   "tasks": 400,
+   "run_now": 400,
+   "seconds": 333.6
+  },
+  {
+   "split": "v2/test_domain",
+   "tasks": 400,
+   "run_now": 400,
+   "seconds": 233.8
+  },
+  {
+   "split": "v1/eval_id",
+   "tasks": 200,
+   "run_now": 200,
+   "seconds": 169.3
+  },
+  {
+   "split": "v1/eval_ood",
+   "tasks": 240,
+   "run_now": 240,
+   "seconds": 313.8
+  },
+  {
+   "split": "v1/eval_unseen",
+   "tasks": 120,
+   "run_now": 120,
+   "seconds": 28.4
+  },
+  {
+   "split": "v1/eval_renamed",
+   "tasks": 160,
+   "run_now": 160,
+   "seconds": 66.0
+  }
+ ],
+ "generation": {
+  "prompt_tokens": 13370900,
+  "gen_tokens": 554552,
+  "gen_time_s": 3568.776842583994,
+  "calls": 187,
+  "oom_splits": 6
+ },
+ "python": "3.11.14",
+ "machine": "x86_64",
+ "job_id": "6af319139737d9a9e09076b9",
+ "accelerator": "gpu",
+ "commit": "1214d358462c59f30f9747361bca5bcf3b176da1",
+ "torch": "2.15.0+cu132",
+ "transformers": "5.22.2",
+ "peft": "0.21.2",
+ "gpu": "NVIDIA A10G"
+}
