@@ -211,12 +211,16 @@ def test_batched_greedy_generation_equals_unbatched_and_ignores_model_sampling_d
     together = pol.generate(convs)
     alone = [pol.generate([c])[0] for c in convs]
     assert together == alone and all(n <= 12 for _, n in together)
+    assert together == pol.reference_generate(convs)  # the decoding loop agrees with the library's generate
     assert together != hf.HFPolicy(base, tok, "base", max_tokens=12).generate(convs)  # the adapter is in use
     model.generation_config.do_sample = True
     model.generation_config.repetition_penalty = 1.8
     model.generation_config.temperature = 1.5
     assert pol.generate(convs) == together
+    assert pol.reference_generate(convs) == together
     assert pol.stats["calls"] == 2 + len(convs) and pol.stats["prompt_tokens"] > 0
+    long = hf.HFPolicy(model, tok, "tiny", max_tokens=40)  # runs past some end-of-turn tokens
+    assert long.generate(convs) == long.reference_generate(convs)
 
 
 MODEL = Path(__file__).resolve().parents[1] / "models/Qwen2.5-0.5B-Instruct"

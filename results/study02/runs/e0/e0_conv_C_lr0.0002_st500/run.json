@@ -1,0 +1,55 @@
+{
+ "name": "e0_conv_C_lr0.0002_st500",
+ "experiment": "e0",
+ "config_sha256": "b540f577c70ee4a6571bef46b574b9888cc4becb529491f20046a6b0bd80ffcf",
+ "adapter_sha256": "0f5694fc7bada40eb1514cbe0db16ec22aeaafbb5731013c467183b8a9188e53",
+ "fewshot": false,
+ "eval_batch": 64,
+ "scoring": [
+  {
+   "split": "v1/val_pool",
+   "tasks": 150,
+   "run_now": 150,
+   "seconds": 40.5
+  },
+  {
+   "split": "v1/eval_id",
+   "tasks": 200,
+   "run_now": 200,
+   "seconds": 56.0
+  },
+  {
+   "split": "v1/eval_ood",
+   "tasks": 240,
+   "run_now": 240,
+   "seconds": 75.8
+  },
+  {
+   "split": "v1/eval_unseen",
+   "tasks": 120,
+   "run_now": 120,
+   "seconds": 26.4
+  },
+  {
+   "split": "v1/eval_renamed",
+   "tasks": 160,
+   "run_now": 160,
+   "seconds": 45.4
+  }
+ ],
+ "generation": {
+  "prompt_tokens": 1096282,
+  "gen_tokens": 69125,
+  "gen_time_s": 240.94399781000266,
+  "calls": 50
+ },
+ "python": "3.11.14",
+ "machine": "x86_64",
+ "job_id": "6af30c5c9737d9a9e090536c",
+ "accelerator": "gpu",
+ "commit": "798bc683391b667a59d2172e7367fc23d1a20241",
+ "torch": "2.15.0+cu132",
+ "transformers": "5.22.2",
+ "peft": "0.21.2",
+ "gpu": "NVIDIA A10G"
+}

@@ -394,7 +394,6 @@ class HFPolicy:
 
     @torch.inference_mode()
     def _generate(self, batch: list[list[dict]]) -> list[tuple[str, int]]:
-        from transformers import GenerationConfig
         prompts = [render_prompt_ids(self.tokenizer, m) for m in batch]
         width = max(map(len, prompts))
         ids = torch.full((len(prompts), width), self.pad_id, dtype=torch.long)
@@ -402,23 +401,69 @@ class HFPolicy:
         for i, p in enumerate(prompts):  # left padding, so that generation continues every prompt
             ids[i, width - len(p):] = torch.tensor(p)
             att[i, width - len(p):] = 1
-        sample = self.temperature > 0
-        gc = GenerationConfig(max_new_tokens=self.max_tokens, do_sample=sample, num_beams=1, repetition_penalty=1.0,
-                              pad_token_id=self.pad_id, eos_token_id=self.eos_ids,
-                              **({"temperature": self.temperature, "top_p": 0.95, "top_k": 0} if sample else {}))
+        ids, att = ids.to(self.device), att.to(self.device)
         t0 = time.perf_counter()
         with _autocast(self.model, self.amp):
-            out = self.model.generate(input_ids=ids.to(self.device), attention_mask=att.to(self.device),
-                                      generation_config=gc)
+            new = self._sample(ids, att) if self.temperature > 0 else self._greedy(ids, att)
         dt = time.perf_counter() - t0
         res = []
-        for row in out[:, width:].tolist():
+        for row in new.tolist():
             n = next((j for j, t in enumerate(row) if t in self.eos_ids), len(row))
             res.append((self.tokenizer.decode(row[:n], skip_special_tokens=True).strip(), n))
         self.stats["prompt_tokens"] += sum(map(len, prompts))
         self.stats["gen_tokens"] += sum(n for _, n in res)
         self.stats["gen_time_s"] += dt
         self.stats["calls"] += 1
+        return res
+
+    def _greedy(self, ids, att):
+        """Greedy decoding with a key-value cache: the same computation as `generate(do_sample=False)`
+        without its per-token bookkeeping. The output layer is applied to the last position only."""
+        body, head = self.model.base_model, self.model.get_output_embeddings()
+        eos = torch.tensor(self.eos_ids, device=ids.device)
+        pos = (att.cumsum(-1) - 1).masked_fill(att == 0, 1)  # positions count real tokens, as in generate
+        nxt_pos = att.sum(-1, keepdim=True)
+        out = body(input_ids=ids, attention_mask=att, position_ids=pos, use_cache=True)
+        done = torch.zeros(ids.shape[0], dtype=torch.bool, device=ids.device)
+        new = []
+        for step in range(self.max_tokens):
+            tok = head(out.last_hidden_state[:, -1]).argmax(-1)
+            tok = torch.where(done, torch.full_like(tok, self.pad_id), tok)
+            new.append(tok)
+            done |= torch.isin(tok, eos)
+            if bool(done.all()) or step == self.max_tokens - 1:
+                break
+            att = torch.cat([att, att.new_ones(att.shape[0], 1)], dim=1)
+            out = body(input_ids=tok[:, None], attention_mask=att, position_ids=nxt_pos + step,
+                       past_key_values=out.past_key_values, use_cache=True)
+        return torch.stack(new, dim=1)
+
+    def _sample(self, ids, att):
+        from transformers import GenerationConfig
+        gc = GenerationConfig(max_new_tokens=self.max_tokens, do_sample=True, num_beams=1, repetition_penalty=1.0,
+                              temperature=self.temperature, top_p=0.95, top_k=0, pad_token_id=self.pad_id,
+                              eos_token_id=self.eos_ids)
+        return self.model.generate(input_ids=ids, attention_mask=att, generation_config=gc)[:, ids.shape[1]:]
+
+    def reference_generate(self, batch: list[list[dict]]) -> list[tuple[str, int]]:
+        """Greedy decoding through the library's own `generate` (used by the tests as the reference)."""
+        from transformers import GenerationConfig
+        prompts = [render_prompt_ids(self.tokenizer, m) for m in batch]
+        width = max(map(len, prompts))
+        ids = torch.full((len(prompts), width), self.pad_id, dtype=torch.long)
+        att = torch.zeros((len(prompts), width), dtype=torch.long)
+        for i, p in enumerate(prompts):
+            ids[i, width - len(p):] = torch.tensor(p)
+            att[i, width - len(p):] = 1
+        gc = GenerationConfig(max_new_tokens=self.max_tokens, do_sample=False, num_beams=1, repetition_penalty=1.0,
+                              pad_token_id=self.pad_id, eos_token_id=self.eos_ids)
+        with torch.inference_mode(), _autocast(self.model, self.amp):
+            out = self.model.generate(input_ids=ids.to(self.device), attention_mask=att.to(self.device),
+                                      generation_config=gc)
+        res = []
+        for row in out[:, width:].tolist():
+            n = next((j for j, t in enumerate(row) if t in self.eos_ids), len(row))
+            res.append((self.tokenizer.decode(row[:n], skip_special_tokens=True).strip(), n))
         return res
 
 

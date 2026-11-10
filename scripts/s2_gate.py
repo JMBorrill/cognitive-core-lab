@@ -26,23 +26,24 @@ REFERENCE = {"repo": "Qwen/Qwen2.5-7B-Instruct", "revision": "a09a35458c702b33ee
 SPLITS = ["test_comp", "test_depth", "test_tool", "test_domain", "test_id"]
 
 
-def attempts(split: str):
-    """(first tasks, second tasks) of a split, one of each per family."""
+def attempts(split: str, max_hops: int):
+    """(first tasks, second tasks) of a split, one of each per family of at most `max_hops` hops."""
     by = defaultdict(list)
     for t in s2.load_split(split):
-        by[t.template].append(t)
+        if t.depth <= max_hops:
+            by[t.template].append(t)
     return [ts[0] for ts in by.values()], {f: ts[1] for f, ts in by.items()}
 
 
 def run(a) -> None:
     from ccl import hf
-    out = Path(a.out) / "gate"
-    remote = Path(a.bucket) / "gate" if a.bucket else None
+    out = Path(a.out) / a.name
+    remote = Path(a.bucket) / a.name if a.bucket else None
     s2.restore(remote, out)
     model, tok = hf.load_policy_model(s2.fetch_model(REFERENCE), None, dtype="bfloat16")
     policy = hf.HFPolicy(model, tok, "reference")
     for split in SPLITS:
-        first, second = attempts(split)
+        first, second = attempts(split, a.max_hops)
         if a.limit:
             first = first[: a.limit]
         save = lambda: s2.sync(out, remote)  # noqa: E731
@@ -72,6 +73,7 @@ def report(path: str) -> None:
     for split in SPLITS:
         got = {f: v for (s, f), v in by.items() if s == split}
         first = sum(bool(v["1"]["success"]) for v in got.values())
+        got = {f: v for f, v in got.items() if "1" in v}
         twice = sorted(f for f, v in got.items() if not v["1"]["success"] and "2" in v and not v["2"]["success"])
         out["splits"][split] = {"families": len(got), "first_attempt_success": first,
                                 "second_attempt_success": sum(bool(v["2"]["success"]) for v in got.values() if "2" in v),
@@ -93,6 +95,8 @@ if __name__ == "__main__":
     ap.add_argument("--bucket", default=None)
     ap.add_argument("--batch", type=int, default=8)
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--max-hops", type=int, default=6, help="attempt only families of at most this many hops")
+    ap.add_argument("--name", default="gate", help="output directory name")
     ap.add_argument("--report", default=None)
     a = ap.parse_args()
     report(a.report) if a.report else run(a)

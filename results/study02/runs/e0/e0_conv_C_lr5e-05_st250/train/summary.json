@@ -1,0 +1,20 @@
+{
+  "out_dir": "/work/runs/e0/e0_conv_C_lr5e-05_st250/train",
+  "steps": 250,
+  "trainable_params": 8798208,
+  "train_time_s": 156.5726237609997,
+  "resumed_from": 0,
+  "final_val_loss": 0.0052727608539868565,
+  "peak_mem_gb": 8.643072512,
+  "adapter_sha256": "182425156640d629f0c78a114aae83e70f0cc1496eef8ca6ec8f44424e000438",
+  "data": [
+    {
+      "stage": 0,
+      "path": "/work/repo/data/v1/sft/variant_C.jsonl",
+      "sha256": "1ef97f8466906c19fa286a366c4e346f051c307914f98c106fc212e5d94858fa",
+      "examples": 1000,
+      "dropped_too_long": 0,
+      "weight": 1
+    }
+  ]
+}

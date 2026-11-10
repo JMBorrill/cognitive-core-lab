@@ -1,0 +1,67 @@
+{
+  "model": "/root/.cache/huggingface/hub/models--Qwen--Qwen2.5-0.5B-Instruct/snapshots/7ae557604adf67be50417f59c2c2f167def9a775",
+  "train_files": [
+    "/work/repo/data/v1/sft/variant_B.jsonl"
+  ],
+  "val_file": "/work/repo/data/v1/sft/oracle_val.jsonl",
+  "stages": null,
+  "out_dir": "/work/runs/e0/e0_repro_B_s2/train",
+  "seed": 2,
+  "steps": 250,
+  "batch_size": 4,
+  "grad_accum": 2,
+  "lr": 1e-05,
+  "warmup": 20,
+  "weight_decay": 0.0,
+  "max_grad_norm": 1.0,
+  "bias_correction": false,
+  "max_seq_len": 2048,
+  "lora": {
+    "rank": 16,
+    "alpha": 320,
+    "dropout": 0.0,
+    "layers": [
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23
+    ],
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj",
+      "gate_proj",
+      "up_proj",
+      "down_proj"
+    ]
+  },
+  "amp": "auto",
+  "save_every": 50,
+  "eval_every": 50,
+  "val_batches": 20,
+  "total_steps": 250,
+  "trainable_params": 5865472,
+  "data": [
+    {
+      "stage": 0,
+      "path": "/work/repo/data/v1/sft/variant_B.jsonl",
+      "sha256": "d84b49db8cce70960c586192719b8bdc9afcb554384d5627b0f8ad8f9e72cf4d",
+      "examples": 1000,
+      "dropped_too_long": 0,
+      "weight": 1
+    }
+  ]
+}

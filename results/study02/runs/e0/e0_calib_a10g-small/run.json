@@ -1,0 +1,31 @@
+{
+ "name": "e0_calib_a10g-small",
+ "experiment": "e0",
+ "config_sha256": "780eb5930a813534d6da43a335ed54977ced448178c287fc6dc3d1dcbae04fa7",
+ "adapter_sha256": "eb4dc6b753b1f63aaf68fcc52e46f541f27a1ed7c0b883bc1d30d5ac2d200719",
+ "fewshot": false,
+ "eval_batch": 64,
+ "scoring": [
+  {
+   "split": "v1/eval_id",
+   "tasks": 200,
+   "run_now": 200,
+   "seconds": 61.0
+  }
+ ],
+ "generation": {
+  "prompt_tokens": 226974,
+  "gen_tokens": 15595,
+  "gen_time_s": 60.39611570600118,
+  "calls": 9
+ },
+ "python": "3.11.14",
+ "machine": "x86_64",
+ "job_id": "6af30b8c9737d9a9e0905012",
+ "accelerator": "gpu",
+ "commit": "229848dc4cd6918ce21d69009e7c0ca0201fe12b",
+ "torch": "2.15.0+cu132",
+ "transformers": "5.22.2",
+ "peft": "0.21.2",
+ "gpu": "NVIDIA A10G"
+}
