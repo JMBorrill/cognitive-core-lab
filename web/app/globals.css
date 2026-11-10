@@ -360,7 +360,8 @@ section.block {
   flex-direction: column;
   gap: 10px;
 }
-.stack > .card + .card {
+.stack > .card + .card,
+.grid > .card + .card {
   margin-top: 0;
 }
 .row {
@@ -1242,7 +1243,8 @@ details > summary:hover {
     --dp-label: 1fr;
   }
   .dp-axis {
-    grid-template-columns: 0 minmax(0, 1fr) 0;
+    /* label and value cells are hidden, so the ticks are the only grid item */
+    grid-template-columns: minmax(0, 1fr);
     gap: 0;
   }
   .dp-axis > :first-child,

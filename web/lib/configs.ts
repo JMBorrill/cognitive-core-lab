@@ -15,6 +15,17 @@ export const SPLIT_SHORT: Record<string, string> = {
   all_main: "All four splits",
 };
 
+/** Single-seed ablations that exist only in results.json (definitions: docs/REPORT.md §3). */
+const ABLATIONS: Record<string, { label: string; description: string }> = {
+  C_matched: {
+    label: "C_matched · Oracle on B's tasks",
+    description: "Ablation (1 seed): oracle trajectories on exactly the 1,000 tasks used for B, isolating label source from task coverage.",
+  },
+  C_25: { label: "C_25 · Oracle, 250 episodes", description: "Data-quantity ablation (1 seed): 250 oracle episodes, same step budget." },
+  C_50: { label: "C_50 · Oracle, 500 episodes", description: "Data-quantity ablation (1 seed): 500 oracle episodes, same step budget." },
+  C_full: { label: "C_full · Oracle, 3,000 episodes", description: "Data-quantity ablation (1 seed): 3,000 oracle episodes, same step budget." },
+};
+
 export type ConfigInfo = {
   key: string; // manifest key (A, D, ...) or a results-only key
   rkey: string; // key used in results.json / efficiency / comparisons (A_base, Dmix, ...)
@@ -62,12 +73,13 @@ export function configList(manifest: Manifest | null, results?: Results | null):
   if (results) {
     for (const rkey of Object.keys(results.configs ?? {})) {
       if (seen.has(rkey)) continue;
+      const ab = ABLATIONS[rkey];
       out.push({
         key: rkey,
         rkey,
-        label: rkey,
+        label: ab?.label ?? rkey,
         short: rkey,
-        description: "Additional run present in results.json but not described in the manifest.",
+        description: ab?.description ?? "Additional run present in results.json but not described in the manifest.",
         color: "var(--series-other)",
         inManifest: false,
       });
