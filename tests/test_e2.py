@@ -73,15 +73,52 @@ def test_cached_decoding_equals_full_re_encoding_token_for_token(tiny_policy):
     for max_tokens in (12, 40):  # 40 runs past some end-of-turn tokens
         ref = reference(model, tok, make(), max_tokens)
         eng = engine.Engine(model, tok, "new", max_tokens=max_tokens)
-        got = eng._run_group(make())
+        with engine._Grouped():  # as `run` does
+            got = eng._run_group(make())
+            alone = [eng._run_group([e])[0].said for e in make()]  # a row does not depend on its group
         assert [e.said for e in got] == [e.said for e in ref]
         assert [e.messages for e in got] == [e.messages for e in ref]
         assert eng.stats["refed_tokens"] > 0  # some cached tokens were replaced by the canonical ones
-        alone = [eng._run_group([e])[0].said for e in make()]  # a row does not depend on its group
         assert alone == [e.said for e in ref]
     # the cache pays: far fewer tokens are read than by re-encoding every turn
     full = sum(len(hf.render_prompt_ids(tok, e.messages[:2 * t + 2])) for e in ref for t in range(e.turns))
     assert eng.stats["fed_tokens"] < 0.75 * 2 * full
+
+
+def test_grouped_attention_equals_the_stock_function_and_is_what_decoding_uses(tiny_policy):
+    import torch
+    from transformers.integrations.sdpa_attention import sdpa_attention_forward as stock
+    from transformers.modeling_utils import ALL_ATTENTION_FUNCTIONS as fns
+    from ccl import engine, hf
+    torch.manual_seed(0)
+    module = torch.nn.Module()
+    module.num_key_value_groups = 6
+    module.eval()
+    b, kv, d, keys = 5, 2, 16, 37
+    q, k, v = torch.randn(b, 12, 1, d), torch.randn(b, kv, keys, d), torch.randn(b, kv, keys, d)
+    mask = torch.rand(b, 1, 1, keys) > 0.3  # padding anywhere in a row, as the engine has it
+    mask[..., -1] = True
+    seen = []
+    mine = engine.grouped_attention(lambda *a, **kw: seen.append(1) or stock(*a, **kw))
+    out, _ = mine(module, q, k, v, mask, scaling=d ** -0.5)
+    ref, _ = stock(module, q, k, v, mask, scaling=d ** -0.5)
+    assert not seen and out.shape == ref.shape and torch.allclose(out, ref, atol=1e-5)
+    for args in ((q, k, v, None), (torch.randn(b, 12, 3, d), k, v, torch.ones(b, 1, 3, keys, dtype=torch.bool))):
+        a, _ = mine(module, *args, scaling=d ** -0.5)  # no mask, or several query positions: the stock function
+        assert torch.equal(a, stock(module, *args, scaling=d ** -0.5)[0])
+    assert len(seen) == 2
+    # the engine switches it on for its own forward passes only, and the outputs are those of the stock path
+    path, adapter = tiny_policy
+    model, tok = hf.load_policy_model(path, adapter, "cpu")
+    make = lambda: [Scripted(i, turns=1 + i % 3) for i in range(6)]  # noqa: E731
+    on = engine.Engine(model, tok, "on", max_tokens=20)
+    off = engine.Engine(model, tok, "off", max_tokens=20, grouped=False)
+    before = fns["sdpa"]
+    with engine._Grouped():
+        assert fns["sdpa"] is not before
+        a = on._run_group(make())
+    assert fns["sdpa"] is before
+    assert [e.said for e in a] == [e.said for e in off._run_group(make())]
 
 
 def test_bfloat16_weights_load_and_sampling_is_seeded_per_task_attempt_and_turn(tiny_policy):

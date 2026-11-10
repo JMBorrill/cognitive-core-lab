@@ -425,4 +425,23 @@ Recorded in [`configs/study02/e2/frozen.json`](../../configs/study02/e2/frozen.j
 
 ## Deviations
 
-None yet.
+1. **One engine revision after the first calibration** (recorded 2026-11-10 at 20:50 UTC, after job
+   `e2s1_seed_calib` and before any other Stage 1 job). The first calibration met both outcome criteria and
+   missed the speed criterion: 0.658 and 0.649 s per episode on the two adapters (2.5 times faster than
+   Experiment 1, against the four times required); 4 and 1 of 400 outcomes changed (1.0% and 0.25%); success
+   87.5% and 88.75% against 87.5% and 89.0%. For "between 2 and 4 times faster" the plan says re-cost and ask
+   again, and that stands: no later stage is queued on this result.
+   The engine's counters gave the cause. Decoding took 0.18 s per step for a group of about 100 episodes,
+   because with an attention mask present the library copies every layer's cached keys and values from 2
+   key-value heads out to 12 query heads at every step. That is a property of how the computation was
+   carried out, not of the model or the task, so it was removed inside Stage 1 instead of being costed into
+   the main run: **R6**, attention per key-value head while one token per row is decoded
+   (`ccl.engine.grouped_attention`; the same sums in another order, tested against the stock function).
+   The calibration is run a second time on the revised engine, under the same criteria, with its results kept
+   beside the first (`calib2_*`); the job stops if more than 5% of outcomes change. `dev` and the yield probe
+   use the revised engine. Both calibrations are reported, and the budget is recalculated from the second
+   measurement whatever it is. R5 (vLLM) was not tried.
+2. **Gradient checkpointing stays on for every micro-batch.** The Stage 0 option to switch it off for short
+   micro-batches ("to be measured") was measured on a cycle-1 buffer: 3.60 s per step with it always on; with
+   it on above 6,000 tokens only, and off, training ran out of memory on the 24 GB card. No Experiment 2
+   adapter is trained with the option, and its saving is removed from the cost model.

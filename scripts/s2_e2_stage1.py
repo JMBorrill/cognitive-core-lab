@@ -233,7 +233,51 @@ def books() -> dict:
             "prices": {k: 60 * j["price_per_min"] for k, j in jobs.items() if "price_per_min" in j}}
 
 
+def freeze() -> None:
+    """The inputs of the main run that are fixed before a pilot (plan, "Frozen inputs"), and what the task
+    stream covers. CPU only; about two minutes."""
+    from ccl.sft import file_sha256
+    fams, tools = s2.load_practice()
+    bucket = L.buckets(fams)
+    reps = {}
+    for r in range(5):
+        st = L.Stream(fams, tools, r)
+        tasks = st.first(L.PASSES * L.PASS_TASKS)
+        seed_f = L.seed_families(fams, r)
+        rows, stats = s2.oracle_rows(L.seed_tasks(fams, tools, r))
+        skeleton = Counter()
+        for t in tasks:  # the gold tool sequence of a task, ignoring every value
+            skeleton[(t.template,)] += 1
+        reps[str(r)] = {"seed_set_sha256": s2.rows_sha256(rows), "seed_episodes": stats["episodes"],
+                        "seed_families": [f["id"] for f in seed_f],
+                        "stream_sha256": L.tasks_sha256(tasks), "stream_tasks": len(tasks),
+                        "stream_dropped_by_selection_check": len(st.dropped),
+                        "stream": L.diversity(st.family, tasks, seed_f),
+                        "first_cycle_of_the_oracle_arm": L.diversity(st.family[:L.CYCLE_ACCEPT], tasks[:L.CYCLE_ACCEPT], seed_f),
+                        "seed": L.diversity([f for f in seed_f for _ in range(L.SEED_INSTANCES)]),
+                        "times_a_family_recurs_in_the_stream": dict(sorted(Counter(skeleton.values()).items())),
+                        "distinct_requests": len({t.request for t in tasks})}
+    out = {"data_v2_manifest_sha256": file_sha256(str(s2.V2 / "manifest.json")),
+           "student": {"repo": "Qwen/Qwen2.5-1.5B-Instruct", "revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"},
+           "practice_space": {"families": len(fams), "tools_in_gold_graphs": len({t for f in fams for t in f["tools"]}),
+                              "edges": len({e for f in fams for e in f["edges"]})},
+           "replicates": reps,
+           "curriculum_buckets": dict(sorted(Counter(bucket.values()).items()))}
+    stage1 = OUT / "stage1.json"
+    if stage1.exists():
+        res = json.loads(stage1.read_text())
+        out["engine_calibration"] = {k: res["engine"].get(k) for k in ("passed", "criteria", "seconds_per_episode", "speed_up")}
+        out["teacher_qualification"] = {k: {x: v[x] for x in ("model", "acceptance", "acceptance_by_hops", "qualifies", "complete")}
+                                        for k, v in res["teachers"].items()}
+    path = ROOT / "configs/study02/e2/frozen.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(out, indent=1) + "\n")
+    print(f"wrote {path}")
+
+
 def main() -> None:
+    if sys.argv[1:] == ["freeze"]:
+        return freeze()
     OUT.mkdir(parents=True, exist_ok=True)
     money = books()
     price = {f"teacher_{k.split('teacher_')[1]}": v for k, v in money["prices"].items() if "teacher_" in k}

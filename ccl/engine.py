@@ -7,7 +7,11 @@ autocast. That was the cost of Experiment 1. This engine changes how the same co
   R2  an episode's key-value cache is kept between turns, so a turn reads only what is new;
   R3  a group of episodes is sized by tokens, not by a fixed count;
   R4  a practice attempt may be stopped at its first parse error, unknown tool or invalid argument,
-      because the acceptance rule can no longer admit it.
+      because the acceptance rule can no longer admit it;
+  R6  while one token per row is decoded, attention is computed per key-value head (`grouped_attention`).
+      The student has 12 query heads on 2 key-value heads, and with an attention mask present the library
+      copies the whole cache out to 12 heads in every layer at every step, which was three quarters of the
+      first Stage 1 calibration's time. (R5, a vLLM fallback, was not needed.)
 
 How R2 stays exact. Each turn the canonical prompt of every episode is rendered as before
 (`ccl.sft.render_prompt_ids`) and compared with the tokens that episode already has in the cache. The
@@ -45,6 +49,39 @@ def load_policy_model(model_path: str, adapter_dir=None, device: str | None = No
     return model.eval(), tok
 
 
+def grouped_attention(stock):
+    """An attention function for single-token decoding with grouped-query attention and a mask.
+
+    The G query heads that share a key-value head are folded into the query dimension, so keys and values are
+    read once as they lie in the cache and never expanded to all heads. The same sums as the stock function,
+    in another order; every other case (no mask, several query positions, no grouping) goes to `stock`."""
+    def attend(module, query, key, value, attention_mask, dropout=0.0, scaling=None, **kwargs):
+        g = getattr(module, "num_key_value_groups", 1)
+        if g == 1 or query.shape[2] != 1 or attention_mask is None or attention_mask.dtype != torch.bool \
+                or module.training or query.shape[1] != g * key.shape[1]:
+            return stock(module, query, key, value, attention_mask, dropout=dropout, scaling=scaling, **kwargs)
+        b, h, _, d = query.shape
+        q = query.reshape(b, h // g, g, d)  # head j * g + i is query i of key-value head j (as in repeat_kv)
+        scores = torch.matmul(q, key.transpose(-1, -2)) * (scaling if scaling is not None else d ** -0.5)
+        scores = scores.float().masked_fill(~attention_mask, float("-inf"))  # the mask is (rows, 1, 1, keys)
+        out = torch.matmul(torch.softmax(scores, dim=-1).to(value.dtype), value)
+        return out.reshape(b, h, 1, d).transpose(1, 2).contiguous(), None
+    return attend
+
+
+class _Grouped:
+    """While active, the library's `sdpa` attention is `grouped_attention`; restored on exit."""
+
+    def __enter__(self):
+        from transformers.modeling_utils import ALL_ATTENTION_FUNCTIONS as fns
+        self.fns, self.stock = fns, fns["sdpa"]
+        fns["sdpa"] = grouped_attention(self.stock)  # a local override of this mapping object only
+
+    def __exit__(self, *exc):
+        del self.fns["sdpa"]
+        assert self.fns["sdpa"] is self.stock
+
+
 def disqualified(ep: Episode) -> bool:
     """True once an attempt holds a parse error, an unknown tool or an invalid argument (the three
     runtime observations of the acceptance rule, `ccl.s2.rejection`)."""
@@ -65,8 +102,8 @@ class Engine:
 
     def __init__(self, model, tokenizer, name: str, max_tokens: int = 256, temperature: float = 0.0,
                  top_p: float = 0.95, seed=0, token_budget: int = 160_000, max_rows: int = 128,
-                 turn_reserve: int = 600):
-        self.model, self.tokenizer, self.name = model, tokenizer, name
+                 turn_reserve: int = 600, grouped: bool = True):
+        self.model, self.tokenizer, self.name, self.grouped = model, tokenizer, name, grouped
         self.max_tokens, self.temperature, self.top_p, self.seed = max_tokens, temperature, top_p, seed
         self.token_budget, self.max_rows, self.turn_reserve = token_budget, max_rows, turn_reserve
         self.device = next(model.parameters()).device
@@ -114,7 +151,10 @@ class Engine:
                 e = Episode(task, self.name, limits, fewshot=fewshot)
                 e.attempt = attempt
                 eps.append(e)
-            return self._run_group(eps, stop_on_error)
+            if not self.grouped:
+                return self._run_group(eps, stop_on_error)
+            with _Grouped():
+                return self._run_group(eps, stop_on_error)
         except torch.OutOfMemoryError:
             if len(jobs) == 1:
                 raise

@@ -1,0 +1,4 @@
+{"time": "2026-11-10T20:13:51Z", "event": "reserve", "key": "e2s1_seed_calib", "flavor": "a10g-small", "timeout_min": 50, "price_per_min": 0.016667, "reserved_usd": 0.8667, "commit": "0f0a8aab0ad0314d3ee439364090d79a5bfe7be9", "configs": []}
+{"time": "2026-11-10T20:13:52Z", "event": "submitted", "key": "e2s1_seed_calib", "job_id": "6af37b00ab34849891acd05c", "url": "https://huggingface.co/jobs/JMBorrill/6af37b00ab34849891acd05c"}
+{"time": "2026-11-10T20:37:06Z", "event": "settled", "key": "e2s1_seed_calib", "job_id": "6af37b00ab34849891acd05c", "stage": "COMPLETED", "message": null, "running_secs": 1146, "cost_usd": 0.3333, "cost_source": "provider", "reserved_usd": 0.8667}
+{"time": "2026-11-10T20:37:06Z", "event": "reconcile", "provider_used_usd": 0.33334, "provider_account_total_usd": 50.721006, "ledger_settled_usd": 0.3333}

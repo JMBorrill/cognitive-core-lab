@@ -152,7 +152,7 @@ def cmd_calib(a) -> None:
     fams, tools = s2.load_practice()
     for run in CALIB:
         cfg = json.loads((ROOT / f"configs/study02/e1/{run}.json").read_text())
-        name = f"calib_{run}"
+        name = f"calib{a.tag}_{run}"  # a later engine revision is measured under a tag; nothing is overwritten
         out, remote = dirs(a, name)
         s2.restore(remote, out)
         if (out / "result.json").exists():
@@ -179,6 +179,9 @@ def cmd_calib(a) -> None:
             "same_text_as_full_re_encoding": f"{sum(same)}/{len(same)}", "engine": eng.stats,
             "token_budget": a.token_budget, "max_rows": a.max_rows})
         del model
+        r = json.loads((out / "result.json").read_text())
+        if r["changed_outcome"] > a.max_changed * r["episodes_compared"]:  # stops the job before anything is built on it
+            sys.exit(f"[s2_e2] {name}: {r['changed_outcome']} of {r['episodes_compared']} outcomes changed")
 
 
 # ------------------------------------------------------------------ seed adapter on dev, and the yield probe
@@ -340,6 +343,8 @@ def main():
     ap.add_argument("--revision")
     ap.add_argument("--token-budget", type=int, default=160_000)
     ap.add_argument("--max-rows", type=int, default=128)
+    ap.add_argument("--tag", default="", help="calib: suffix of the result directories")
+    ap.add_argument("--max-changed", type=float, default=1.0, help="calib: fail above this share of changed outcomes")
     a = ap.parse_args()
     globals()[f"cmd_{a.command}"](a)
 

@@ -1,0 +1,20 @@
+{
+  "out_dir": "/work/runs/e2/r0_seed/train",
+  "steps": 100,
+  "trainable_params": 18464768,
+  "train_time_s": 327.11161624500005,
+  "resumed_from": 0,
+  "final_val_loss": 0.07008005843869432,
+  "peak_mem_gb": 9.444838912,
+  "adapter_sha256": "ce6bc4f5aa7163d07baa92e844258d2a60a515d77f443059732de3824c828610",
+  "data": [
+    {
+      "stage": 0,
+      "path": "/work/runs/_data/e2_seed_r0.jsonl",
+      "sha256": "430c3c7f92004fa56e8e78374bdf87b18de6fd7b1cc921cca13fb9391cfd49a1",
+      "examples": 400,
+      "dropped_too_long": 0,
+      "weight": 1
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+ "name": "r0_seed",
+ "seed_set_sha256": "430c3c7f92004fa56e8e78374bdf87b18de6fd7b1cc921cca13fb9391cfd49a1",
+ "steps": 100,
+ "train_seconds": 327.1,
+ "seconds_per_step": 3.271,
+ "peak_mem_gb": 9.444838912,
+ "adapter_sha256": "ce6bc4f5aa7163d07baa92e844258d2a60a515d77f443059732de3824c828610",
+ "seconds": 367.9,
+ "python": "3.11.14",
+ "machine": "x86_64",
+ "job_id": "6af37b00ab34849891acd05c",
+ "accelerator": "gpu",
+ "commit": "0f0a8aab0ad0314d3ee439364090d79a5bfe7be9",
+ "torch": "2.15.0+cu132",
+ "transformers": "5.22.2",
+ "peft": "0.21.2",
+ "gpu": "NVIDIA A10G"
+}

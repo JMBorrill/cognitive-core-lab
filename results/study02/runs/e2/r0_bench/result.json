@@ -1,0 +1,29 @@
+{
+ "name": "r0_bench",
+ "data_sha256": "7cd0c937211160472ca8ae50e989cb78819f7dbc7f9430f19f2d9e5b966bb115",
+ "episodes": 880,
+ "settings": {
+  "always": {
+   "seconds_per_step": 3.604,
+   "peak_mem_gb": 9.536230912,
+   "tokens_per_step": 8043,
+   "tokens_per_second": 2241,
+   "last_loss": 0.07800826791259978
+  },
+  "long_only": {
+   "out_of_memory": "OutOfMemoryError('CUDA out of memory. Tried to allocate 100.00 MiB. GPU 0 has a total capacity of 22.30 GiB of which 34.69 MiB is free. Process 50591 has 22.26 GiB memory in use. Of the allocated memo"
+  },
+  "off": {
+   "out_of_memory": "OutOfMemoryError('CUDA out of memory. Tried to allocate 130.00 MiB. GPU 0 has a total capacity of 22.30 GiB of which 92.69 MiB is free. Process 50591 has 22.21 GiB memory in use. Of the allocated memo"
+  }
+ },
+ "python": "3.11.14",
+ "machine": "x86_64",
+ "job_id": "6af37b00ab34849891acd05c",
+ "accelerator": "gpu",
+ "commit": "0f0a8aab0ad0314d3ee439364090d79a5bfe7be9",
+ "torch": "2.15.0+cu132",
+ "transformers": "5.22.2",
+ "peft": "0.21.2",
+ "gpu": "NVIDIA A10G"
+}
