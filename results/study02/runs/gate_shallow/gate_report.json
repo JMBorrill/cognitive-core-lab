@@ -1,0 +1,2217 @@
+{
+ "reference": "Qwen/Qwen2.5-7B-Instruct (few-shot prompt, greedy)",
+ "splits": {
+  "test_comp": {
+   "families": 182,
+   "first_attempt_success": 61,
+   "second_attempt_success": 36,
+   "failed_twice": 85
+  },
+  "test_depth": {
+   "families": 0,
+   "first_attempt_success": 0,
+   "second_attempt_success": 0,
+   "failed_twice": 0
+  },
+  "test_tool": {
+   "families": 84,
+   "first_attempt_success": 40,
+   "second_attempt_success": 13,
+   "failed_twice": 31
+  },
+  "test_domain": {
+   "families": 104,
+   "first_attempt_success": 65,
+   "second_attempt_success": 11,
+   "failed_twice": 28
+  },
+  "test_id": {
+   "families": 100,
+   "first_attempt_success": 61,
+   "second_attempt_success": 13,
+   "failed_twice": 26
+  }
+ },
+ "failed_twice": [
+  {
+   "split": "test_comp",
+   "family": "f0cc27a1986",
+   "hops": 2,
+   "mod": "retry",
+   "shape": "chain+act",
+   "failed_checks": {
+    "status": 2,
+    "required_calls": 2,
+    "effects": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f14c7afc981",
+   "hops": 2,
+   "mod": "fallback",
+   "shape": "chain+fanout",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f18a7cf225f",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f1ba3e7efd4",
+   "hops": 2,
+   "mod": "denied",
+   "shape": "chain+list+act",
+   "failed_checks": {
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f1bc4c9fcb0",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+twin",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f1cd2d13c98",
+   "hops": 2,
+   "mod": "retry",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f1f8f67d84e",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+fanout",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f2061e22d91",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f209efd6393",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f232d4479dd",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "facts": 2,
+    "required_calls": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f2373bda94f",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+fanout",
+   "failed_checks": {
+    "facts": 2,
+    "required_calls": 2,
+    "status": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f24c5f01565",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "facts": 2,
+    "required_calls": 2,
+    "status": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f24fafca265",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f26713cfdae",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f2ca05c204e",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 1,
+    "facts": 2,
+    "required_calls": 1
+   },
+   "parse_errors": 1
+  },
+  {
+   "split": "test_comp",
+   "family": "f2cd690349b",
+   "hops": 2,
+   "mod": "retry",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f2dc6828ac1",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "facts": 2,
+    "status": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f3488de61c5",
+   "hops": 2,
+   "mod": "retry",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 1,
+    "facts": 2,
+    "required_calls": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f360380366f",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "facts": 2,
+    "required_calls": 2,
+    "status": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f386895ff85",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 1,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f3975b43019",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f39beb0d855",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+fanout",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f4916c79f2b",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f4b8e4dd24c",
+   "hops": 2,
+   "mod": "retry",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f4c2e6c91a0",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f4d5b9f4ef4",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 1,
+    "facts": 2,
+    "required_calls": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f4fe81a6091",
+   "hops": 2,
+   "mod": "retry",
+   "shape": "chain+list+act",
+   "failed_checks": {
+    "status": 1,
+    "required_calls": 2,
+    "effects": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f54b3c2cf56",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "facts": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f5671370730",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f56751b5a59",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f58d1c0ebf3",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f5ff38aea26",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 1,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f61e9e2a46c",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+act",
+   "failed_checks": {
+    "status": 1,
+    "required_calls": 2,
+    "effects": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f642e9669c0",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 1,
+    "facts": 2,
+    "required_calls": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f649139874f",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f64f586722d",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 1,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f706975cebe",
+   "hops": 2,
+   "mod": "fallback",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f70d2111be0",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "facts": 2,
+    "required_calls": 2,
+    "status": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f77e5baf042",
+   "hops": 2,
+   "mod": "fallback",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f7b5f1ce499",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f8062031862",
+   "hops": 2,
+   "mod": "fallback",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f81be2d9e70",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 1
+   },
+   "parse_errors": 1
+  },
+  {
+   "split": "test_comp",
+   "family": "f825a53749b",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+fanout",
+   "failed_checks": {
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f85b9c28095",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+fanout",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 1,
+    "terminated": 1
+   },
+   "parse_errors": 3
+  },
+  {
+   "split": "test_comp",
+   "family": "f8ed0f13446",
+   "hops": 2,
+   "mod": "fallback",
+   "shape": "chain+list+fanout",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f8f804a75db",
+   "hops": 2,
+   "mod": "retry",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f8fe598c405",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+act",
+   "failed_checks": {
+    "status": 2,
+    "required_calls": 2,
+    "effects": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f964148fb6b",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f989ed9cf40",
+   "hops": 2,
+   "mod": "retry",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "f9f1b297f5e",
+   "hops": 2,
+   "mod": "retry",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "fa2da1356e9",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+act",
+   "failed_checks": {
+    "status": 2,
+    "required_calls": 2,
+    "effects": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "fa5c1c69fe2",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+act",
+   "failed_checks": {
+    "terminated": 1,
+    "status": 2,
+    "facts": 1,
+    "required_calls": 2,
+    "effects": 2
+   },
+   "parse_errors": 3
+  },
+  {
+   "split": "test_comp",
+   "family": "fa804ebe699",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "fa9b5832acf",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "faf2d7e25b5",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "fafd8860859",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "fb4cdbe0956",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "fb4e44c980f",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "fb6f65bbcc3",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "fb816f12e53",
+   "hops": 2,
+   "mod": "fallback",
+   "shape": "chain+fanout",
+   "failed_checks": {
+    "status": 1,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "fb9e3ea9cfd",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 1,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "fba68385c75",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "terminated": 1,
+    "status": 1,
+    "facts": 2
+   },
+   "parse_errors": 3
+  },
+  {
+   "split": "test_comp",
+   "family": "fba6b961237",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "fba834d1f9c",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+act",
+   "failed_checks": {
+    "status": 1,
+    "required_calls": 2,
+    "effects": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "fc072e187ca",
+   "hops": 2,
+   "mod": "retry",
+   "shape": "chain+list",
+   "failed_checks": {
+    "facts": 2,
+    "required_calls": 2,
+    "status": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "fc59070f167",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "fc7aebd1602",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "fcc717f67e5",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "fd0208bf9c9",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 1,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "fd048ec4997",
+   "hops": 2,
+   "mod": "retry",
+   "shape": "chain+list",
+   "failed_checks": {
+    "no_permission_violation": 1,
+    "status": 1,
+    "facts": 1,
+    "required_calls": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "fd276523288",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "fd2c48fddc3",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 1,
+    "terminated": 1
+   },
+   "parse_errors": 3
+  },
+  {
+   "split": "test_comp",
+   "family": "fd6ca1d880c",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+fanout",
+   "failed_checks": {
+    "status": 1,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "fd75c9a1010",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "fe247203a0b",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "fe59eb57336",
+   "hops": 2,
+   "mod": "retry",
+   "shape": "chain+fanout",
+   "failed_checks": {
+    "status": 1,
+    "facts": 2,
+    "required_calls": 2,
+    "no_permission_violation": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "fe79e735b87",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 1,
+    "facts": 2,
+    "required_calls": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "fe8986b61f8",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "fe899fce5a0",
+   "hops": 2,
+   "mod": "fallback",
+   "shape": "chain",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "fed8a78a4c5",
+   "hops": 2,
+   "mod": "denied",
+   "shape": "chain+list+act",
+   "failed_checks": {
+    "status": 1,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "feef4c92318",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "facts": 2,
+    "required_calls": 2,
+    "status": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "ff90ee75f1e",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "ffb7218948f",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "ffc3cd4fb1e",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "facts": 2,
+    "status": 1,
+    "required_calls": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_comp",
+   "family": "ffd99e65ad0",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+act",
+   "failed_checks": {
+    "status": 2,
+    "required_calls": 2,
+    "effects": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_tool",
+   "family": "f06b37ae46e",
+   "hops": 1,
+   "mod": "none",
+   "shape": "single+list+twin",
+   "failed_checks": {
+    "facts": 2,
+    "terminated": 1,
+    "status": 1
+   },
+   "parse_errors": 4
+  },
+  {
+   "split": "test_tool",
+   "family": "f13a42acd7b",
+   "hops": 2,
+   "mod": "denied",
+   "shape": "chain+list+act",
+   "failed_checks": {
+    "required_calls": 2,
+    "status": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_tool",
+   "family": "f1572da9e51",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 1,
+    "facts": 2,
+    "required_calls": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_tool",
+   "family": "f16e3ef1216",
+   "hops": 2,
+   "mod": "denied",
+   "shape": "chain+list+act",
+   "failed_checks": {
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_tool",
+   "family": "f1eae168a13",
+   "hops": 1,
+   "mod": "refused",
+   "shape": "single+list+act",
+   "failed_checks": {
+    "status": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_tool",
+   "family": "f20517be506",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 1,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_tool",
+   "family": "f2a2d28a43c",
+   "hops": 1,
+   "mod": "notfound",
+   "shape": "single+list",
+   "failed_checks": {
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_tool",
+   "family": "f32ed52f644",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+act",
+   "failed_checks": {
+    "status": 2,
+    "required_calls": 2,
+    "effects": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_tool",
+   "family": "f37c6ecb273",
+   "hops": 2,
+   "mod": "denied",
+   "shape": "chain+act",
+   "failed_checks": {
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_tool",
+   "family": "f4abcee0fb3",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "facts": 2,
+    "effects": 1,
+    "terminated": 1,
+    "status": 1,
+    "required_calls": 1
+   },
+   "parse_errors": 3
+  },
+  {
+   "split": "test_tool",
+   "family": "f50a96454fa",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "facts": 2,
+    "required_calls": 2,
+    "effects": 1,
+    "status": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_tool",
+   "family": "f5e5faabef6",
+   "hops": 2,
+   "mod": "denied",
+   "shape": "chain+act",
+   "failed_checks": {
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_tool",
+   "family": "f5f9897b936",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+act",
+   "failed_checks": {
+    "status": 2,
+    "required_calls": 2,
+    "effects": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_tool",
+   "family": "f64b3dbd236",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+act",
+   "failed_checks": {
+    "status": 2,
+    "required_calls": 2,
+    "effects": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_tool",
+   "family": "f7f1161dd04",
+   "hops": 2,
+   "mod": "denied",
+   "shape": "chain+list+act",
+   "failed_checks": {
+    "status": 2,
+    "required_calls": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_tool",
+   "family": "f7fbf874522",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+act",
+   "failed_checks": {
+    "status": 2,
+    "required_calls": 2,
+    "effects": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_tool",
+   "family": "f80bbd11d31",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_tool",
+   "family": "f87796e78b8",
+   "hops": 2,
+   "mod": "retry",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 1,
+    "required_calls": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_tool",
+   "family": "f8cdf0997ca",
+   "hops": 2,
+   "mod": "denied",
+   "shape": "chain+list+act",
+   "failed_checks": {
+    "status": 1,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_tool",
+   "family": "f8d22c8bdac",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+act",
+   "failed_checks": {
+    "status": 1,
+    "required_calls": 2,
+    "effects": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_tool",
+   "family": "f9284ee9a46",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_tool",
+   "family": "f9a24f9ba21",
+   "hops": 2,
+   "mod": "retry",
+   "shape": "chain+list",
+   "failed_checks": {
+    "facts": 2,
+    "status": 1,
+    "required_calls": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_tool",
+   "family": "fa0f27be863",
+   "hops": 1,
+   "mod": "none",
+   "shape": "single+list+twin",
+   "failed_checks": {
+    "status": 1,
+    "facts": 2,
+    "required_calls": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_tool",
+   "family": "fad0707caee",
+   "hops": 2,
+   "mod": "retry",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_tool",
+   "family": "fae7f08b6de",
+   "hops": 2,
+   "mod": "retry",
+   "shape": "chain+act",
+   "failed_checks": {
+    "status": 2,
+    "required_calls": 2,
+    "effects": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_tool",
+   "family": "fd772e53512",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 1,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_tool",
+   "family": "fd9b4f6aad1",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_tool",
+   "family": "fe811c6dcd6",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+act",
+   "failed_checks": {
+    "required_calls": 2,
+    "effects": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_tool",
+   "family": "ff08336394a",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 1,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_tool",
+   "family": "ff7d826c8f7",
+   "hops": 2,
+   "mod": "fallback",
+   "shape": "chain+act",
+   "failed_checks": {
+    "status": 2,
+    "required_calls": 2,
+    "effects": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_tool",
+   "family": "ff9f41085f1",
+   "hops": 2,
+   "mod": "retry",
+   "shape": "chain+act",
+   "failed_checks": {
+    "status": 2,
+    "required_calls": 2,
+    "effects": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_domain",
+   "family": "f0a9d7ff526",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_domain",
+   "family": "f169cbf2129",
+   "hops": 1,
+   "mod": "none",
+   "shape": "single+list+twin",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_domain",
+   "family": "f177ecc7e70",
+   "hops": 1,
+   "mod": "none",
+   "shape": "single+list+twin",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 1
+   },
+   "parse_errors": 2
+  },
+  {
+   "split": "test_domain",
+   "family": "f2192484a80",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain",
+   "failed_checks": {
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_domain",
+   "family": "f219c5aa94f",
+   "hops": 1,
+   "mod": "notfound",
+   "shape": "single+list+act",
+   "failed_checks": {
+    "status": 1,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_domain",
+   "family": "f21a2c06baf",
+   "hops": 1,
+   "mod": "none",
+   "shape": "single+list+twin",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2
+   },
+   "parse_errors": 1
+  },
+  {
+   "split": "test_domain",
+   "family": "f317e648489",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 1,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_domain",
+   "family": "f34ad6dcb23",
+   "hops": 2,
+   "mod": "denied",
+   "shape": "chain+list+act",
+   "failed_checks": {
+    "status": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_domain",
+   "family": "f48bf655ba3",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 1,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_domain",
+   "family": "f4c4069fca4",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "facts": 2,
+    "required_calls": 2,
+    "status": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_domain",
+   "family": "f5268dcb6da",
+   "hops": 2,
+   "mod": "retry",
+   "shape": "chain+list",
+   "failed_checks": {
+    "required_calls": 2,
+    "status": 1,
+    "facts": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_domain",
+   "family": "f622852820b",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "facts": 2,
+    "required_calls": 2,
+    "status": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_domain",
+   "family": "f646062b99b",
+   "hops": 1,
+   "mod": "none",
+   "shape": "single+list+twin",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2
+   },
+   "parse_errors": 1
+  },
+  {
+   "split": "test_domain",
+   "family": "f774fccc10c",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_domain",
+   "family": "f8767d54552",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_domain",
+   "family": "f9895402a3d",
+   "hops": 2,
+   "mod": "retry",
+   "shape": "chain",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_domain",
+   "family": "fa0d4da94fd",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 1,
+    "facts": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_domain",
+   "family": "fa413e828f2",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 1,
+    "facts": 2,
+    "required_calls": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_domain",
+   "family": "fa67ae4469e",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_domain",
+   "family": "fb7211faa36",
+   "hops": 2,
+   "mod": "fallback",
+   "shape": "chain",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_domain",
+   "family": "fbc1b58fc82",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "facts": 2,
+    "required_calls": 2,
+    "status": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_domain",
+   "family": "fbf1a2891fd",
+   "hops": 2,
+   "mod": "retry",
+   "shape": "chain+list+act",
+   "failed_checks": {
+    "required_calls": 2,
+    "effects": 2,
+    "status": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_domain",
+   "family": "fd4a8bd6e31",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 1,
+    "facts": 2,
+    "required_calls": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_domain",
+   "family": "fd955bd3ec5",
+   "hops": 2,
+   "mod": "fallback",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 1,
+    "terminated": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_domain",
+   "family": "ff06ce23ed0",
+   "hops": 2,
+   "mod": "retry",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_domain",
+   "family": "ff4de7bb735",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 1,
+    "facts": 2,
+    "required_calls": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_domain",
+   "family": "ff6d7fd3ea3",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "facts": 2,
+    "status": 1,
+    "required_calls": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_domain",
+   "family": "ff8ce1a4c1b",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_id",
+   "family": "f0256f95a4e",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_id",
+   "family": "f0d692633b9",
+   "hops": 1,
+   "mod": "none",
+   "shape": "single+list+twin",
+   "failed_checks": {
+    "terminated": 1,
+    "status": 2,
+    "facts": 1
+   },
+   "parse_errors": 3
+  },
+  {
+   "split": "test_id",
+   "family": "f0fd1932d0e",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_id",
+   "family": "f122644e577",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_id",
+   "family": "f15450239f3",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "facts": 1,
+    "status": 1
+   },
+   "parse_errors": 1
+  },
+  {
+   "split": "test_id",
+   "family": "f1a47f96550",
+   "hops": 2,
+   "mod": "fallback",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_id",
+   "family": "f1cf8cda691",
+   "hops": 1,
+   "mod": "none",
+   "shape": "single+list+twin",
+   "failed_checks": {
+    "facts": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_id",
+   "family": "f1dcbcbb5fc",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "facts": 2,
+    "required_calls": 2,
+    "status": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_id",
+   "family": "f242306ed6b",
+   "hops": 2,
+   "mod": "retry",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 1,
+    "facts": 2,
+    "required_calls": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_id",
+   "family": "f29bb816158",
+   "hops": 2,
+   "mod": "denied",
+   "shape": "chain+act",
+   "failed_checks": {
+    "status": 1,
+    "required_calls": 2,
+    "effects": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_id",
+   "family": "f397c91914f",
+   "hops": 2,
+   "mod": "denied",
+   "shape": "chain+list+act",
+   "failed_checks": {
+    "required_calls": 1,
+    "status": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_id",
+   "family": "f582766add0",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+act",
+   "failed_checks": {
+    "status": 2,
+    "required_calls": 2,
+    "effects": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_id",
+   "family": "f858b686152",
+   "hops": 2,
+   "mod": "retry",
+   "shape": "chain+list",
+   "failed_checks": {
+    "facts": 2,
+    "status": 1,
+    "required_calls": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_id",
+   "family": "fc885c7aa09",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "facts": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_id",
+   "family": "fca42b5e502",
+   "hops": 2,
+   "mod": "fallback",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_id",
+   "family": "fca8bfabf73",
+   "hops": 2,
+   "mod": "retry",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_id",
+   "family": "fcd54a2ad18",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+fanout",
+   "failed_checks": {
+    "status": 1,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_id",
+   "family": "fd5e764a29f",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_id",
+   "family": "fd77e8febd6",
+   "hops": 2,
+   "mod": "denied",
+   "shape": "chain+list+act",
+   "failed_checks": {
+    "status": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_id",
+   "family": "fe30caccb7a",
+   "hops": 2,
+   "mod": "retry",
+   "shape": "chain+fanout",
+   "failed_checks": {
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_id",
+   "family": "fe595ecac2a",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+act",
+   "failed_checks": {
+    "status": 2,
+    "required_calls": 2,
+    "effects": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_id",
+   "family": "fef762b8914",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "facts": 2,
+    "required_calls": 2,
+    "status": 1
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_id",
+   "family": "ff2697df178",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 1,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_id",
+   "family": "ff7515bc270",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain+list+twin",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 1,
+    "terminated": 1
+   },
+   "parse_errors": 3
+  },
+  {
+   "split": "test_id",
+   "family": "ffcc59e0992",
+   "hops": 2,
+   "mod": "none",
+   "shape": "chain",
+   "failed_checks": {
+    "status": 2,
+    "facts": 2,
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  },
+  {
+   "split": "test_id",
+   "family": "ffe291072b3",
+   "hops": 2,
+   "mod": "denied",
+   "shape": "chain+list+act",
+   "failed_checks": {
+    "required_calls": 2
+   },
+   "parse_errors": 0
+  }
+ ]
+}

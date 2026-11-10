@@ -1,0 +1,8 @@
+{
+ "reference": "Qwen/Qwen2.5-7B-Instruct (few-shot prompt, greedy)",
+ "stopped_after": 200,
+ "split": "test_comp, first task per family, four-hop families first",
+ "success": 0.03,
+ "dependency_safe": 0.15,
+ "hallucinated_tools_per_episode": 0.065
+}
