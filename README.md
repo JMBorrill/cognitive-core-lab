@@ -79,6 +79,10 @@ Interactive runtime and showcase:
 cd web && npm ci && npm run dev                                                 # http://localhost:3000
 ```
 
+## AI assistance
+
+This project was developed with the help of an AI coding assistant (Claude, by Anthropic).
+
 ## Licences
 
 Code: Apache-2.0. Student and teacher weights: Apache-2.0 (Qwen). All task data is synthetic and
