@@ -1,0 +1,20 @@
+{
+  "out_dir": "/work/runs/e1/e1_s05_D400_r1/train",
+  "steps": 800,
+  "trainable_params": 8798208,
+  "train_time_s": 975.4659328530001,
+  "resumed_from": 0,
+  "final_val_loss": 0.03440840536347374,
+  "peak_mem_gb": 19.041022976,
+  "adapter_sha256": "b6697c13d5b766a01368cfb49982f97311afd0e00a84c2c2e562667eac7ec5f8",
+  "data": [
+    {
+      "stage": 0,
+      "path": "/work/runs/_data/e1_r1_D400.jsonl",
+      "sha256": "7c8e1cc87370c77eded04ea14643ba7f8abed1f6d6ac6d240fd8dde6a31dbe6f",
+      "examples": 3200,
+      "dropped_too_long": 0,
+      "weight": 1
+    }
+  ]
+}

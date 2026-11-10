@@ -45,7 +45,81 @@ Checks made on CPU before any GPU was used, all part of the test suite:
 
 ## 3. Experiment 0: the bridge
 
-<!-- E0 -->
+Plan, clarifications and deviations: [`experiments/study02_e0_bridge/PLAN.md`](../../experiments/study02_e0_bridge/PLAN.md).
+Full tables: [`results/study02/e0/tables.md`](../../results/study02/e0/tables.md).
+
+### 3.1 Reproduction (step B): passed
+
+Three seeds each of B (teacher demonstrations) and C (oracle trajectories), with Study 01's settings in PEFT
+terms, scored on the Study 01 evaluation files.
+
+| | `eval_id` | `eval_ood` | `eval_unseen` | `eval_renamed` |
+|---|---|---|---|---|
+| B, this port (mean of 3) | 85.2 | 31.4 | 47.8 | 71.2 |
+| B, Study 01 (MLX) | 86.0 | 30.3 | 33.3 | 73.3 |
+| C, this port (mean of 3) | 92.0 | 29.4 | 39.4 | 74.8 |
+| C, Study 01 (MLX) | 89.7 | 30.3 | 33.1 | 69.2 |
+
+The criterion was the two left-hand columns within 5 points and every run stable; the largest difference there
+is 2.3 points and all six runs pass the stability rule. `eval_unseen` is 14 points higher for B than in
+Study 01. That split has four templates and its per-seed values range from 31% to 56% here, as the
+[audit](STUDY01_AUDIT.md) said they would; it was not part of the criterion and I do not read it as a
+difference between the stacks.
+
+On identical batches the loss follows the Study 01 log step for step, while the gradient norm before clipping
+does not:
+
+| step | loss, this port | loss, Study 01 | gradient norm, this port | gradient norm, Study 01 |
+|---|---|---|---|---|
+| 1 | 0.5542 | 0.5562 | 62.4 | 854.6 |
+| 5 | 0.2818 | 0.2827 | 27.1 | 213.5 |
+| 10 | 0.2372 | 0.2481 | 9.8 | 72.7 |
+| 20 | 0.0626 | 0.0764 | 8.5 | 10.0 |
+| 30 | 0.0138 | 0.0122 | 2.9 | 2.9 |
+| 50 | 0.0062 | 0.0089 | 1.2 | 3.8 |
+
+Both runs clip to norm 1 and Adam rescales, so the trajectories agree, but at initialisation the MLX gradient
+was 14 times larger for the same loss on the same batch. A plausible cause is precision: this port keeps the
+weights in float32 and computes in bfloat16 under autocast, which performs the attention softmax in float32,
+while the MLX run computed everything in bfloat16. I have not verified that. It matters for how Study 01's
+stability problems are read (next section).
+
+### 3.2 Conventional settings (step C): stable, default kept, gap survives
+
+| lr | steps | `val_pool` | `eval_id` | `eval_ood` | stable |
+|---|---|---|---|---|---|
+| 5e-05 | 250 | 88.0 | 87.5 | 17.1 | yes |
+| 5e-05 | 500 | 90.0 | 86.0 | 28.3 | yes |
+| 0.0001 | 250 | 91.3 | 86.5 | 26.2 | yes |
+| 0.0001 | 500 | 91.3 | 88.0 | 28.7 | yes |
+| 0.0002 | 250 | 93.3 | 91.0 | 42.5 | yes |
+| 0.0002 | 500 | 93.3 | 91.0 | 35.8 | yes |
+
+- **All six runs are stable**, including all blocks with `alpha = 2 x rank` at lr 1e-4, the configuration that
+  failed Study 01's stability study under MLX. Together with the gradient-norm difference above, this suggests
+  that Study 01's unusual settings (scale 20, last 16 blocks, lr 1e-5) were a response to numerical behaviour
+  of its stack more than a property of the task.
+- **The default is kept.** lr 1e-4 with two passes scores 91.3% on the validation tasks, 2.0 points below the
+  best setting (lr 2e-4, 93.3%), inside the 3-point rule.
+- **The Study 01 gap is not a training artefact.** `eval_ood` ranges from 17% to 43% across the grid, against a
+  60% threshold. It does vary a lot with settings at one seed (26% at the default, 43% at lr 2e-4), which is the
+  16-template noise the audit described. These scores were not used to choose anything.
+
+### 3.3 Repeatability (step D) and throughput (step A)
+
+- Scoring the same adapter in two separate jobs changed the outcome of **0 of 720 episodes**.
+- Training runs at about 10,000 tokens per second on both GPU types with the Study 01 layout, and 7,500 with
+  all blocks. The L4 is cheaper per training token (0.022 against 0.027 USD per million). The A10G scores 1.7
+  times faster, and scoring dominates the cost of a run, so Experiment 1 used the A10G. This departs from the
+  letter of the step A rule and is logged as a deviation.
+
+### 3.4 Decision
+
+Every stop/go condition for proceeding is met: reproduction within 5 points, best conventional `eval_ood`
+below 60%, flip rate below 2%, cost below the estimate (1.9 GPU-hours and about 2.1 USD against 5 GPU-hours
+and 4 USD). Experiment 1 was run with rank 16, alpha 32, all blocks, bias-corrected AdamW, lr 1e-4, two
+passes over the data.
+
 
 ## 4. The v2 environment
 
