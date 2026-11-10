@@ -182,3 +182,17 @@ Written after the environment was built and tested on CPU and before any model w
 - Largest standard deviation of replicate means on `test_comp`: 0.056 (0.5B), 0.022 (1.5B, three replicates).
 - Cost of Experiments 0 and 1 together: 50.37 USD of the 60 USD cap.
 
+## Review notes (2026-11-10)
+
+Added in review ([docs/study02/REVIEW_E0_E1.md](../../docs/study02/REVIEW_E0_E1.md)). Nothing above was edited.
+
+- Deviation 5 mentions partial `dev` rows for the 1.5B student. The committed result files contain none:
+  that student has no `dev`, `test_depth`, `test_tool` or `test_domain` rows at all.
+- The timing stated in deviations 3 and 5 agrees with the commit times and the access log: deviation 3 was
+  committed at 14:37:15 UTC and the first trained run began scoring `test_comp` at 14:39:25; deviation 5 at
+  14:57:04, and the first 1.5B run began scoring `test_comp` at 15:11:34.
+- The outcome for the 1.5B student should be quoted with a Student-t interval over its three replicates:
+  +26.9 points [18.0, 35.7].
+- "Largest standard deviation of replicate means" is 0.056 for the 0.5B student and 0.022 for the 1.5B
+  student. The rule on the number of seeds for Experiment 2 applies to the student chosen for it; the
+  Experiment 2 plan uses five replicates with a pre-registered extension to eight.

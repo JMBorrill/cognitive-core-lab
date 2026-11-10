@@ -503,3 +503,50 @@ Per-run records are in `results/study02/runs/<experiment>/<run>/`: the per-episo
 the configuration with data hashes, the adapter's SHA-256, the code commit, library versions and GPU.
 Adapters, checkpoints and per-episode traces are in the private storage bucket `JMBorrill/ccl-study02`.
 Seeds: replicate *r* uses seed *r* for the family subset, the LoRA initialisation and the batch order.
+
+## 10. Addendum from review (2026-11-10)
+
+Added after the [review](REVIEW_E0_E1.md) of this report. Sections 1 to 9 are as first written; no number in
+them is wrong, and no result file changed. The review's checks are in
+[`results/study02/review/review.md`](../../results/study02/review/review.md). Its analyses are post-hoc.
+
+**Corrections to how results above are worded.**
+
+1. **§1 and §5.2, interval for the 1.5B student.** With three replicates the bootstrap interval
+   [22.2, 31.4] is too narrow. A Student-t interval over the three replicate differences is
+   +26.9 [18.0, 35.7]. H1 (secondary) is supported either way. The 0.5B interval is unaffected:
+   [15.8, 21.9] by the same method against [15.7, 22.2].
+2. **§5.4, "a practised family".** `test_id` holds families of the practice space, not families a run
+   practised: a run's training subset contains 1% of them at D = 25 and 57% at D = 1,600. Its rise with D
+   mixes generalisation with a growing practised share. Only the own-family row is "practised".
+3. **§1 and §5.4, "the gap is essentially closed".** Up to three hops. At four hops the 0.5B student is
+   at 29% on its own families against 19% on `test_comp`.
+4. **§1 and §5.4, "diversity costs the small model in-distribution accuracy".** The fall is real
+   (−11.1 points, [−14.3, −7.9]; also on identical tasks) and happens entirely between 25 and 100 families,
+   when instances per family drop from 128 to 32. From 100 to 1,600 families it is flat
+   (−1.1 [−5.1, +2.8]).
+5. **§5.2, the mixed-model odds ratios.** Their intervals come from a variational fit and understate the
+   uncertainty. Read them as approximate.
+6. **§5.4, "three families were never solved".** By task, 74 of 1,200 were never solved in 26 attempts.
+   The 26 of at most three hops were read and are well-formed. Difficulty follows the number of list
+   selections in a request more closely than the number of hops.
+7. **§6, "the cap held by construction".** It held, but two jobs that ran into their time limit were
+   billed 0.0167 USD more than their reservation each; the reserve absorbed it. The launcher now reserves
+   what the provider bills.
+
+**Limitations to add to §7.**
+
+12. **`test_depth` is bounded by the runtime's eight-turn limit.** The oracle needs all eight turns on 14%
+    of its tasks and seven on a further 50%, so one wasted turn is a failure. 20% of the 0.5B student's
+    `test_depth` episodes at D = 1,600 end at the limit.
+13. **Hops understate difficulty.** A two-hop "twin" task can require four list selections.
+
+**On limitation 5 (the quality gate).** The review adds a check at every depth: each list selection in the
+evaluation files is re-derived from the task's world and must single out exactly one record, the one the
+gold graph uses (5,436 selections, 0 failures). It tests the consistency of the gold answer, not whether a
+request reads naturally, so the limitation stands in a narrower form.
+
+**On §8.2, preparation for Experiment 2.** Both items are taken up in
+[`experiments/study02_e2_signal/PLAN.md`](../../experiments/study02_e2_signal/PLAN.md). Its cost model
+finds that cheaper rollouts are necessary but not sufficient: per-cycle retraining of the 1.5B student costs
+as much as the rollouts once those are four times faster.

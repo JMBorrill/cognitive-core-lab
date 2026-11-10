@@ -2,7 +2,9 @@
 
 Nothing here imports a tensor library. Training data comes from the practice space only:
 `load_practice` reads `data/v2/practice`, and no function in this module opens `data/v2/sealed`
-except `load_split`, which is called by the scoring script alone.
+except `load_split`. That is called by the scoring script, by the reference-model gate, and by the
+review's task checks (`scripts/s2_review.py`), which involve no student; never by training code
+(`tests/test_v2.py` enforces this).
 """
 
 from __future__ import annotations
