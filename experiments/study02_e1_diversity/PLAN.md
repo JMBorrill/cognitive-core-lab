@@ -147,3 +147,17 @@ Written after the environment was built and tested on CPU and before any model w
 2. **Gradient checkpointing for the 1.5B student.** Its six runs train with gradient checkpointing so that the
    longest episodes fit on a 24 GB card. Gradients are the same (tested); only memory and speed change. Recorded
    before those runs were submitted.
+3. **Scoring cost and what was trimmed to stay under the cap.** Scoring a trained 0.5B run on every split takes
+   about 54 minutes on an A10G (0.72 s per episode), three times the plan's estimate, and the untrained
+   baselines are slower still because they emit long malformed output. To keep the total under 60 USD without
+   touching the confirmatory test: (a) the four baselines are scored on `dev`, `test_id` and `test_comp` only,
+   and stopped once `test_comp` is complete; their v1-anchor values for the 0.5B student are taken from Study 01,
+   where they were measured (2.2% and 12.8%); (b) the six 1.5B runs keep their job limit of 160 minutes and are
+   scored in the fixed order own, `dev`, `test_id`, `test_comp`, `test_depth`, `test_tool`, `test_domain`, v1
+   anchor, so later splits may be missing for them. All twenty 0.5B runs are scored on every split. Decided at
+   14:36 UTC on 2026-11-10, when no `test_comp` result of any trained run had been looked at; the only trained
+   results seen were own-family and partial `dev` scores of the five D = 1,600 runs.
+4. **How the jobs were packed.** Runs were first submitted several to a job and then, to finish sooner, one to a
+   job, resuming from the checkpoints and partial results in the storage bucket. A run's results do not depend
+   on which job produced them; the code commit of each job is in the ledger and in each `run.json`.
+
