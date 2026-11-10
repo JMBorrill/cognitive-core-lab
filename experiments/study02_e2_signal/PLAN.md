@@ -312,7 +312,7 @@ Options that cost less, and what each gives up:
 |---|---|---|
 | drop `practice+curriculum`; test H2 on `practice` | about 54 | H3; changes the arm H2 was pre-registered on |
 | stop after 3A | about 52 | confirmatory inference for anything but large effects (three replicates) |
-| one pass instead of two for a practice arm's intermediate adapters | about 23 | weaker rollout policies in cycles 2-6; departs from the loop as proposed |
+| one pass instead of two for a practice arm's intermediate adapters | about 21 | weaker rollout policies in cycles 2-6; departs from the loop as proposed |
 | checkpoint gradients only for long batches (same gradients) | about 10-15, to be measured | nothing; an engineering item for Stage 0 |
 
 I recommend none of the first three now. Approve Stages 0 and 1; set the main budget when Stage 1 has
