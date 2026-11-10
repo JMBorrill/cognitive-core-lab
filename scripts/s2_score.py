@@ -37,6 +37,8 @@ def main():
     ap.add_argument("--out", default="runs2")
     ap.add_argument("--bucket", default=None)
     ap.add_argument("--limit", type=int, default=0, help="score only the first N tasks of each split (smoke tests)")
+    ap.add_argument("--splits", nargs="*", default=None, help="score only these splits of each config (the run is "
+                    "then not marked complete)")
     a = ap.parse_args()
     from ccl import hf
     out_root = Path(a.out)
@@ -65,7 +67,7 @@ def main():
         policy = hf.HFPolicy(loaded[1], loaded[2], name)
         sha = json.loads((adapter / "summary.json").read_text())["adapter_sha256"] if adapter else None
         timings = []
-        for split in cfg["score"]:
+        for split in [x for x in cfg["score"] if a.splits is None or x in a.splits]:
             tasks = tasks_for(split, cfg)
             if a.limit:
                 tasks = tasks[: a.limit]
@@ -85,7 +87,7 @@ def main():
             {"name": name, "experiment": cfg["experiment"], "config_sha256": s2.config_sha256(cfg),
              "adapter_sha256": sha, "fewshot": cfg.get("fewshot", False), "eval_batch": cfg.get("eval_batch", 64),
              "scoring": timings, "generation": policy.stats, **s2.environment()}, indent=1))
-        if not a.limit:
+        if not a.limit and a.splits is None:
             (out / "DONE").write_text("ok\n")
         s2.sync(out, remote)
 
