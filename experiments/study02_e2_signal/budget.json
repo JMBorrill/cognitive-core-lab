@@ -1,0 +1,673 @@
+{
+ "design": {
+  "replicates": 5,
+  "replicates_extended": 8,
+  "control_replicates": 3,
+  "seed_episodes": 400,
+  "cycles": 6,
+  "episodes_per_cycle": 480,
+  "task_cap_per_cycle": 2400,
+  "attempts_per_task": 4,
+  "episodes_per_step": 8,
+  "passes": 2,
+  "static_arm_cycles_trained": [
+   3,
+   6
+  ],
+  "splits_final": {
+   "v2/test_comp": 1200,
+   "v2/test_depth": 400,
+   "v2/test_tool": 400,
+   "v2/test_domain": 400,
+   "v2/test_id": 400,
+   "v1": 720
+  },
+  "dev": 600,
+  "sharpening_tasks": 300,
+  "sharpening_attempts": 16,
+  "audit_rescoring_arms": 4
+ },
+ "assumptions": {
+  "usd_per_gpu_hour": 1.0,
+  "job_overhead": 1.1,
+  "contingency": 1.25,
+  "sampled_attempt_vs_greedy": 1.25,
+  "unverified_well_formed_rate": 0.9,
+  "teacher_acceptance": 0.6,
+  "teacher_attempts_per_task": 1.5,
+  "teacher_usd_per_attempt": [
+   0.0009,
+   0.004
+  ]
+ },
+ "measured_in_experiment_1": {
+  "seconds_per_episode": {
+   "v2/test_comp": 1.8257222222222225,
+   "v2/test_id": 1.4368333333333334,
+   "own": 1.6232499999999999,
+   "v1": 0.952824074074074,
+   "v2/dev": 1.7144636898377195,
+   "v2/test_depth": 2.63920225758521,
+   "v2/test_tool": 1.8886194664110585,
+   "v2/test_domain": 1.462787190788936
+  },
+  "scaled_from_0.5B": [
+   "v2/dev",
+   "v2/test_depth",
+   "v2/test_tool",
+   "v2/test_domain"
+  ],
+  "ratio_1.5B_to_0.5B": 2.0517028466278884,
+  "train_seconds_per_step": 3.9131714660944943,
+  "untrained_seconds_per_episode": 2.119
+ },
+ "scenarios": {
+  "E1 engine, as measured": {
+   "floor allowed by the pilot gate": {
+    "stage1_usd": {
+     "engine calibration (two adapters, own-family tasks, both engines)": 1.6794861111111112,
+     "complete the 1.5B scoring of Experiment 1 (4 splits x 6 adapters)": 7.8487790787466345,
+     "v1 anchor for the two untrained 1.5B baselines": 1.16545,
+     "seed adapter of replicate 0, dev, yield probe on 400 tasks": 1.639940357602994
+    },
+    "stage1_total_usd": 12.33365554746074,
+    "stage2_pilot_usd": 15.007296213704315,
+    "stage3_block_a_usd": 391.266307646876,
+    "stage3_block_b_usd": 220.41767970941166,
+    "stage4_teacher_adapters_usd": 24.66233000697742,
+    "stage4_teacher_generation_usd": [
+     40.5,
+     180.0
+    ],
+    "stage4_teacher_generation_3_replicates_usd": [
+     24.299999999999997,
+     108.0
+    ],
+    "extension_usd": 325.60578345300644,
+    "total_without_teacher_or_extension_usd": 639.0249391174527,
+    "per_replicate_usd": {
+     "seed": {
+      "rollouts": 3.292743055555556,
+      "training": 0.1494614101633314,
+      "scoring": 2.6264620223836985
+     },
+     "oracle": {
+      "rollouts": 0.0,
+      "training": 1.9131060500906418,
+      "scoring": 3.0193599513048435
+     },
+     "practice": {
+      "rollouts": 39.51291666666667,
+      "training": 4.663195997095939,
+      "scoring": 4.590951666989419
+     },
+     "practice+curriculum": {
+      "rollouts": 39.51291666666667,
+      "training": 4.663195997095939,
+      "scoring": 4.590951666989419
+     },
+     "teacher": {
+      "rollouts": 0.0,
+      "training": 1.9131060500906418,
+      "scoring": 3.0193599513048435
+     },
+     "practice-unverified": {
+      "rollouts": 8.780648148148149,
+      "training": 4.663195997095939,
+      "scoring": 4.590951666989419
+     },
+     "oracle-matched": {
+      "rollouts": 0.0,
+      "training": 1.2255835633393175,
+      "scoring": 2.6264620223836985
+     }
+    },
+    "practice_attempts": 576000
+   },
+   "planning value": {
+    "stage1_usd": {
+     "engine calibration (two adapters, own-family tasks, both engines)": 1.6794861111111112,
+     "complete the 1.5B scoring of Experiment 1 (4 splits x 6 adapters)": 7.8487790787466345,
+     "v1 anchor for the two untrained 1.5B baselines": 1.16545,
+     "seed adapter of replicate 0, dev, yield probe on 400 tasks": 1.639940357602994
+    },
+    "stage1_total_usd": 12.33365554746074,
+    "stage2_pilot_usd": 8.421810102593202,
+    "stage3_block_a_usd": 272.72755764687594,
+    "stage3_block_b_usd": 141.39184637607832,
+    "stage4_teacher_adapters_usd": 24.66233000697742,
+    "stage4_teacher_generation_usd": [
+     40.5,
+     180.0
+    ],
+    "stage4_teacher_generation_3_replicates_usd": [
+     24.299999999999997,
+     108.0
+    ],
+    "extension_usd": 207.06703345300642,
+    "total_without_teacher_or_extension_usd": 434.8748696730082,
+    "per_replicate_usd": {
+     "seed": {
+      "rollouts": 3.292743055555556,
+      "training": 0.1494614101633314,
+      "scoring": 2.6264620223836985
+     },
+     "oracle": {
+      "rollouts": 0.0,
+      "training": 1.9131060500906418,
+      "scoring": 3.0193599513048435
+     },
+     "practice": {
+      "rollouts": 19.756458333333335,
+      "training": 4.663195997095939,
+      "scoring": 4.590951666989419
+     },
+     "practice+curriculum": {
+      "rollouts": 19.756458333333335,
+      "training": 4.663195997095939,
+      "scoring": 4.590951666989419
+     },
+     "teacher": {
+      "rollouts": 0.0,
+      "training": 1.9131060500906418,
+      "scoring": 3.0193599513048435
+     },
+     "practice-unverified": {
+      "rollouts": 8.780648148148149,
+      "training": 4.663195997095939,
+      "scoring": 4.590951666989419
+     },
+     "oracle-matched": {
+      "rollouts": 0.0,
+      "training": 1.2255835633393175,
+      "scoring": 2.6264620223836985
+     }
+    },
+    "practice_attempts": 288000
+   },
+   "optimistic": {
+    "stage1_usd": {
+     "engine calibration (two adapters, own-family tasks, both engines)": 1.6794861111111112,
+     "complete the 1.5B scoring of Experiment 1 (4 splits x 6 adapters)": 7.8487790787466345,
+     "v1 anchor for the two untrained 1.5B baselines": 1.16545,
+     "seed adapter of replicate 0, dev, yield probe on 400 tasks": 1.639940357602994
+    },
+    "stage1_total_usd": 12.33365554746074,
+    "stage2_pilot_usd": 6.226648065556165,
+    "stage3_block_a_usd": 233.2146409802093,
+    "stage3_block_b_usd": 115.04990193163388,
+    "stage4_teacher_adapters_usd": 24.66233000697742,
+    "stage4_teacher_generation_usd": [
+     40.5,
+     180.0
+    ],
+    "stage4_teacher_generation_3_replicates_usd": [
+     24.299999999999997,
+     108.0
+    ],
+    "extension_usd": 167.55411678633973,
+    "total_without_teacher_or_extension_usd": 366.82484652486005,
+    "per_replicate_usd": {
+     "seed": {
+      "rollouts": 3.292743055555556,
+      "training": 0.1494614101633314,
+      "scoring": 2.6264620223836985
+     },
+     "oracle": {
+      "rollouts": 0.0,
+      "training": 1.9131060500906418,
+      "scoring": 3.0193599513048435
+     },
+     "practice": {
+      "rollouts": 13.170972222222224,
+      "training": 4.663195997095939,
+      "scoring": 4.590951666989419
+     },
+     "practice+curriculum": {
+      "rollouts": 13.170972222222224,
+      "training": 4.663195997095939,
+      "scoring": 4.590951666989419
+     },
+     "teacher": {
+      "rollouts": 0.0,
+      "training": 1.9131060500906418,
+      "scoring": 3.0193599513048435
+     },
+     "practice-unverified": {
+      "rollouts": 8.780648148148149,
+      "training": 4.663195997095939,
+      "scoring": 4.590951666989419
+     },
+     "oracle-matched": {
+      "rollouts": 0.0,
+      "training": 1.2255835633393175,
+      "scoring": 2.6264620223836985
+     }
+    },
+    "practice_attempts": 192000
+   }
+  },
+  "Stage 1 target (4x)": {
+   "floor allowed by the pilot gate": {
+    "stage1_usd": {
+     "engine calibration (two adapters, own-family tasks, both engines)": 1.6794861111111112,
+     "complete the 1.5B scoring of Experiment 1 (4 splits x 6 adapters)": 7.8487790787466345,
+     "v1 anchor for the two untrained 1.5B baselines": 1.16545,
+     "seed adapter of replicate 0, dev, yield probe on 400 tasks": 1.639940357602994
+    },
+    "stage1_total_usd": 12.33365554746074,
+    "stage2_pilot_usd": 4.245046706965072,
+    "stage3_block_a_usd": 136.69148969520148,
+    "stage3_block_b_usd": 72.18785910902169,
+    "stage4_teacher_adapters_usd": 13.339730189584262,
+    "stage4_teacher_generation_usd": [
+     40.5,
+     180.0
+    ],
+    "stage4_teacher_generation_3_replicates_usd": [
+     24.299999999999997,
+     108.0
+    ],
+    "extension_usd": 107.02660463575475,
+    "total_without_teacher_or_extension_usd": 225.458051058649,
+    "per_replicate_usd": {
+     "seed": {
+      "rollouts": 0.823185763888889,
+      "training": 0.1494614101633314,
+      "scoring": 0.6566155055959246
+     },
+     "oracle": {
+      "rollouts": 0.0,
+      "training": 1.9131060500906418,
+      "scoring": 0.7548399878262109
+     },
+     "practice": {
+      "rollouts": 9.878229166666667,
+      "training": 4.663195997095939,
+      "scoring": 1.1477379167473547
+     },
+     "practice+curriculum": {
+      "rollouts": 9.878229166666667,
+      "training": 4.663195997095939,
+      "scoring": 1.1477379167473547
+     },
+     "teacher": {
+      "rollouts": 0.0,
+      "training": 1.9131060500906418,
+      "scoring": 0.7548399878262109
+     },
+     "practice-unverified": {
+      "rollouts": 2.1951620370370373,
+      "training": 4.663195997095939,
+      "scoring": 1.1477379167473547
+     },
+     "oracle-matched": {
+      "rollouts": 0.0,
+      "training": 1.2255835633393175,
+      "scoring": 0.6566155055959246
+     }
+    },
+    "practice_attempts": 576000
+   },
+   "planning value": {
+    "stage1_usd": {
+     "engine calibration (two adapters, own-family tasks, both engines)": 1.6794861111111112,
+     "complete the 1.5B scoring of Experiment 1 (4 splits x 6 adapters)": 7.8487790787466345,
+     "v1 anchor for the two untrained 1.5B baselines": 1.16545,
+     "seed adapter of replicate 0, dev, yield probe on 400 tasks": 1.639940357602994
+    },
+    "stage1_total_usd": 12.33365554746074,
+    "stage2_pilot_usd": 2.5986751791872944,
+    "stage3_block_a_usd": 107.05680219520147,
+    "stage3_block_b_usd": 52.43140077568836,
+    "stage4_teacher_adapters_usd": 13.339730189584262,
+    "stage4_teacher_generation_usd": [
+     40.5,
+     180.0
+    ],
+    "stage4_teacher_generation_3_replicates_usd": [
+     24.299999999999997,
+     108.0
+    ],
+    "extension_usd": 77.39191713575475,
+    "total_without_teacher_or_extension_usd": 174.4205336975379,
+    "per_replicate_usd": {
+     "seed": {
+      "rollouts": 0.823185763888889,
+      "training": 0.1494614101633314,
+      "scoring": 0.6566155055959246
+     },
+     "oracle": {
+      "rollouts": 0.0,
+      "training": 1.9131060500906418,
+      "scoring": 0.7548399878262109
+     },
+     "practice": {
+      "rollouts": 4.939114583333334,
+      "training": 4.663195997095939,
+      "scoring": 1.1477379167473547
+     },
+     "practice+curriculum": {
+      "rollouts": 4.939114583333334,
+      "training": 4.663195997095939,
+      "scoring": 1.1477379167473547
+     },
+     "teacher": {
+      "rollouts": 0.0,
+      "training": 1.9131060500906418,
+      "scoring": 0.7548399878262109
+     },
+     "practice-unverified": {
+      "rollouts": 2.1951620370370373,
+      "training": 4.663195997095939,
+      "scoring": 1.1477379167473547
+     },
+     "oracle-matched": {
+      "rollouts": 0.0,
+      "training": 1.2255835633393175,
+      "scoring": 0.6566155055959246
+     }
+    },
+    "practice_attempts": 288000
+   },
+   "optimistic": {
+    "stage1_usd": {
+     "engine calibration (two adapters, own-family tasks, both engines)": 1.6794861111111112,
+     "complete the 1.5B scoring of Experiment 1 (4 splits x 6 adapters)": 7.8487790787466345,
+     "v1 anchor for the two untrained 1.5B baselines": 1.16545,
+     "seed adapter of replicate 0, dev, yield probe on 400 tasks": 1.639940357602994
+    },
+    "stage1_total_usd": 12.33365554746074,
+    "stage2_pilot_usd": 2.049884669928035,
+    "stage3_block_a_usd": 97.17857302853481,
+    "stage3_block_b_usd": 45.84591466457725,
+    "stage4_teacher_adapters_usd": 13.339730189584262,
+    "stage4_teacher_generation_usd": [
+     40.5,
+     180.0
+    ],
+    "stage4_teacher_generation_3_replicates_usd": [
+     24.299999999999997,
+     108.0
+    ],
+    "extension_usd": 67.5136879690881,
+    "total_without_teacher_or_extension_usd": 157.40802791050083,
+    "per_replicate_usd": {
+     "seed": {
+      "rollouts": 0.823185763888889,
+      "training": 0.1494614101633314,
+      "scoring": 0.6566155055959246
+     },
+     "oracle": {
+      "rollouts": 0.0,
+      "training": 1.9131060500906418,
+      "scoring": 0.7548399878262109
+     },
+     "practice": {
+      "rollouts": 3.292743055555556,
+      "training": 4.663195997095939,
+      "scoring": 1.1477379167473547
+     },
+     "practice+curriculum": {
+      "rollouts": 3.292743055555556,
+      "training": 4.663195997095939,
+      "scoring": 1.1477379167473547
+     },
+     "teacher": {
+      "rollouts": 0.0,
+      "training": 1.9131060500906418,
+      "scoring": 0.7548399878262109
+     },
+     "practice-unverified": {
+      "rollouts": 2.1951620370370373,
+      "training": 4.663195997095939,
+      "scoring": 1.1477379167473547
+     },
+     "oracle-matched": {
+      "rollouts": 0.0,
+      "training": 1.2255835633393175,
+      "scoring": 0.6566155055959246
+     }
+    },
+    "practice_attempts": 192000
+   }
+  },
+  "stretch (10x)": {
+   "floor allowed by the pilot gate": {
+    "stage1_usd": {
+     "engine calibration (two adapters, own-family tasks, both engines)": 1.6794861111111112,
+     "complete the 1.5B scoring of Experiment 1 (4 splits x 6 adapters)": 7.8487790787466345,
+     "v1 anchor for the two untrained 1.5B baselines": 1.16545,
+     "seed adapter of replicate 0, dev, yield probe on 400 tasks": 1.639940357602994
+    },
+    "stage1_total_usd": 12.33365554746074,
+    "stage2_pilot_usd": 2.0925968056172235,
+    "stage3_block_a_usd": 85.7765261048666,
+    "stage3_block_b_usd": 42.5418949889437,
+    "stage4_teacher_adapters_usd": 11.075210226105627,
+    "stage4_teacher_generation_usd": [
+     40.5,
+     180.0
+    ],
+    "stage4_teacher_generation_3_replicates_usd": [
+     24.299999999999997,
+     108.0
+    ],
+    "extension_usd": 63.31076887230445,
+    "total_without_teacher_or_extension_usd": 142.74467344688827,
+    "per_replicate_usd": {
+     "seed": {
+      "rollouts": 0.3292743055555556,
+      "training": 0.1494614101633314,
+      "scoring": 0.26264620223836993
+     },
+     "oracle": {
+      "rollouts": 0.0,
+      "training": 1.9131060500906418,
+      "scoring": 0.3019359951304843
+     },
+     "practice": {
+      "rollouts": 3.951291666666667,
+      "training": 4.663195997095939,
+      "scoring": 0.459095166698942
+     },
+     "practice+curriculum": {
+      "rollouts": 3.951291666666667,
+      "training": 4.663195997095939,
+      "scoring": 0.459095166698942
+     },
+     "teacher": {
+      "rollouts": 0.0,
+      "training": 1.9131060500906418,
+      "scoring": 0.3019359951304843
+     },
+     "practice-unverified": {
+      "rollouts": 0.8780648148148149,
+      "training": 4.663195997095939,
+      "scoring": 0.459095166698942
+     },
+     "oracle-matched": {
+      "rollouts": 0.0,
+      "training": 1.2255835633393175,
+      "scoring": 0.26264620223836993
+     }
+    },
+    "practice_attempts": 576000
+   },
+   "planning value": {
+    "stage1_usd": {
+     "engine calibration (two adapters, own-family tasks, both engines)": 1.6794861111111112,
+     "complete the 1.5B scoring of Experiment 1 (4 splits x 6 adapters)": 7.8487790787466345,
+     "v1 anchor for the two untrained 1.5B baselines": 1.16545,
+     "seed adapter of replicate 0, dev, yield probe on 400 tasks": 1.639940357602994
+    },
+    "stage1_total_usd": 12.33365554746074,
+    "stage2_pilot_usd": 1.4340481945061125,
+    "stage3_block_a_usd": 73.92265110486659,
+    "stage3_block_b_usd": 34.63931165561036,
+    "stage4_teacher_adapters_usd": 11.075210226105627,
+    "stage4_teacher_generation_usd": [
+     40.5,
+     180.0
+    ],
+    "stage4_teacher_generation_3_replicates_usd": [
+     24.299999999999997,
+     108.0
+    ],
+    "extension_usd": 51.456893872304434,
+    "total_without_teacher_or_extension_usd": 122.3296665024438,
+    "per_replicate_usd": {
+     "seed": {
+      "rollouts": 0.3292743055555556,
+      "training": 0.1494614101633314,
+      "scoring": 0.26264620223836993
+     },
+     "oracle": {
+      "rollouts": 0.0,
+      "training": 1.9131060500906418,
+      "scoring": 0.3019359951304843
+     },
+     "practice": {
+      "rollouts": 1.9756458333333335,
+      "training": 4.663195997095939,
+      "scoring": 0.459095166698942
+     },
+     "practice+curriculum": {
+      "rollouts": 1.9756458333333335,
+      "training": 4.663195997095939,
+      "scoring": 0.459095166698942
+     },
+     "teacher": {
+      "rollouts": 0.0,
+      "training": 1.9131060500906418,
+      "scoring": 0.3019359951304843
+     },
+     "practice-unverified": {
+      "rollouts": 0.8780648148148149,
+      "training": 4.663195997095939,
+      "scoring": 0.459095166698942
+     },
+     "oracle-matched": {
+      "rollouts": 0.0,
+      "training": 1.2255835633393175,
+      "scoring": 0.26264620223836993
+     }
+    },
+    "practice_attempts": 288000
+   },
+   "optimistic": {
+    "stage1_usd": {
+     "engine calibration (two adapters, own-family tasks, both engines)": 1.6794861111111112,
+     "complete the 1.5B scoring of Experiment 1 (4 splits x 6 adapters)": 7.8487790787466345,
+     "v1 anchor for the two untrained 1.5B baselines": 1.16545,
+     "seed adapter of replicate 0, dev, yield probe on 400 tasks": 1.639940357602994
+    },
+    "stage1_total_usd": 12.33365554746074,
+    "stage2_pilot_usd": 1.2145319908024086,
+    "stage3_block_a_usd": 69.97135943819991,
+    "stage3_block_b_usd": 32.00511721116592,
+    "stage4_teacher_adapters_usd": 11.075210226105627,
+    "stage4_teacher_generation_usd": [
+     40.5,
+     180.0
+    ],
+    "stage4_teacher_generation_3_replicates_usd": [
+     24.299999999999997,
+     108.0
+    ],
+    "extension_usd": 47.50560220563778,
+    "total_without_teacher_or_extension_usd": 115.52466418762899,
+    "per_replicate_usd": {
+     "seed": {
+      "rollouts": 0.3292743055555556,
+      "training": 0.1494614101633314,
+      "scoring": 0.26264620223836993
+     },
+     "oracle": {
+      "rollouts": 0.0,
+      "training": 1.9131060500906418,
+      "scoring": 0.3019359951304843
+     },
+     "practice": {
+      "rollouts": 1.3170972222222224,
+      "training": 4.663195997095939,
+      "scoring": 0.459095166698942
+     },
+     "practice+curriculum": {
+      "rollouts": 1.3170972222222224,
+      "training": 4.663195997095939,
+      "scoring": 0.459095166698942
+     },
+     "teacher": {
+      "rollouts": 0.0,
+      "training": 1.9131060500906418,
+      "scoring": 0.3019359951304843
+     },
+     "practice-unverified": {
+      "rollouts": 0.8780648148148149,
+      "training": 4.663195997095939,
+      "scoring": 0.459095166698942
+     },
+     "oracle-matched": {
+      "rollouts": 0.0,
+      "training": 1.2255835633393175,
+      "scoring": 0.26264620223836993
+     }
+    },
+    "practice_attempts": 192000
+   }
+  }
+ },
+ "power": {
+  "replicate_sd_measured_1.5B": {
+   "D25": 0.021672007888655004,
+   "D1600": 0.014938144066387464
+  },
+  "replicates_behind_that_estimate": 3,
+  "family_sd_of_arm_difference_upper_bound": 0.29998132116874426,
+  "table": [
+   {
+    "seed_sd": 0.02,
+    "replicates_per_arm": 5,
+    "se_points": 1.7606286427019249,
+    "detectable_difference_points": 5.62520851343265,
+    "non_inferiority_margin_7.5_has_80pct_power": true
+   },
+   {
+    "seed_sd": 0.02,
+    "replicates_per_arm": 8,
+    "se_points": 1.5810797631689621,
+    "detectable_difference_points": 4.763793326428083,
+    "non_inferiority_margin_7.5_has_80pct_power": true
+   },
+   {
+    "seed_sd": 0.03,
+    "replicates_per_arm": 5,
+    "se_points": 2.258276603408542,
+    "detectable_difference_points": 7.215193747890292,
+    "non_inferiority_margin_7.5_has_80pct_power": true
+   },
+   {
+    "seed_sd": 0.03,
+    "replicates_per_arm": 8,
+    "se_points": 1.9364434454696635,
+    "detectable_difference_points": 5.834504101200096,
+    "non_inferiority_margin_7.5_has_80pct_power": true
+   },
+   {
+    "seed_sd": 0.05,
+    "replicates_per_arm": 5,
+    "se_points": 3.3911374518739907,
+    "detectable_difference_points": 10.8346841587374,
+    "non_inferiority_margin_7.5_has_80pct_power": false
+   },
+   {
+    "seed_sd": 0.05,
+    "replicates_per_arm": 8,
+    "se_points": 2.783848634085988,
+    "detectable_difference_points": 8.387735934501082,
+    "non_inferiority_margin_7.5_has_80pct_power": true
+   }
+  ]
+ }
+}

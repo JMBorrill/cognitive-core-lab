@@ -30,10 +30,12 @@ Experiment 2 are in **[docs/study02/REPORT_E0_E1.md](docs/study02/REPORT_E0_E1.m
 |---|---|
 | Experiment 0 | the PyTorch port reproduces Study 01 (B and C within 2.3 points on `eval_id` and `eval_ood`); the gap survives conventional LoRA settings |
 | Experiment 1, 0.5B | held-out compositions: 18.9% with 25 training families, 37.7% with 1,600, at the same 3,200 episodes (+18.9 points [15.7, 22.2]) |
-| Experiment 1, 1.5B | 50.0% and 76.9% (+26.9 points [22.2, 31.4]) |
-| reading | diversity of practised structure closes the gap to unpractised compositions; the 0.5B student is then limited by depth |
+| Experiment 1, 1.5B | 50.0% and 76.9% (+26.9 points; [18.0, 35.7] over its three replicates, see the review) |
+| reading | diversity of practised structure closes the gap to unpractised compositions up to three hops; the 0.5B student is then limited by chained selections and depth |
 | recommendation | Experiment 2 on the 1.5B student, after making rollouts cheaper and re-costing |
 | compute | 50.37 USD of a 60 USD cap |
+| review | [independent checks and corrections](docs/study02/REVIEW_E0_E1.md); the confirmatory result stands |
+| next | [Experiment 2 plan](experiments/study02_e2_signal/PLAN.md) for the 1.5B student: draft, nothing run, staged with caps |
 
 - [Proposal](docs/study02/PROPOSAL.md): hypotheses, design, statistics, cost, stop/go decisions
 - [Study 01 audit](docs/study02/STUDY01_AUDIT.md) and its [generated tables](docs/study02/audit_tables.md) (`python scripts/study02_audit.py`)
@@ -43,6 +45,9 @@ Experiment 2 are in **[docs/study02/REPORT_E0_E1.md](docs/study02/REPORT_E0_E1.m
 - Results: [Experiment 0 tables](results/study02/e0/tables.md), [Experiment 1 tables](results/study02/e1/tables.md),
   [post-hoc analyses](results/study02/e1/posthoc.md), [cost](results/study02/cost.md) and [ledger](results/study02/ledger.jsonl),
   [test-access log](results/study02/test_access.jsonl)
+- Review: [report](docs/study02/REVIEW_E0_E1.md) and its [generated checks](results/study02/review/review.md)
+  (`python scripts/s2_review.py`); Experiment 2 [plan](experiments/study02_e2_signal/PLAN.md) and
+  [cost model](experiments/study02_e2_signal/budget.md) (`python scripts/s2_e2_budget.py`)
 
 ```
 ccl/sft.py              tokenisation, episode packing, batch schedule (shared by the MLX and PyTorch trainers)
@@ -56,19 +61,22 @@ scripts/s2_score.py     score final adapters on held-out splits; logs every acce
 scripts/s2_gate.py      reference-model quality gate on the test families
 scripts/s2_launch.py    submit GPU jobs under a hard spending cap; ledger
 scripts/s2_analyze.py   pre-registered analyses -> results/study02
+scripts/s2_review.py    review: independent re-derivation and integrity checks; post-hoc analyses, labelled
+scripts/s2_e2_budget.py Experiment 2 cost model and power from what Experiment 1 measured (spends nothing)
 ```
 
 Reproduce on any Linux machine (CPU is enough for everything except training and scoring):
 
 ```bash
 uv venv --python 3.11 .venv && uv pip install --python .venv/bin/python -r requirements-cuda.lock
-.venv/bin/python -m pytest -q                   # 57 tests; Study 01's MLX test is skipped without MLX
+.venv/bin/python -m pytest -q                   # 60 tests (one needs the Qwen checkpoint); Study 01's MLX test is skipped without MLX
 .venv/bin/python scripts/build_v2.py            # ~40 s; reproduces data/v2 byte for byte
 .venv/bin/python scripts/s2_prepare_v1.py       # rebuilds the Study 01 training files and checks their hashes
 .venv/bin/python scripts/s2_train.py configs/study02/e1/e1_s05_D1600_r0.json --out runs2    # needs a GPU
 .venv/bin/python scripts/s2_score.py configs/study02/e1/e1_s05_D1600_r0.json --out runs2
 .venv/bin/python scripts/s2_analyze.py e0 && .venv/bin/python scripts/s2_analyze.py e1       # from results/study02/runs
 .venv/bin/python scripts/s2_analyze.py posthoc && .venv/bin/python scripts/s2_analyze.py books
+.venv/bin/python scripts/s2_review.py           # ~2 min on CPU; results/study02/review
 ```
 
 ## Layout
