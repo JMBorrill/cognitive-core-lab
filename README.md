@@ -19,6 +19,17 @@ Results, methodology and limitations are in **[docs/REPORT.md](docs/REPORT.md)**
 tables are in [results/tables.md](results/tables.md), and the completion matrix is in
 [docs/COMPLETION.md](docs/COMPLETION.md).
 
+## Study 02 (proposed)
+
+Study 01 leaves a gap: 86–91% on familiar templates, 30–36% on unseen ones. Study 02 asks what closes
+it, and whether the model can close it through verified self-practice. Nothing has been run yet.
+
+- [Proposal](docs/study02/PROPOSAL.md): hypotheses, design, statistics, cost, stop/go decisions
+- [Study 01 audit](docs/study02/STUDY01_AUDIT.md) and its [generated tables](docs/study02/audit_tables.md) (`python scripts/study02_audit.py`)
+- [Literature positioning](docs/study02/LITERATURE.md)
+- [Implementation plan](docs/study02/IMPLEMENTATION_PLAN.md): code, cloud GPU path, budget
+- Pre-registered plans: [Experiment 0](experiments/study02_e0_bridge/PLAN.md), [Experiment 1](experiments/study02_e1_diversity/PLAN.md)
+
 ## Layout
 
 ```
