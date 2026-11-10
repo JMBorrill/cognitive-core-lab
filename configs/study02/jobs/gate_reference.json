@@ -1,0 +1,11 @@
+{
+ "key": "gate_reference",
+ "experiment": "gate",
+ "flavor": "a10g-small",
+ "timeout_min": 180,
+ "configs": [],
+ "stages": [],
+ "extra": [
+  "python scripts/s2_gate.py --out /work/runs --bucket /out"
+ ]
+}
