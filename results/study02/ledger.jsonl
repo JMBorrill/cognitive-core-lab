@@ -1,0 +1,4 @@
+{"time": "2026-11-10T12:03:35Z", "event": "reserve", "key": "e0_calib_l4x1", "flavor": "l4x1", "timeout_min": 20, "price_per_min": 0.013333, "reserved_usd": 0.28, "commit": "fb5ee219b899809302d3cb810bd05df62c74ca5a", "configs": ["configs/study02/e0/e0_calib_l4x1.json"]}
+{"time": "2026-11-10T12:03:35Z", "event": "submitted", "key": "e0_calib_l4x1", "job_id": "6af308179737d9a9e090414c", "url": "https://huggingface.co/jobs/JMBorrill/6af308179737d9a9e090414c"}
+{"time": "2026-11-10T12:16:50Z", "event": "settled", "key": "e0_calib_l4x1", "job_id": "6af308179737d9a9e090414c", "stage": "COMPLETED", "message": null, "billable_secs": 768, "running_secs": 768, "total_secs": 772, "cost_usd": 0.1733, "reserved_usd": 0.28}
+{"time": "2026-11-10T12:16:50Z", "event": "reconcile", "provider_used_usd": 0.186662, "ledger_settled_usd": 0.1733}

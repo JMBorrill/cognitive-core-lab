@@ -1,0 +1,37 @@
+{
+ "name": "e0_calib_l4x1",
+ "config_sha256": "42c59cede5febf5c574819e4f0556574849f35115c3e2ff1b31d565c81948f86",
+ "data": {
+  "sha256": "1ef97f8466906c19fa286a366c4e346f051c307914f98c106fc212e5d94858fa"
+ },
+ "summary": {
+  "out_dir": "/work/runs/e0/e0_calib_l4x1/train",
+  "steps": 50,
+  "trainable_params": 5865472,
+  "train_time_s": 25.011894174998815,
+  "resumed_from": 0,
+  "final_val_loss": 0.014475177159522653,
+  "peak_mem_gb": 6.773697024,
+  "adapter_sha256": "7e12deacc7c75435ab6a115ea381d55479e20a8de4b91d7e6d041c4f2457ec5c",
+  "data": [
+   {
+    "stage": 0,
+    "path": "/work/repo/data/v1/sft/variant_C.jsonl",
+    "sha256": "1ef97f8466906c19fa286a366c4e346f051c307914f98c106fc212e5d94858fa",
+    "examples": 1000,
+    "dropped_too_long": 0,
+    "weight": 1
+   }
+  ]
+ },
+ "seconds_this_invocation": 40.8,
+ "python": "3.11.14",
+ "machine": "x86_64",
+ "job_id": "6af308179737d9a9e090414c",
+ "accelerator": "gpu",
+ "commit": "fb5ee219b899809302d3cb810bd05df62c74ca5a",
+ "torch": "2.15.0+cu132",
+ "transformers": "5.22.2",
+ "peft": "0.21.2",
+ "gpu": "NVIDIA L4"
+}

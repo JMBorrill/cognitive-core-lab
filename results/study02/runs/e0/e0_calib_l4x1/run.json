@@ -1,0 +1,31 @@
+{
+ "name": "e0_calib_l4x1",
+ "experiment": "e0",
+ "config_sha256": "42c59cede5febf5c574819e4f0556574849f35115c3e2ff1b31d565c81948f86",
+ "adapter_sha256": "7e12deacc7c75435ab6a115ea381d55479e20a8de4b91d7e6d041c4f2457ec5c",
+ "fewshot": false,
+ "eval_batch": 64,
+ "scoring": [
+  {
+   "split": "v1/eval_id",
+   "tasks": 200,
+   "run_now": 200,
+   "seconds": 105.1
+  }
+ ],
+ "generation": {
+  "prompt_tokens": 227051,
+  "gen_tokens": 15549,
+  "gen_time_s": 104.63682720700308,
+  "calls": 9
+ },
+ "python": "3.11.14",
+ "machine": "x86_64",
+ "job_id": "6af308179737d9a9e090414c",
+ "accelerator": "gpu",
+ "commit": "fb5ee219b899809302d3cb810bd05df62c74ca5a",
+ "torch": "2.15.0+cu132",
+ "transformers": "5.22.2",
+ "peft": "0.21.2",
+ "gpu": "NVIDIA L4"
+}

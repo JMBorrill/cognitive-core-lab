@@ -21,8 +21,9 @@ def reserve(key, minutes, price=L4):
 
 def test_reservation_is_the_worst_case_and_cost_rounds_up():
     assert L.reservation_usd(60, L4) == pytest.approx(61 * L4, abs=1e-4)
-    assert L.job_cost_usd(61, L4) == pytest.approx(2 * L4, abs=1e-4)  # billed by the started minute
+    assert L.job_cost_usd(61, L4) == pytest.approx(3 * L4, abs=1e-4)  # started minutes, plus one for start-up
     assert L.job_cost_usd(0, L4) == 0.0
+    assert L.job_cost_usd(772, L4) == pytest.approx(0.1867, abs=1e-3)  # the first job: the provider billed 0.186662
     assert L.job_cost_usd(60 * 60, L4) <= L.reservation_usd(60, L4)  # a job cannot cost more than it reserved
 
 

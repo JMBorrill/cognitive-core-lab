@@ -1,0 +1,1 @@
+{"time": "2026-11-10T12:14:38Z", "run": "e0_calib_l4x1", "split": "v1/eval_id", "tasks": 200, "to_score": 200, "adapter_sha256": "7e12deacc7c75435ab6a115ea381d55479e20a8de4b91d7e6d041c4f2457ec5c", "config_sha256": "42c59cede5febf5c574819e4f0556574849f35115c3e2ff1b31d565c81948f86", "commit": "fb5ee219b899809302d3cb810bd05df62c74ca5a"}

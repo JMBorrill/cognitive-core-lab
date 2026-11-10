@@ -89,7 +89,9 @@ def reservation_usd(timeout_min: int, price_per_min: float) -> float:
 
 
 def job_cost_usd(billable_secs: float, price_per_min: float) -> float:
-    return round(math.ceil(billable_secs / 60) * price_per_min, 4)
+    """Cost of a finished job. The provider bills started minutes including start-up, which came to one
+    minute more than the reported lifetime on the first job, so a minute is added."""
+    return round((math.ceil(billable_secs / 60) + 1) * price_per_min, 4) if billable_secs else 0.0
 
 
 # ------------------------------------------------------------------ provider calls
@@ -154,7 +156,7 @@ def submit(spec_path: str, dry_run: bool) -> None:
     assert spec["key"] not in {e.get("key") for e in ledger}, f"job key {spec['key']} was already used"
     assert spec["flavor"] in budget["flavors"], f"flavor {spec['flavor']} is not approved in the budget file"
     price = live_price_per_min(spec["flavor"])
-    assert price <= budget["flavors"][spec["flavor"]] / 60 + 1e-9, "the live price is above the budgeted price"
+    assert price <= budget["flavors"][spec["flavor"]] / 60 * 1.001, "the live price is above the budgeted price"
     need = reservation_usd(spec["timeout_min"], price)
     ok, why = may_submit(ledger, budget, need)
     print(f"[launch] {spec['key']}: {spec['flavor']} for at most {spec['timeout_min']} min, "
@@ -190,8 +192,8 @@ def settle() -> None:
         d = info.durations
         print(f"[settle] {key} {j['job_id']}: {info.status.stage} {info.status.message or ''} durations={d}")
         if info.status.stage in TERMINAL:
-            # Billed while starting or running; the whole lifetime minus queueing is an upper bound.
-            secs = (d.total_secs - (d.scheduling_secs or 0)) if d and d.total_secs is not None else 0
+            # Billed while starting or running; the whole reported lifetime is used.
+            secs = d.total_secs if d and d.total_secs is not None else 0
             if not secs and info.started_at and info.finished_at:
                 secs = (info.finished_at - info.started_at).total_seconds()
             append({"event": "settled", "key": key, "job_id": j["job_id"], "stage": info.status.stage,
