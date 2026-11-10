@@ -16,7 +16,7 @@ training text. Every trained configuration modifies weights through LoRA. A⁺ s
 alone achieves without any weight change.
 
 Results, methodology and limitations are in **[docs/REPORT.md](docs/REPORT.md)**. Auto-generated
-tables are in [results/tables.md](results/tables.md), and the honest completion matrix is in
+tables are in [results/tables.md](results/tables.md), and the completion matrix is in
 [docs/COMPLETION.md](docs/COMPLETION.md).
 
 ## Layout

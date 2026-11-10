@@ -10,6 +10,7 @@ models/
 runs/*/checkpoints/
 runs/**/*.safetensors
 scratch/
+.claude/
 logs/*.log
 
 # per-episode traces are large; published subsets live in web/public/data
