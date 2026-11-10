@@ -1,1 +1,2 @@
 {"time": "2026-11-10T14:17:16Z", "run": "e1_s15_fewshot", "split": "v2/test_id", "tasks": 400, "to_score": 400, "adapter_sha256": null, "config_sha256": "544fd7195848f42270bf2b460ee43d632b16d1cfcf83ec5a5ad0009b19801227", "commit": "7cc6bedc041735afa6cecc3897acfa1f6707fa57"}
+{"time": "2026-11-10T14:29:09Z", "run": "e1_s15_fewshot", "split": "v2/test_comp", "tasks": 1200, "to_score": 1200, "adapter_sha256": null, "config_sha256": "544fd7195848f42270bf2b460ee43d632b16d1cfcf83ec5a5ad0009b19801227", "commit": "7cc6bedc041735afa6cecc3897acfa1f6707fa57"}
