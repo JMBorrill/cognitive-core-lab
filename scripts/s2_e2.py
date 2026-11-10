@@ -123,7 +123,8 @@ def cmd_bench(a) -> None:
         cfg = {**train_settings(), "steps": a.steps, "save_every": 10 ** 6, "eval_every": 10 ** 6, "val_file": None,
                "grad_checkpoint": ckpt, "model": s2.fetch_model(S15), "seed": a.replicate,
                "train_files": [str(data / f"e2_bench_r{a.replicate}.jsonl")], "out_dir": str(out / label)}
-        torch.cuda.reset_peak_memory_stats()
+        if torch.cuda.is_available():
+            torch.cuda.reset_peak_memory_stats()
         failed = None
         try:
             summary = hf.train(cfg, fresh=True)
@@ -168,13 +169,13 @@ def cmd_calib(a) -> None:
         rows = [json.loads(l) for l in open(out / "metrics.jsonl")]
         with gzip.open(ROOT / f"results/study02/runs/e1/{run}/metrics.jsonl.gz", "rt") as f:
             before = {r["task_id"]: r["success"] for r in map(json.loads, f) if r["split"] == "own"}
-        assert {r["task_id"] for r in rows} == set(before)
+        both = [r for r in rows if r["task_id"] in before]  # all of them, unless the task files differ
         finish(out, remote, {
-            "name": name, "episodes": len(rows), "seconds": timing["seconds"],
+            "name": name, "episodes": len(rows), "episodes_compared": len(both), "seconds": timing["seconds"],
             "seconds_per_episode": round(timing["seconds"] / max(1, timing["run_now"]), 4),
             "success": sum(r["success"] for r in rows) / len(rows),
-            "success_experiment_1": sum(before.values()) / len(before),
-            "changed_outcome": sum(r["success"] != before[r["task_id"]] for r in rows),
+            "success_experiment_1": sum(before[r["task_id"]] for r in both) / max(1, len(both)),
+            "changed_outcome": sum(r["success"] != before[r["task_id"]] for r in both),
             "same_text_as_full_re_encoding": f"{sum(same)}/{len(same)}", "engine": eng.stats,
             "token_budget": a.token_budget, "max_rows": a.max_rows})
         del model
