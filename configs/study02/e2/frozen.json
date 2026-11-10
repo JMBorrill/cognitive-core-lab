@@ -915,5 +915,47 @@
   "h4|fanout|none": 65,
   "h4|list|fault": 1246,
   "h4|list|none": 906
+ },
+ "engine_calibration": {
+  "passed": false,
+  "criteria": {
+   "speed": false,
+   "flips": true,
+   "success": true
+  },
+  "seconds_per_episode": 0.6535500000000001,
+  "speed_up": 2.4787697957310075
+ },
+ "teacher_qualification": {
+  "teacher_Qwen3-14B": {
+   "model": {
+    "repo": "Qwen/Qwen3-14B",
+    "revision": "40c069824f4251a91eefaf281ebe4c544efd3e18"
+   },
+   "acceptance": 0.61,
+   "acceptance_by_hops": {
+    "1": 0.86,
+    "2": 0.74,
+    "3": 0.54,
+    "4": 0.3
+   },
+   "qualifies": false,
+   "complete": true
+  },
+  "teacher_Qwen3-32B": {
+   "model": {
+    "repo": "Qwen/Qwen3-32B",
+    "revision": "9216db5781bf21249d130ec9da846c4624c16137"
+   },
+   "acceptance": 0.775,
+   "acceptance_by_hops": {
+    "1": 0.96,
+    "2": 0.9,
+    "3": 0.66,
+    "4": 0.58
+   },
+   "qualifies": true,
+   "complete": true
+  }
  }
 }

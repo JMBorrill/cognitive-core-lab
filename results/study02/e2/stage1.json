@@ -537,7 +537,14 @@
    "more_calls_than_oracle": 7,
    "fewer_turns_than_oracle": 0,
    "more_turns_than_oracle": 11,
-   "tasks_with_two_or_more_distinct_passing_attempts": 17
+   "tasks_with_two_or_more_distinct_passing_attempts": 17,
+   "found_by_elimination": {
+    "accepted_episodes": [
+     178
+    ],
+    "admissible_attempts": 2,
+    "of_admissible_attempts": 382
+   }
   },
   "tasks_per_cycle_at_this_yield": 1443.609022556391,
   "replay": {
@@ -549,38 +556,107 @@
  },
  "teachers": {
   "teacher_Qwen3-14B": {
+   "accepted_strict": 83,
+   "accepted_by_elimination": 7,
+   "accepted_n": 122,
+   "acceptance_without_elimination": {
+    "overall": 0.575,
+    "1": 0.86,
+    "2": 0.72,
+    "3": 0.46,
+    "4": 0.26
+   },
+   "acceptance_strict_only": {
+    "overall": 0.415,
+    "1": 0.72,
+    "2": 0.52,
+    "3": 0.28,
+    "4": 0.14
+   },
    "model": {
     "repo": "Qwen/Qwen3-14B",
     "revision": "40c069824f4251a91eefaf281ebe4c544efd3e18"
    },
-   "complete": false,
-   "acceptance": 0.58,
+   "complete": true,
+   "acceptance": 0.61,
    "acceptance_by_hops": {
     "1": 0.86,
-    "2": 0.72,
-    "3": 0.5,
-    "4": 0.24
+    "2": 0.74,
+    "3": 0.54,
+    "4": 0.3
    },
    "qualifies": false,
    "greedy_acceptance": 0.58,
-   "attempts": 200,
-   "rollout_seconds": 472.3,
+   "attempts": 284,
+   "rollout_seconds": 676.8,
    "load_seconds": 120.3,
-   "seconds_per_attempt": 2.3615,
+   "seconds_per_attempt": 2.3830985915492957,
    "flavor": "gpu",
    "usd_per_hour": 1.7999999999999998,
-   "replay": null,
-   "usd_per_accepted_demonstration": 0.0020357758620689653,
-   "usd_for_14400_demonstrations": 29.3151724137931
+   "replay": {
+    "dir": "teacher_Qwen3-14B",
+    "accepted_attempts_replayed": 122,
+    "failed": 0,
+    "failures": []
+   },
+   "usd_per_accepted_demonstration": 0.0027737704918032787,
+   "usd_for_14400_demonstrations": 39.94229508196722
+  },
+  "teacher_Qwen3-32B": {
+   "accepted_strict": 120,
+   "accepted_by_elimination": 8,
+   "accepted_n": 155,
+   "acceptance_without_elimination": {
+    "overall": 0.735,
+    "1": 0.96,
+    "2": 0.9,
+    "3": 0.62,
+    "4": 0.46
+   },
+   "acceptance_strict_only": {
+    "overall": 0.6,
+    "1": 0.92,
+    "2": 0.86,
+    "3": 0.42,
+    "4": 0.2
+   },
+   "model": {
+    "repo": "Qwen/Qwen3-32B",
+    "revision": "9216db5781bf21249d130ec9da846c4624c16137"
+   },
+   "complete": true,
+   "acceptance": 0.775,
+   "acceptance_by_hops": {
+    "1": 0.96,
+    "2": 0.9,
+    "3": 0.66,
+    "4": 0.58
+   },
+   "qualifies": true,
+   "greedy_acceptance": 0.745,
+   "attempts": 251,
+   "rollout_seconds": 1098.3,
+   "load_seconds": 67.3,
+   "seconds_per_attempt": 4.375697211155378,
+   "flavor": "gpu",
+   "usd_per_hour": 2.50002,
+   "replay": {
+    "dir": "teacher_Qwen3-32B",
+    "accepted_attempts_replayed": 155,
+    "failed": 0,
+    "failures": []
+   },
+   "usd_per_accepted_demonstration": 0.004920738290322581,
+   "usd_for_14400_demonstrations": 70.85863138064516
   }
  },
  "books": {
   "cap_usd": 15.0,
   "reserve_usd": 1.0,
-  "settled_usd": 0.6833,
-  "provider_used_usd": 1.133347,
-  "open_reservations_usd": 1.71,
-  "committed_usd": 2.3933,
+  "settled_usd": 2.0383,
+  "provider_used_usd": 2.038354,
+  "open_reservations_usd": 0,
+  "committed_usd": 2.0384,
   "jobs": {
    "e2s1_seed_calib": {
     "flavor": "a10g-small",
@@ -620,14 +696,56 @@
     "timeout_min": 55,
     "reserved_usd": 1.71,
     "price_per_min": 0.03,
-    "commit": "2331ff1b2e"
+    "commit": "2331ff1b2e",
+    "stage": "COMPLETED",
+    "running_secs": 855,
+    "cost_usd": 0.48,
+    "message": null
+   },
+   "e2s1_teacher_qwen3_32b": {
+    "flavor": "a100-large",
+    "timeout_min": 55,
+    "reserved_usd": 2.375,
+    "price_per_min": 0.041667,
+    "commit": "3fdaf594c9",
+    "stage": "COMPLETED",
+    "running_secs": 1201,
+    "cost_usd": 0.875,
+    "message": null
    }
   },
   "prices": {
    "e2s1_seed_calib": 1.0000200000000001,
    "e2s1_calib2_dev_probe": 1.0000200000000001,
    "e2s1_dev_probe": 1.0000200000000001,
-   "e2s1_teacher_qwen3_14b": 1.7999999999999998
+   "e2s1_teacher_qwen3_14b": 1.7999999999999998,
+   "e2s1_teacher_qwen3_32b": 2.50002
   }
+ },
+ "headroom": {
+  "seed_dev": 0.25666666666666665,
+  "comparator_measured": false,
+  "bracket_for_1600_family_dev": [
+   0.7688888888888888,
+   0.8141666666666666
+  ],
+  "bracket_holds_for_0.5B": true,
+  "0.5B": {
+   "25": {
+    "dev": 0.263,
+    "test_comp": 0.18849999999999997,
+    "test_id": 0.3095
+   },
+   "1600": {
+    "dev": 0.4646666666666667,
+    "test_comp": 0.377,
+    "test_id": 0.509
+   }
+  },
+  "margin_points_at_bracket": [
+   51.222222222222214,
+   55.749999999999986
+  ],
+  "met_under_the_estimate": true
  }
 }

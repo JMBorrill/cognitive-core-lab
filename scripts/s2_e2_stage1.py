@@ -92,6 +92,29 @@ def seed() -> dict:
             "dev_seconds_per_episode": r["dev_seconds"] / r["dev_tasks"] if r.get("dev_tasks") else None}
 
 
+def headroom(seed_dev: float) -> dict:
+    """Criterion (c), second half: seed `dev` success at least 15 points below the 1,600-family adapters'.
+    Those adapters have no `dev` rows (item (b) was not run), so their `dev` success is bracketed from
+    Experiment 1's committed rows: for the 0.5B student `dev` lies between `test_comp` and `test_id` at both
+    levels of D, and the 1.5B student has both of those."""
+    import gzip
+    e1 = ROOT / "results/study02/runs/e1"
+
+    def mean(tag, d, reps, split):
+        v = []
+        for r in reps:
+            with gzip.open(e1 / f"e1_{tag}_D{d}_r{r}/metrics.jsonl.gz", "rt") as f:
+                x = [json.loads(l)["success"] for l in f if f'"split": "{split}"' in l]
+            v.append(sum(x) / len(x))
+        return sum(v) / len(v)
+    small = {d: {k: mean("s05", d, range(5), f"v2/{k}") for k in ("dev", "test_comp", "test_id")} for d in (25, 1600)}
+    lo, hi = mean("s15", 1600, range(3), "v2/test_comp"), mean("s15", 1600, range(3), "v2/test_id")
+    return {"seed_dev": seed_dev, "comparator_measured": False, "bracket_for_1600_family_dev": [lo, hi],
+            "bracket_holds_for_0.5B": all(v["test_comp"] < v["dev"] < v["test_id"] for v in small.values()),
+            "0.5B": small, "margin_points_at_bracket": [100 * (lo - seed_dev), 100 * (hi - seed_dev)],
+            "met_under_the_estimate": 100 * (lo - seed_dev) >= GATE["seed_below_points"]}
+
+
 def calls_of(trace: dict) -> list[tuple]:
     return sorted((c["tool_key"] or c["tool"], json.dumps(c["canonical_args"], sort_keys=True))
                   for c in trace["calls"] if c["outcome"] != "limit")
@@ -154,6 +177,10 @@ def probe() -> dict:
             more_turns += p["turns"] > len(o.trace.turns)
             strict += p["strict"]
     n_acc = len(accepted)
+    admissible = [x for x in recs if not x["rejection"]]
+    elim = {"accepted_episodes": sorted(i for i in picks if L.by_elimination(picks[i]["trace"])),
+            "admissible_attempts": sum(L.by_elimination(x["trace"]) for x in admissible),
+            "of_admissible_attempts": len(admissible)}
     distinct_ok = [len({json.dumps([t["raw"] for t in x["trace"]["turns"]]) for x in by_task[i] if not x["rejection"]})
                    for i in offered if i in accepted]
     stops = Counter(x["trace"]["termination"] for x in recs)
@@ -179,7 +206,8 @@ def probe() -> dict:
             "accepted_episodes": {"n": n_acc, "strict": strict, "same_calls_as_oracle": same_calls,
                                   "more_calls_than_oracle": extra, "fewer_turns_than_oracle": fewer_turns,
                                   "more_turns_than_oracle": more_turns,
-                                  "tasks_with_two_or_more_distinct_passing_attempts": sum(d > 1 for d in distinct_ok)},
+                                  "tasks_with_two_or_more_distinct_passing_attempts": sum(d > 1 for d in distinct_ok),
+                                  "found_by_elimination": elim},
             "tasks_per_cycle_at_this_yield": L.CYCLE_ACCEPT / max(n_acc / len(offered), 1e-9),
             "replay": json.loads((RUNS / "r0_practice/replay.json").read_text())
             if (RUNS / "r0_practice/replay.json").exists() else None}
@@ -201,7 +229,27 @@ def teachers(prices: dict) -> dict:
         attempts = sum(p["attempts"] for p in r["passes"].values())
         flavor = r.get("accelerator") or ""
         usd_h = prices.get(d.name)
-        t = {"model": r["model"], "complete": r["complete"], "acceptance": r["acceptance"],
+        rows = s2.read_gz(d / "attempts.jsonl.gz")
+        ok = [x for x in rows if not x["rejection"]]
+        hops = {x["index"]: x["trace"] for x in ok}
+        depth = {}
+        for x in rows:
+            depth[x["index"]] = None
+        fams, tools = s2.load_practice()
+        st = L.Stream(fams, tools, 0)
+        for i in depth:
+            depth[i] = st.get(i).depth
+
+        def rate(keep) -> dict:
+            good = {x["index"] for x in ok if keep(x)}
+            by = defaultdict(list)
+            for i, h in depth.items():
+                by[h].append(i in good)
+            return {"overall": len(good) / len(depth), **{str(h): sum(v) / len(v) for h, v in sorted(by.items())}}
+        t = {"accepted_strict": sum(x["strict"] for x in ok), "accepted_by_elimination": sum(L.by_elimination(x["trace"]) for x in ok),
+             "accepted_n": len(ok), "acceptance_without_elimination": rate(lambda x: not L.by_elimination(x["trace"])),
+             "acceptance_strict_only": rate(lambda x: x["strict"])}
+        t = {**t, "model": r["model"], "complete": r["complete"], "acceptance": r["acceptance"],
              "acceptance_by_hops": r["acceptance_by_hops"], "qualifies": r["qualifies"],
              "greedy_acceptance": r["passes"]["greedy"]["accepted"] / r["tasks"],
              "attempts": attempts, "rollout_seconds": r["rollout_seconds"], "load_seconds": r["load_seconds"],
@@ -285,14 +333,39 @@ def main() -> None:
         return freeze()
     OUT.mkdir(parents=True, exist_ok=True)
     money = books()
-    price = {f"teacher_{k.split('teacher_')[1]}": v for k, v in money["prices"].items() if "teacher_" in k}
-    names = {"teacher_qwen3_14b": "teacher_Qwen3-14B", "teacher_qwen3_30b_a3b": "teacher_Qwen3-30B-A3B-Instruct-2507"}
-    price = {names.get(k, k): v for k, v in price.items()}
+    # a teacher's job key (e2s1_teacher_qwen3_32b) names its result directory (teacher_Qwen3-32B) up to case and dashes
+    by_key = {k.split("e2s1_")[-1]: v for k, v in money["prices"].items() if "teacher_" in k}
+    price = {d.name: by_key.get(d.name.lower().replace("-", "_")) for d in RUNS.glob("teacher_*")}
     res = {"engine": engine(), "engine_revision_r6": engine("2"), "seed": seed(), "bench": bench(),
            "probe": probe(), "teachers": teachers(price), "books": money}
+    if res["seed"].get("dev_success") is not None:
+        res["headroom"] = headroom(res["seed"]["dev_success"])
     (OUT / "stage1.json").write_text(json.dumps(res, indent=1) + "\n")
     e, s, b, p, t = res["engine"], res["seed"], res["bench"], res["probe"], res["teachers"]
     md = ["# Experiment 2, Stage 1: measurements (generated by scripts/s2_e2_stage1.py)", ""]
+    h = res.get("headroom")
+    if e and p and h:
+        r0 = list(e["runs"].values())
+        ok = lambda b: "met" if b else "**not met**"  # noqa: E731
+        md += ["## Gates of plan §7, Stage 1", ""] + table(["", "criterion", "measured", ""], [
+            ["(a)", "at most 0.36 s per episode (four times faster)",
+             " and ".join(f"{v['seconds_per_episode']:.3f}" for v in r0) + f" s ({e['speed_up']:.1f} times faster)",
+             ok(e["criteria"]["speed"]) + ": between 2 and 4 times, so re-cost and ask again"],
+            ["(a)", "at most 1% of episodes change outcome", " and ".join(pc(v["changed_share"]) for v in r0), ok(e["criteria"]["flips"])],
+            ["(a)", "success within 1 point of Experiment 1",
+             " and ".join(f"{v['success_difference_points']:+.2f}" for v in r0) + " points", ok(e["criteria"]["success"])],
+            ["(b)", "the 1.5B scoring Experiment 1 left out", "not run: approved for planning only", "-"],
+            ["(c)", "at least 20% of probed tasks accepted", f"{p['accepted']} of {p['tasks']} ({pc(p['yield'])})",
+             ok(p["yield"] >= GATE["yield"])],
+            ["(c)", "seed `dev` success at least 15 points below the 1,600-family adapters'",
+             f"seed {pc(h['seed_dev'])}; the comparator is part of (b) and not measured. Estimated between "
+             f"{pc(h['bracket_for_1600_family_dev'][0])} and {pc(h['bracket_for_1600_family_dev'][1])}",
+             ("met under the estimate" if h["met_under_the_estimate"] else "**not met under the estimate**")
+             + f", by {h['margin_points_at_bracket'][0]:.0f} points or more"],
+            ["(d)", "a teacher accepted on at least 60% of 200 tasks and 40% of the four-hop ones",
+             "; ".join(f"{v['model']['repo'].split('/')[-1]}: {pc(v['acceptance'])} and {pc(v['acceptance_by_hops'].get('4'))}"
+                       + ("" if v["complete"] else " (incomplete)") for v in t.values()) or "-",
+             "a teacher qualifies" if any(v["qualifies"] for v in t.values()) else "**no teacher qualifies**"]])
     if e:
         md += ["## (a) Rollout engine on the GPU", "",
                "Own-family tasks of two Experiment 1 adapters, scored again with the new engine and compared with "
@@ -370,7 +443,15 @@ def main() -> None:
                f"dependency-unsafe call); {a['same_calls_as_oracle']} make exactly the oracle's calls, "
                f"{a['more_calls_than_oracle']} make more; {a['fewer_turns_than_oracle']} take fewer turns than the "
                f"oracle and {a['more_turns_than_oracle']} more. {a['tasks_with_two_or_more_distinct_passing_attempts']} "
-               "tasks have two or more different passing attempts.", ""]
+               "tasks have two or more different passing attempts.", "",
+               f"**Found by elimination: {len(a['found_by_elimination']['accepted_episodes'])} of {a['n']} accepted episodes** "
+               f"(stream tasks {a['found_by_elimination']['accepted_episodes']}), and "
+               f"{a['found_by_elimination']['admissible_attempts']} of {a['found_by_elimination']['of_admissible_attempts']} "
+               "admissible attempts. In the simulated worlds a record off the gold path refers to records that do not "
+               "exist, so an attempt can ask for the referenced record of one listed candidate after another until one "
+               "is found, without applying the selection rule the request states (`ccl.loop.by_elimination`). The "
+               "validator accepts it: the right record was reached and the right fact stated. Such episodes are not "
+               "strictly successful.", ""]
         if p["replay"]:
             md += [f"CPU replay in a separate process: {p['replay']['accepted_attempts_replayed']} admissible attempts "
                    f"replayed, {p['replay']['failed']} failed.", ""]
@@ -389,6 +470,14 @@ def main() -> None:
                       f"{v['usd_per_accepted_demonstration']:.4f}" if "usd_per_accepted_demonstration" in v else "-",
                       f"{v['usd_for_14400_demonstrations']:.0f}" if "usd_for_14400_demonstrations" in v else "-"]
                      for v in t.values()])
+        md += ["How the accepted demonstrations were reached. The qualification rule is the pre-registered acceptance "
+               "rule; the other two rows are stricter readings, reported beside it.", ""]
+        md += table(["model", "", "accepted", *[f"{h} hops" for h in (1, 2, 3, 4)]],
+                    [[v["model"]["repo"].split("/")[-1], label, pc(x["overall"]), *[pc(x[str(h)]) for h in (1, 2, 3, 4)]]
+                     for v in t.values() for label, x in (
+                         ("as pre-registered", {"overall": v["acceptance"], **v["acceptance_by_hops"]}),
+                         (f"without the {v['accepted_by_elimination']} demonstrations found by elimination", v["acceptance_without_elimination"]),
+                         (f"strictly successful only ({v['accepted_strict']} of {v['accepted_n']})", v["acceptance_strict_only"]))])
     m = res["books"]
     md += ["## Money", ""] + table(
         ["job", "flavour", "outcome", "billed minutes", "reserved USD", "billed USD"],

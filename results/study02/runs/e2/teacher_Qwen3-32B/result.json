@@ -1,0 +1,69 @@
+{
+ "name": "teacher_Qwen3-32B",
+ "model": {
+  "repo": "Qwen/Qwen3-32B",
+  "revision": "9216db5781bf21249d130ec9da846c4624c16137"
+ },
+ "tasks": 200,
+ "load_seconds": 67.3,
+ "thresholds": {
+  "overall": 0.6,
+  "four_hop": 0.4
+ },
+ "passes": {
+  "greedy": {
+   "attempts": 200,
+   "accepted": 149,
+   "seconds": 825.0,
+   "engine": {
+    "episodes": 200,
+    "groups": 13,
+    "turn_batches": 76,
+    "decode_steps": 4579,
+    "fed_tokens": 245737,
+    "refed_tokens": 20380,
+    "gen_tokens": 25697,
+    "gen_time_s": 824.4746218260043,
+    "oom_splits": 0,
+    "stopped": 0
+   }
+  },
+  "retry": {
+   "attempts": 51,
+   "accepted": 6,
+   "seconds": 273.3,
+   "engine": {
+    "episodes": 51,
+    "groups": 4,
+    "turn_batches": 26,
+    "decode_steps": 1557,
+    "fed_tokens": 68210,
+    "refed_tokens": 6159,
+    "gen_tokens": 7300,
+    "gen_time_s": 273.13608585296606,
+    "oom_splits": 0,
+    "stopped": 1
+   }
+  }
+ },
+ "accepted": 155,
+ "acceptance": 0.775,
+ "acceptance_by_hops": {
+  "1": 0.96,
+  "2": 0.9,
+  "3": 0.66,
+  "4": 0.58
+ },
+ "rollout_seconds": 1098.3,
+ "complete": true,
+ "qualifies": true,
+ "python": "3.11.14",
+ "machine": "x86_64",
+ "job_id": "6af386ddab34849891ace7cf",
+ "accelerator": "gpu",
+ "commit": "3fdaf594c962f3f2a185393d4521bd0214992c46",
+ "torch": "2.15.0+cu132",
+ "transformers": "5.22.2",
+ "peft": "0.21.2",
+ "gpu": "NVIDIA A100-SXM4-80GB"
+}

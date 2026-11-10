@@ -61,3 +61,18 @@ def test_cost_model_moves_the_right_way_and_stage_one_does_not_assume_the_new_en
     assert d["episodes_per_cycle"] / 0.20 == d["task_cap_per_cycle"]
     # the final adapter of every arm takes the same number of steps: two passes over seed plus six cycles
     assert (d["seed_episodes"] + d["cycles"] * d["episodes_per_cycle"]) * d["passes"] / d["episodes_per_step"] == 820
+
+
+def test_recosting_uses_stage_one_measurements_and_keeps_the_plans_rule_for_sealed_splits():
+    R = load("s2_e2_rebudget")
+    x = R.inputs()
+    # the measured engine is between two and four times faster: the plan's "re-cost and ask again" band
+    assert 2.0 < x["speed_up"] < 4.0 and 0.2 <= x["yield"] < 0.6 and 0.2 < x["attempt_seconds"] < 1.0
+    assert 3.0 < x["train_seconds_per_step"] < 4.5 and 1.0 < x["job_overhead"] < 1.5
+    by_rule, relaxed = R.cost(x, x["yield"], x["attempt_seconds"]), R.cost(x, x["yield"], x["attempt_seconds"], True)
+    assert relaxed["remaining_usd"] < by_rule["remaining_usd"]  # sealed splits on the Experiment 1 path cost more
+    floor = R.cost(x, 0.20, x["attempt_seconds"])
+    assert floor["remaining_usd"] > by_rule["remaining_usd"] and floor["stage2_pilot_usd"] <= 10  # the pilot's cap
+    assert R.load("s2_e2_budget").ASSUME["job_overhead"] == 1.10  # the plan's own model is left as it was
+    d = R.deferred_scoring(x)
+    assert d["total_usd"] < d["on_the_experiment_1_engine_usd"] and d["dev_only_three_1600_family_adapters_usd"] < 1

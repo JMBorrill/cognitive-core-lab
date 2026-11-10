@@ -142,6 +142,32 @@ def replay(task: Task, trace: dict, verified: bool = True) -> tuple[Episode | No
     return ep, "ok"
 
 
+def by_elimination(trace: dict) -> bool:
+    """True if an attempt reached a record by trying the candidates of a list one after another.
+
+    In the simulated worlds a record that is not on the gold path refers to records that do not exist. An
+    attempt can therefore skip the selection rule a request states: it asks for the referenced record of one
+    listed candidate after another until one is found. That shows in the trace as a call that ends in
+    "not found" and a later successful call of the same tool, the two arguments being the same field of two
+    different records of one earlier list. A mistyped identifier that is then corrected is not counted. The
+    validator accepts such an episode; this check reads the trace only, never the gold graph."""
+    calls = [c for c in trace["calls"] if c["outcome"] != "limit"]
+    for k, c in enumerate(calls):
+        if c["outcome"] == "ok" or c["result"].get("error") != "not_found":
+            continue
+        bad = {str(v) for v in (c["args"] or {}).values()}
+        good = {str(v) for d in calls[k + 1:] if d["tool"] == c["tool"] and d["outcome"] == "ok"
+                for v in (d["args"] or {}).values()} - bad
+        for e in calls[:k]:
+            for rows in (e["result"] or {}).values() if e["outcome"] == "ok" else ():
+                if isinstance(rows, list) and all(isinstance(r, dict) for r in rows):
+                    for f in {f for r in rows for f in r}:
+                        col = {str(r.get(f)) for r in rows}
+                        if col & bad and col & good:
+                            return True
+    return False
+
+
 def attempt_row(index: int, ep: Episode) -> dict:
     m = episode_metrics(ep.task, ep)
     return {"index": index, "task_id": ep.task.task_id, "attempt": ep.attempt, "success": m["success"],

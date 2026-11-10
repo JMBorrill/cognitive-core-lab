@@ -14,3 +14,7 @@
 {"time": "2026-11-10T21:02:11Z", "event": "reconcile", "provider_used_usd": 1.133347, "provider_account_total_usd": 51.521013, "ledger_settled_usd": 0.6833}
 {"time": "2026-11-10T21:03:48Z", "event": "settled", "key": "e2s1_teacher_qwen3_14b", "job_id": "6af382949737d9a9e091942c", "stage": "COMPLETED", "message": null, "running_secs": 855, "cost_usd": 0.48, "cost_source": "provider", "reserved_usd": 1.71}
 {"time": "2026-11-10T21:03:48Z", "event": "reconcile", "provider_used_usd": 1.163347, "provider_account_total_usd": 51.551013, "ledger_settled_usd": 1.1633}
+{"time": "2026-11-10T21:04:28Z", "event": "reserve", "key": "e2s1_teacher_qwen3_32b", "flavor": "a100-large", "timeout_min": 55, "price_per_min": 0.041667, "reserved_usd": 2.375, "commit": "3fdaf594c962f3f2a185393d4521bd0214992c46", "configs": []}
+{"time": "2026-11-10T21:04:29Z", "event": "submitted", "key": "e2s1_teacher_qwen3_32b", "job_id": "6af386ddab34849891ace7cf", "url": "https://huggingface.co/jobs/JMBorrill/6af386ddab34849891ace7cf"}
+{"time": "2026-11-10T21:24:54Z", "event": "settled", "key": "e2s1_teacher_qwen3_32b", "job_id": "6af386ddab34849891ace7cf", "stage": "COMPLETED", "message": null, "running_secs": 1201, "cost_usd": 0.875, "cost_source": "provider", "reserved_usd": 2.375}
+{"time": "2026-11-10T21:24:54Z", "event": "reconcile", "provider_used_usd": 2.038354, "provider_account_total_usd": 52.42602, "ledger_settled_usd": 2.0383}

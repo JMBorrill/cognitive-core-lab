@@ -278,6 +278,21 @@ def test_acceptance_keeps_the_shortest_passing_attempt_and_replay_must_reproduce
     assert L.replay(task, short)[0] is None
 
 
+def test_elimination_is_recognised_from_the_trace_and_a_corrected_identifier_is_not():
+    listed = {"tool": "list_doctor_assays", "args": {"doctor_id": "DR-1"}, "outcome": "ok", "result": {"assays": [
+        {"assay_id": "AS-1", "instrument_id": "IS-1"}, {"assay_id": "AS-2", "instrument_id": "IS-2"},
+        {"assay_id": "AS-3", "instrument_id": "IS-3"}]}}
+    get = lambda i, ok: {"tool": "get_instrument", "args": {"instrument_id": i}, "outcome": "ok" if ok else "error",  # noqa: E731
+                         "result": {"instrument_id": i} if ok else {"error": "not_found"}}
+    assert L.by_elimination({"calls": [listed, get("IS-1", False), get("IS-2", False), get("IS-3", True)]})
+    assert not L.by_elimination({"calls": [listed, get("IS-3", True)]})  # the rule was applied
+    assert not L.by_elimination({"calls": [listed, get("AS-3", False), get("IS-3", True)]})  # wrong field, corrected
+    assert not L.by_elimination({"calls": [listed, get("IS-1", False)]})  # nothing was found in the end
+    retry = {"tool": "get_instrument", "args": {"instrument_id": "IS-3"}, "outcome": "error",
+             "result": {"error": "timeout", "retryable": True}}
+    assert not L.by_elimination({"calls": [listed, retry, get("IS-3", True)]})  # a retry after a transient failure
+
+
 def test_practice_cycle_is_deterministic_resumable_and_stops_at_its_targets(practice, tmp_path):
     fams, tools = practice
     run = scripted_run(0.45)

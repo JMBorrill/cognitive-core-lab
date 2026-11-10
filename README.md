@@ -33,9 +33,10 @@ Experiment 2 are in **[docs/study02/REPORT_E0_E1.md](docs/study02/REPORT_E0_E1.m
 | Experiment 1, 1.5B | 50.0% and 76.9% (+26.9 points; [18.0, 35.7] over its three replicates, see the review) |
 | reading | diversity of practised structure closes the gap to unpractised compositions up to three hops; the 0.5B student is then limited by chained selections and depth |
 | recommendation | Experiment 2 on the 1.5B student, after making rollouts cheaper and re-costing |
-| compute | 50.37 USD of a 60 USD cap |
+| compute | 50.39 USD of a 60 USD cap (one minute was billed after the report was written; budget closed) |
 | review | [independent checks and corrections](docs/study02/REVIEW_E0_E1.md); the confirmatory result stands |
-| next | [Experiment 2 plan](experiments/study02_e2_signal/PLAN.md) for the 1.5B student: draft, nothing run, staged with caps |
+| Experiment 2, Stages 0 and 1 | built and calibrated, 2.04 USD of a 15 USD cap: a rollout engine that reproduces Experiment 1's outcomes 2.5 times faster (four times was required); the seed adapter is accepted on 33% of practice tasks, mostly shallow ones (82 / 52 / 17 / 3% at one to four hops); `Qwen3-32B` qualifies as teacher. [Report](docs/study02/REPORT_E2_STAGE1.md) |
+| next | Stage 2 of the [Experiment 2 plan](experiments/study02_e2_signal/PLAN.md), a two-cycle pilot: awaiting approval. Nothing beyond Stage 1 has run |
 
 - [Proposal](docs/study02/PROPOSAL.md): hypotheses, design, statistics, cost, stop/go decisions
 - [Study 01 audit](docs/study02/STUDY01_AUDIT.md) and its [generated tables](docs/study02/audit_tables.md) (`python scripts/study02_audit.py`)
@@ -48,6 +49,10 @@ Experiment 2 are in **[docs/study02/REPORT_E0_E1.md](docs/study02/REPORT_E0_E1.m
 - Review: [report](docs/study02/REVIEW_E0_E1.md) and its [generated checks](results/study02/review/review.md)
   (`python scripts/s2_review.py`); Experiment 2 [plan](experiments/study02_e2_signal/PLAN.md) and
   [cost model](experiments/study02_e2_signal/budget.md) (`python scripts/s2_e2_budget.py`)
+- Experiment 2, Stages 0 and 1: [report](docs/study02/REPORT_E2_STAGE1.md), [measurements](results/study02/e2/stage1.md)
+  (`python scripts/s2_e2_stage1.py`), [budget recalculated from them](experiments/study02_e2_signal/budget_stage1.md)
+  (`python scripts/s2_e2_rebudget.py`), [frozen inputs](configs/study02/e2/frozen.json),
+  [Stage 1 ledger](results/study02/e2/ledger.jsonl)
 
 ```
 ccl/sft.py              tokenisation, episode packing, batch schedule (shared by the MLX and PyTorch trainers)
@@ -63,13 +68,18 @@ scripts/s2_launch.py    submit GPU jobs under a hard spending cap; ledger
 scripts/s2_analyze.py   pre-registered analyses -> results/study02
 scripts/s2_review.py    review: independent re-derivation and integrity checks; post-hoc analyses, labelled
 scripts/s2_e2_budget.py Experiment 2 cost model and power from what Experiment 1 measured (spends nothing)
+ccl/engine.py           rollout engine for Experiment 2: bfloat16 weights, key-value cache kept between turns, groups sized by tokens
+ccl/loop.py             seed set, task stream, acceptance, replay, curriculum, resumable practice cycle (no tensor library)
+scripts/s2_e2.py        what a Stage 1 job runs (seed adapter, calibration, dev, yield probe, teacher qualification); CPU replay
+scripts/s2_e2_stage1.py Stage 1 measurements against the plan's gates; frozen inputs
+scripts/s2_e2_rebudget.py the plan's cost model with Stage 1's measurements as inputs
 ```
 
 Reproduce on any Linux machine (CPU is enough for everything except training and scoring):
 
 ```bash
 uv venv --python 3.11 .venv && uv pip install --python .venv/bin/python -r requirements-cuda.lock
-.venv/bin/python -m pytest -q                   # 60 tests (one needs the Qwen checkpoint); Study 01's MLX test is skipped without MLX
+.venv/bin/python -m pytest -q                   # 74 tests (one needs the Qwen checkpoint); Study 01's MLX test is skipped without MLX
 .venv/bin/python scripts/build_v2.py            # ~40 s; reproduces data/v2 byte for byte
 .venv/bin/python scripts/s2_prepare_v1.py       # rebuilds the Study 01 training files and checks their hashes
 .venv/bin/python scripts/s2_train.py configs/study02/e1/e1_s05_D1600_r0.json --out runs2    # needs a GPU

@@ -421,7 +421,28 @@ is reported separately.
 
 ## Frozen inputs
 
-Recorded in [`configs/study02/e2/frozen.json`](../../configs/study02/e2/frozen.json) at the end of Stage 1.
+Recorded in [`configs/study02/e2/frozen.json`](../../configs/study02/e2/frozen.json) at the end of Stage 1
+(2026-11-10): `data/v2/manifest.json` SHA-256, unchanged; the SHA-256 of the seed set and of the 14,400-task
+stream of replicates 0 to 4 (no task was dropped by the selection check); the 28 curriculum buckets; the
+engine's calibration; both teacher qualifications (`Qwen/Qwen3-32B` at revision `9216db5781bf` qualifies).
+The code commit of every job is in `results/study02/e2/ledger.jsonl`. A pilot's jobs record their own.
+
+## Outcome of Stages 0 and 1 (2026-11-10)
+
+Report: [docs/study02/REPORT_E2_STAGE1.md](../../docs/study02/REPORT_E2_STAGE1.md).
+
+- **Stage 0**: gates met (CPU tests, dry run of every job spec).
+- **Stage 1 (a), engine**: outcome criteria met (1.0% and 0.25% of outcomes changed; success within 0.25
+  points); speed criterion not met (0.65 s per episode, 2.5 times faster than Experiment 1, against four
+  times). By the table in §7: re-cost, new approval.
+- **(b)**: not run. On the new engine it would cost 3.79 USD, on the Experiment 1 path 9.41 USD.
+- **(c)**: yield 33.3% (133 of 400 tasks; gate 20%). Seed `dev` success 25.7%, against an estimated 77 to 81%
+  for the 1,600-family adapters (not measured).
+- **(d)**: `Qwen3-14B` does not qualify (61%, 30% at four hops); `Qwen3-32B` qualifies (77.5%, 58%).
+- **Cost**: 2.04 USD of the 15 USD cap.
+- **Re-costing** ([budget_stage1.md](budget_stage1.md)): Stages 2-3 at 214 USD from the measurements, by this
+  plan's rules; 176 USD if sealed splits may be scored on the new engine.
+- **No later stage is approved or queued.**
 
 ## Deviations
 
