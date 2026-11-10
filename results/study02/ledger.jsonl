@@ -104,3 +104,6 @@
 {"time": "2026-11-10T14:40:09Z", "event": "reconcile", "provider_used_usd": 19.020372, "ledger_settled_usd": 4.5034}
 {"time": "2026-11-10T14:40:28Z", "event": "reserve", "key": "e1_s05_D400_r0_score", "flavor": "a10g-small", "timeout_min": 75, "price_per_min": 0.016667, "reserved_usd": 1.2667, "commit": "482797c73e3f0625f56421a3f430d184ed7615e3", "configs": ["configs/study02/e1/e1_s05_D400_r0.json"]}
 {"time": "2026-11-10T14:40:28Z", "event": "submitted", "key": "e1_s05_D400_r0_score", "job_id": "6af32cdc9737d9a9e090b3c8", "url": "https://huggingface.co/jobs/JMBorrill/6af32cdc9737d9a9e090b3c8"}
+{"time": "2026-11-10T14:40:40Z", "event": "reserve", "key": "e1_s05_D400_r1_score", "flavor": "a10g-small", "timeout_min": 75, "price_per_min": 0.016667, "reserved_usd": 1.2667, "commit": "e182721f22e07e60c2553cf73935af1661d8a909", "configs": ["configs/study02/e1/e1_s05_D400_r1.json"]}
+{"time": "2026-11-10T14:40:41Z", "event": "submitted", "key": "e1_s05_D400_r1_score", "job_id": "6af32ce9ab34849891ac0a48", "url": "https://huggingface.co/jobs/JMBorrill/6af32ce9ab34849891ac0a48"}
+{"time": "2026-11-10T14:41:09Z", "event": "reconcile", "provider_used_usd": 19.020372, "ledger_settled_usd": 4.5034}
