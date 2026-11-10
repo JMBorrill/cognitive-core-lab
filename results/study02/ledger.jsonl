@@ -117,3 +117,11 @@
 {"time": "2026-11-10T14:49:35Z", "event": "submitted", "key": "e1_s05_D400_r2_score", "job_id": "6af32effab34849891ac0f87", "url": "https://huggingface.co/jobs/JMBorrill/6af32effab34849891ac0f87"}
 {"time": "2026-11-10T14:49:35Z", "event": "reserve", "key": "e1_s05_D400_r3_score", "flavor": "a10g-small", "timeout_min": 75, "price_per_min": 0.016667, "reserved_usd": 1.2667, "commit": "2c58372420a625178b5038b3d7ffc4d6187a35fa", "configs": ["configs/study02/e1/e1_s05_D400_r3.json"]}
 {"time": "2026-11-10T14:49:36Z", "event": "submitted", "key": "e1_s05_D400_r3_score", "job_id": "6af32f00ab34849891ac0f89", "url": "https://huggingface.co/jobs/JMBorrill/6af32f00ab34849891ac0f89"}
+{"time": "2026-11-10T14:51:42Z", "event": "reconcile", "provider_used_usd": 22.820448, "ledger_settled_usd": 6.1868}
+{"time": "2026-11-10T14:53:47Z", "event": "reconcile", "provider_used_usd": 23.520462, "ledger_settled_usd": 6.1868}
+{"time": "2026-11-10T14:55:50Z", "event": "settled", "key": "e1_s15_D1600_r1", "job_id": "6af322fd9737d9a9e0909745", "stage": "ERROR", "message": "Job failed with exit code: 1. Reason: Error", "running_secs": 3378, "cost_usd": 0.95, "cost_source": "provider", "reserved_usd": 2.6834}
+{"time": "2026-11-10T14:55:52Z", "event": "reconcile", "provider_used_usd": 24.203809, "ledger_settled_usd": 7.1368}
+{"time": "2026-11-10T14:55:52Z", "event": "reserve", "key": "e1_s05_D400_r4_score", "flavor": "a10g-small", "timeout_min": 75, "price_per_min": 0.016667, "reserved_usd": 1.2667, "commit": "ce6e3e3860b301a4100902c71a38c1be470378ed", "configs": ["configs/study02/e1/e1_s05_D400_r4.json"]}
+{"time": "2026-11-10T14:55:53Z", "event": "submitted", "key": "e1_s05_D400_r4_score", "job_id": "6af33079ab34849891ac1414", "url": "https://huggingface.co/jobs/JMBorrill/6af33079ab34849891ac1414"}
+{"time": "2026-11-10T14:55:53Z", "event": "reserve", "key": "e1_s05_D100_r4_score", "flavor": "a10g-small", "timeout_min": 75, "price_per_min": 0.016667, "reserved_usd": 1.2667, "commit": "ce6e3e3860b301a4100902c71a38c1be470378ed", "configs": ["configs/study02/e1/e1_s05_D100_r4.json"]}
+{"time": "2026-11-10T14:55:54Z", "event": "submitted", "key": "e1_s05_D100_r4_score", "job_id": "6af33079ab34849891ac1417", "url": "https://huggingface.co/jobs/JMBorrill/6af33079ab34849891ac1417"}

@@ -37,6 +37,7 @@ def main():
     ap.add_argument("--out", default="runs2")
     ap.add_argument("--bucket", default=None)
     ap.add_argument("--limit", type=int, default=0, help="score only the first N tasks of each split (smoke tests)")
+    ap.add_argument("--batch", type=int, default=0, help="episodes scored in lock-step (default: the config's value)")
     ap.add_argument("--splits", nargs="*", default=None, help="score only these splits of each config (the run is "
                     "then not marked complete)")
     a = ap.parse_args()
@@ -79,13 +80,13 @@ def main():
                                         "tasks": len(tasks), "to_score": todo, "adapter_sha256": sha,
                                         "config_sha256": s2.config_sha256(cfg),
                                         "commit": s2.environment()["commit"]}) + "\n")
-            timings.append(s2.evaluate(policy, tasks, split, out, name, batch=cfg.get("eval_batch", 64),
+            timings.append(s2.evaluate(policy, tasks, split, out, name, batch=a.batch or cfg.get("eval_batch", 64),
                                        fewshot=cfg.get("fewshot", False), checkpoint=lambda: s2.sync(out, remote)))
             print(f"[s2_score] {name} {timings[-1]}", flush=True)
             s2.sync(out, remote)
         (out / "run.json").write_text(json.dumps(
             {"name": name, "experiment": cfg["experiment"], "config_sha256": s2.config_sha256(cfg),
-             "adapter_sha256": sha, "fewshot": cfg.get("fewshot", False), "eval_batch": cfg.get("eval_batch", 64),
+             "adapter_sha256": sha, "fewshot": cfg.get("fewshot", False), "eval_batch": a.batch or cfg.get("eval_batch", 64),
              "scoring": timings, "generation": policy.stats, **s2.environment()}, indent=1))
         if not a.limit and a.splits is None:
             (out / "DONE").write_text("ok\n")
