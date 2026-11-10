@@ -1,0 +1,48 @@
+{
+ "experiment": "e1",
+ "name": "e1_s05_D400_r4",
+ "model": {
+  "repo": "Qwen/Qwen2.5-0.5B-Instruct",
+  "revision": "7ae557604adf67be50417f59c2c2f167def9a775"
+ },
+ "seed": 4,
+ "data": {
+  "kind": "e1",
+  "replicate": 4,
+  "D": 400,
+  "sha256": "0abb82490f7664e355449fadc0b5fcfb69fb1f15424d73c5313ab64279a7acc4"
+ },
+ "train": {
+  "steps": 800,
+  "batch_size": 4,
+  "grad_accum": 2,
+  "lr": 0.0001,
+  "warmup": 20,
+  "max_grad_norm": 1.0,
+  "weight_decay": 0.0,
+  "bias_correction": true,
+  "max_seq_len": 4096,
+  "save_every": 100,
+  "eval_every": 100,
+  "lora": {
+   "rank": 16,
+   "alpha": 32,
+   "dropout": 0.0,
+   "layers": null
+  }
+ },
+ "score": [
+  "own",
+  "v2/dev",
+  "v2/test_id",
+  "v2/test_comp",
+  "v2/test_depth",
+  "v2/test_tool",
+  "v2/test_domain",
+  "v1/eval_id",
+  "v1/eval_ood",
+  "v1/eval_unseen",
+  "v1/eval_renamed"
+ ],
+ "eval_batch": 128
+}

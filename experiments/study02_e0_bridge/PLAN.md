@@ -81,4 +81,22 @@ job was submitted, so no result influenced them.
 
 ## Deviations
 
-None yet.
+1. **Flavours used.** The reproduction (step B) was submitted on `l4x1`, the flavour that step A's rule selects
+   (0.022 against 0.027 USD per million training tokens). Both jobs waited twelve minutes for hardware without
+   starting, were cancelled at no cost, and were rerun on `a10g-small`. Steps C and D also ran on `a10g-small`.
+   The GPU type changes cost and speed, not results.
+2. **Flavour for Experiment 1.** Step A's rule compares cost per training token. Scoring, not training, turned
+   out to dominate the cost of a run, and the A10G scores 1.7 times as many episodes per second for 1.25 times
+   the price. Experiment 1 therefore uses `a10g-small`, chosen on cost per complete run.
+3. **Adapter merged for scoring.** From the step C jobs onwards the low-rank update is folded into the base
+   weights before scoring (the same function, tested to 1e-5 on logits). The two calibration runs scored the
+   unmerged adapter.
+4. **Order of scoring.** The step B and D jobs scored tasks grouped by depth and prompt length; the step C jobs
+   scored them in file order. Batch composition affects numerical rounding only; step D found 0 of 720 episodes
+   differing between two jobs with the same order.
+
+## Outcome (2026-11-10)
+
+All criteria are met: see `results/study02/e0/tables.md` and `decision.json`. The Study 02 default is kept
+(rank 16, alpha 32, all blocks, bias-corrected AdamW, lr 1e-4, two passes). Experiment 0 used 1.9 GPU-hours
+and about 2.1 USD including two calibration jobs, against an estimate of 5 GPU-hours and 4 USD.

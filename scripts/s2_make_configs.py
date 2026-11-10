@@ -60,7 +60,9 @@ def e0() -> None:
 
 def e1() -> None:
     decision = json.loads((ROOT / "results/study02/e0/decision.json").read_text())
-    train = {**decision["train"], "steps": 800, "save_every": 100, "eval_every": 100}
+    # 800 steps x 8 episodes = two passes over 3,200 episodes. The length limit is raised so that no episode is
+    # dropped: the longest oracle episode of the practice space is a little over 2,048 tokens.
+    train = {**decision["train"], "steps": 800, "save_every": 100, "eval_every": 100, "max_seq_len": 4096}
     fams, tools = s2.load_practice()
     score = ["own"] + V2_ALL + V1_MAIN
     coverage = {}
@@ -72,11 +74,11 @@ def e1() -> None:
             coverage[f"r{r}_D{d}"] = {**s2.subset_stats(s2.e1_order(fams, r)[:d]), **stats,
                                       "family_ids": [f["id"] for f in s2.e1_order(fams, r)[:d]]}
             write("e1", {"name": f"e1_s05_D{d}_r{r}", "model": S05, "seed": r, "data": data, "train": train,
-                         "score": score})
+                         "score": score, "eval_batch": 128})
             if d in (25, 1600) and r < 3:
                 write("e1", {"name": f"e1_s15_D{d}_r{r}", "model": S15, "seed": r, "data": data, "train": train,
-                             "score": score, "eval_batch": 32})
-    for tag, model, batch in (("s05", S05, 64), ("s15", S15, 32)):
+                             "score": score, "eval_batch": 64})
+    for tag, model, batch in (("s05", S05, 128), ("s15", S15, 64)):
         write("e1", {"name": f"e1_{tag}_base", "model": model, "seed": 0, "score": V2_ALL + V1_MAIN,
                      "eval_batch": batch})
         write("e1", {"name": f"e1_{tag}_fewshot", "model": model, "seed": 0, "fewshot": True,

@@ -1,0 +1,16 @@
+{
+ "key": "e1_s05_r3",
+ "experiment": "e1",
+ "flavor": "a10g-small",
+ "timeout_min": 240,
+ "configs": [
+  "configs/study02/e1/e1_s05_D1600_r3.json",
+  "configs/study02/e1/e1_s05_D25_r3.json",
+  "configs/study02/e1/e1_s05_D400_r3.json",
+  "configs/study02/e1/e1_s05_D100_r3.json"
+ ],
+ "stages": [
+  "train",
+  "score"
+ ]
+}

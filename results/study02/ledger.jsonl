@@ -31,3 +31,7 @@
 {"time": "2026-11-10T12:57:29Z", "event": "settled", "key": "e0_repro_B_a10g", "job_id": "6af30f969737d9a9e0905c29", "stage": "COMPLETED", "message": null, "billable_secs": 1308, "running_secs": 1308, "total_secs": 1313, "cost_usd": 0.3833, "reserved_usd": 0.85}
 {"time": "2026-11-10T12:57:30Z", "event": "settled", "key": "e0_repro_C_a10g", "job_id": "6af30f979737d9a9e0905c2b", "stage": "COMPLETED", "message": null, "billable_secs": 1269, "running_secs": 1269, "total_secs": 1273, "cost_usd": 0.3833, "reserved_usd": 1.0167}
 {"time": "2026-11-10T12:57:30Z", "event": "reconcile", "provider_used_usd": 2.486708, "ledger_settled_usd": 2.1233}
+{"time": "2026-11-10T12:58:42Z", "event": "settled", "key": "gate_reference_2", "job_id": "6af30f97ab34849891abb491", "stage": "CANCELED", "message": null, "billable_secs": 0, "running_secs": null, "total_secs": null, "cost_usd": 0.0, "reserved_usd": 3.3501}
+{"time": "2026-11-10T12:58:43Z", "event": "reconcile", "provider_used_usd": 2.503375, "ledger_settled_usd": 2.1233}
+{"time": "2026-11-10T12:58:43Z", "event": "reserve", "key": "gate_shallow", "flavor": "a10g-small", "timeout_min": 45, "price_per_min": 0.016667, "reserved_usd": 0.7667, "commit": "2d7cfdb11d2cf09ade9e830216a270a9f8346798", "configs": []}
+{"time": "2026-11-10T12:58:43Z", "event": "submitted", "key": "gate_shallow", "job_id": "6af315039737d9a9e0906975", "url": "https://huggingface.co/jobs/JMBorrill/6af315039737d9a9e0906975"}

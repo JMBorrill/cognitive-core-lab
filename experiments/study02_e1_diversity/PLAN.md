@@ -110,7 +110,10 @@ Written after the environment was built and tested on CPU and before any model w
 7. **Stability rule.** As in Experiment 0, applied to steps 1-800.
 8. **Validation loss** during training is computed on oracle trajectories for the first 80 `dev` tasks. It is
    monitored only. No setting is tuned in Experiment 1.
-9. **Evaluation batch.** 64 episodes in lock-step for the 0.5B student, 32 for the 1.5B student.
+9. **Evaluation batch and length limit.** 128 episodes in lock-step for the 0.5B student, 64 for the 1.5B
+   student, scored in a fixed order grouped by depth and prompt length. Greedy decoding uses a minimal loop
+   that gives the same outputs as the library's `generate` (tested). The training length limit is 4,096 tokens
+   instead of 2,048 so that no episode is dropped: the longest oracle episode has 2,074 tokens.
 10. **Quality gate, step 3.** `Qwen/Qwen2.5-7B-Instruct` with the few-shot prompt attempts the first task of
     every test family and the second task of every family whose first attempt failed. A family is removed only
     if reading its failures shows a defect in the task (an inconsistent world, an ambiguous request, a gold graph
@@ -119,11 +122,20 @@ Written after the environment was built and tested on CPU and before any model w
     is logged in `data/v2/gate/`.
 11. **Budget.** Hard cap of 60 USD for Experiments 0 and 1 together, enforced by `scripts/s2_launch.py`.
 
-## Frozen inputs
+## Frozen inputs (recorded 2026-11-10, before the first Experiment 1 run)
 
-- `data/v2/manifest.json` SHA-256: *to be recorded before the first run*
-- commit: *to be recorded before the first run*
-- training settings from Experiment 0: *to be recorded before the first run*
+- `data/v2/manifest.json` SHA-256: `eec8eb4398ec254eb77e33f30b097ffd13d5f21661ae88f551dd5dcb4031d005`
+- commit that last changed `data/v2`: `66b8b0b4d4fefbe4cf5d0ec890b25d0c28627e08`
+- census: 5,364 practice families (2,103 base graphs, 79 gold tools, 229 practised edges); `test_comp` 600
+  families, `test_depth` 200, `test_tool` 200, `test_domain` 200, `test_id` 200, `dev` 300, two tasks each
+- training settings from Experiment 0 (`results/study02/e0/decision.json`): LoRA rank 16,
+  alpha 32, all blocks, bias-corrected AdamW, lr 0.0001, 20 warm-up steps,
+  cosine decay to 10%, gradient clipping 1.0, 800 steps x 8 episodes
+- run configs: `configs/study02/e1/` (each names the SHA-256 its training set must have when rebuilt in the job)
+- the code commit of every job is recorded in `results/study02/ledger.jsonl` and in each run's `run.json`
+- quality gate at the time of freezing: oracle 100% on every task; both degenerate policies fail every task that
+  needs a tool; reference-model reading of the two-hop `test_comp` families found no task defect and no family
+  was removed (`data/v2/gate/`)
 
 ## Deviations
 
