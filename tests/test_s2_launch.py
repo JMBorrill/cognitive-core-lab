@@ -20,21 +20,36 @@ def reserve(key, minutes, price=L4):
 
 
 def test_reservation_is_the_worst_case_and_cost_rounds_up():
-    assert L.reservation_usd(60, L4) == pytest.approx(61 * L4, abs=1e-4)
+    assert L.reservation_usd(60, L4) == pytest.approx((60 + L.BILLING_SLACK_MIN) * L4, abs=1e-4)
     assert L.job_cost_usd(61, L4) == pytest.approx(3 * L4, abs=1e-4)  # started minutes, plus one for start-up
     assert L.job_cost_usd(0, L4) == 0.0
     assert L.job_cost_usd(772, L4) == pytest.approx(0.1867, abs=1e-3)  # the first job: the provider billed 0.186662
     assert L.job_cost_usd(60 * 60, L4) <= L.reservation_usd(60, L4)  # a job cannot cost more than it reserved
 
 
+def test_no_job_in_the_committed_ledger_was_billed_above_what_the_launcher_now_reserves():
+    """Two Experiment 1 jobs ran into their time limit and were billed one minute more than the launcher had
+    reserved for them. The reservation must cover the bill of every job the provider has charged so far."""
+    jobs: dict = {}
+    for e in L.read_ledger():
+        j = jobs.setdefault(e.get("key"), {})
+        if e["event"] == "reserve":
+            j.update(timeout=e["timeout_min"], price=e["price_per_min"], recorded=e["reserved_usd"])
+        elif e["event"] in ("settled", "provider_cost"):
+            j["cost"] = e["cost_usd"]
+    billed = [j for j in jobs.values() if "timeout" in j and "cost" in j]
+    assert len(billed) >= 50 and any(j["cost"] > j["recorded"] for j in billed)  # the overshoot is in the record
+    assert all(j["cost"] <= L.reservation_usd(j["timeout"], j["price"]) + 1e-9 for j in billed)
+
+
 def test_submission_is_refused_when_the_cap_would_be_exceeded():
     ledger = [reserve("a", 1200), {"event": "submitted", "key": "a", "job_id": "1"},
               reserve("b", 1200), {"event": "submitted", "key": "b", "job_id": "2"}]
     b = L.books(ledger)
-    assert b["reserved_usd"] == pytest.approx(2 * 1201 * L4, abs=1e-3) and b["settled_usd"] == 0
-    ok, why = L.may_submit(ledger, BUDGET, L.reservation_usd(1800, L4))  # 32.03 + 24.01 = 56.04 <= 57
+    assert b["reserved_usd"] == pytest.approx(2 * 1202 * L4, abs=1e-3) and b["settled_usd"] == 0
+    ok, why = L.may_submit(ledger, BUDGET, L.reservation_usd(1800, L4))  # 32.05 + 24.03 = 56.08 <= 57
     assert ok, why
-    ok, why = L.may_submit(ledger, BUDGET, L.reservation_usd(1900, L4))  # 32.03 + 25.35 = 57.38 > 57
+    ok, why = L.may_submit(ledger, BUDGET, L.reservation_usd(1900, L4))  # 32.05 + 25.36 = 57.41 > 57
     assert not ok and "refused" in why and "57.00" in why
     assert not L.may_submit([], BUDGET, 57.01)[0] and L.may_submit([], BUDGET, 57.0)[0]
 

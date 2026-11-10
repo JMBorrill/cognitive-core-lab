@@ -9,7 +9,8 @@
 How the cap holds. Before a job is submitted its worst case (timeout x price per minute) is written to
 the ledger as a reservation, and the submission is refused if the billed cost of closed jobs, plus every
 open reservation, plus the new one would exceed the cap minus a small reserve. The provider stops a job at
-its timeout, so a job can never cost more than its reservation. When a job ends, the reservation is replaced
+its timeout and bills up to `BILLING_SLACK_MIN` minutes beyond it, which the reservation includes; the
+reserve covers anything the provider might bill beyond that. When a job ends, the reservation is replaced
 by the cost the provider billed for it, and the provider's running total is recorded; should that total ever
 exceed the ledger's own sum, it is the one that counts. Jobs are never retried automatically.
 
@@ -53,7 +54,7 @@ def books(ledger: list[dict]) -> dict:
     """Money spent by closed jobs, money reserved by open jobs, and the open jobs themselves.
 
     A closed job counts at the provider's billed cost once that is known (`provider_cost` events), otherwise
-    at the ledger's own estimate. An open job counts at its full reservation, which it cannot exceed. Their
+    at the ledger's own estimate. An open job counts at its full reservation, its worst case. Their
     sum is an upper bound on the final bill; the provider's running total is a lower bound, and the larger of
     the two is what counts as committed."""
     jobs: dict[str, dict] = {}
@@ -93,8 +94,15 @@ def may_submit(ledger: list[dict], budget: dict, reservation: float) -> tuple[bo
     return True, f"ok: {total:.2f} of {limit:.2f} USD committed after this job"
 
 
+# Minutes the provider bills beyond a job's time limit. Both Experiment 1 jobs that ran into their limit
+# (65 minutes) were billed 67 minutes: start-up and per-minute rounding are charged on top of the limit.
+# The first version reserved one minute, so those two jobs cost 0.0167 USD more than their reservation.
+BILLING_SLACK_MIN = 2
+
+
 def reservation_usd(timeout_min: int, price_per_min: float) -> float:
-    return round((timeout_min + 1) * price_per_min, 4)  # one extra minute for per-minute rounding
+    """Worst case of a job: its time limit plus the minutes the provider bills beyond it."""
+    return round((timeout_min + BILLING_SLACK_MIN) * price_per_min, 4)
 
 
 def job_cost_usd(billable_secs: float, price_per_min: float) -> float:
