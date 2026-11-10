@@ -97,11 +97,13 @@ def cmd_seed(a) -> None:
            "model": s2.fetch_model(S15), "train_files": [str(data / f"e2_seed_r{a.replicate}.jsonl")],
            "val_file": val_file(data), "out_dir": str(out / "train"), "seed": a.replicate}
     summary = hf.train(cfg, on_checkpoint=lambda: s2.sync(out, remote))
-    finish(out, remote, {"name": name, "seed_set_sha256": sha, "steps": cfg["steps"],
+    finish(out, remote, {"name": name, "seed_set_sha256": sha, "steps": cfg["steps"],  # also kept as train_result.json
                          "train_seconds": round(summary["train_time_s"], 1),
                          "seconds_per_step": round(summary["train_time_s"] / cfg["steps"], 3),
                          "peak_mem_gb": summary["peak_mem_gb"], "adapter_sha256": summary["adapter_sha256"],
                          "seconds": round(time.time() - t0, 1)})
+    shutil.copyfile(out / "result.json", out / "train_result.json")  # `dev` writes result.json again
+    s2.sync(out, remote)
 
 
 def cmd_bench(a) -> None:
@@ -200,7 +202,7 @@ def cmd_dev(a) -> None:
     timing = s2.evaluate(policy, s2.load_split("dev"), "v2/dev", out, name, batch=32,
                          checkpoint=lambda: s2.sync(out, remote))
     rows = [json.loads(l) for l in open(out / "metrics.jsonl")]
-    result = json.loads((out / "result.json").read_text()) if (out / "result.json").exists() else {"name": name}
+    result = {"name": name}
     result.update({"dev_engine": a.engine, "dev_tasks": len(rows), "dev_success": sum(r["success"] for r in rows) / len(rows),
                    "dev_seconds": timing["seconds"], "dev_generation": policy.stats})
     finish(out, remote, result)

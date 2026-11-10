@@ -267,7 +267,8 @@ def pull(experiment: str) -> None:
     keep = ("metrics.jsonl", "run.json", "train_run.json", "test_access.jsonl", "train_log.jsonl", "config.json",
             "summary.json", "adapter_config.json", "DONE", "result.json", "attempts.jsonl.gz", "buffer.jsonl.gz")
     files = [f for f in a.list_bucket_tree(budget["bucket"], prefix=experiment + "/", recursive=True)
-             if getattr(f, "type", "file") == "file" and f.path.endswith(keep) and "/checkpoints/" not in f.path]
+             if getattr(f, "type", "file") == "file" and "/checkpoints/" not in f.path
+             and (f.path.endswith(keep) or "/attempts/" in f.path or "/buffer/" in f.path)]
     dest = ROOT / "results/study02/runs"
     pairs = [(f.path, str(dest / f.path)) for f in files]
     for _, local in pairs:

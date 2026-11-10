@@ -6,3 +6,11 @@
 {"time": "2026-11-10T20:39:29Z", "event": "submitted", "key": "e2s1_calib2_dev_probe", "job_id": "6af38101ab34849891acdc06", "url": "https://huggingface.co/jobs/JMBorrill/6af38101ab34849891acdc06"}
 {"time": "2026-11-10T20:45:05Z", "event": "settled", "key": "e2s1_calib2_dev_probe", "job_id": "6af38101ab34849891acdc06", "stage": "ERROR", "message": "Job failed with exit code: 1. Reason: Error", "running_secs": 220, "cost_usd": 0.0833, "cost_source": "provider", "reserved_usd": 0.8667}
 {"time": "2026-11-10T20:45:05Z", "event": "reconcile", "provider_used_usd": 0.416675, "provider_account_total_usd": 50.804341, "ledger_settled_usd": 0.4166}
+{"time": "2026-11-10T20:46:11Z", "event": "reserve", "key": "e2s1_dev_probe", "flavor": "a10g-small", "timeout_min": 60, "price_per_min": 0.016667, "reserved_usd": 1.0334, "commit": "2331ff1b2e13ee93967fc3bca71717ec10384f91", "configs": []}
+{"time": "2026-11-10T20:46:12Z", "event": "submitted", "key": "e2s1_dev_probe", "job_id": "6af382949737d9a9e091942a", "url": "https://huggingface.co/jobs/JMBorrill/6af382949737d9a9e091942a"}
+{"time": "2026-11-10T20:46:12Z", "event": "reserve", "key": "e2s1_teacher_qwen3_14b", "flavor": "l40sx1", "timeout_min": 55, "price_per_min": 0.03, "reserved_usd": 1.71, "commit": "2331ff1b2e13ee93967fc3bca71717ec10384f91", "configs": []}
+{"time": "2026-11-10T20:46:12Z", "event": "submitted", "key": "e2s1_teacher_qwen3_14b", "job_id": "6af382949737d9a9e091942c", "url": "https://huggingface.co/jobs/JMBorrill/6af382949737d9a9e091942c"}
+{"time": "2026-11-10T21:02:11Z", "event": "settled", "key": "e2s1_dev_probe", "job_id": "6af382949737d9a9e091942a", "stage": "COMPLETED", "message": null, "running_secs": 930, "cost_usd": 0.2667, "cost_source": "provider", "reserved_usd": 1.0334}
+{"time": "2026-11-10T21:02:11Z", "event": "reconcile", "provider_used_usd": 1.133347, "provider_account_total_usd": 51.521013, "ledger_settled_usd": 0.6833}
+{"time": "2026-11-10T21:03:48Z", "event": "settled", "key": "e2s1_teacher_qwen3_14b", "job_id": "6af382949737d9a9e091942c", "stage": "COMPLETED", "message": null, "running_secs": 855, "cost_usd": 0.48, "cost_source": "provider", "reserved_usd": 1.71}
+{"time": "2026-11-10T21:03:48Z", "event": "reconcile", "provider_used_usd": 1.163347, "provider_account_total_usd": 51.551013, "ledger_settled_usd": 1.1633}
