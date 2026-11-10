@@ -54,6 +54,8 @@ DEFAULTS = {
     "lora": {"rank": 16, "alpha": 32, "dropout": 0.0, "layers": None, "target_modules": QWEN_LINEAR},
     "amp": "auto",  # bf16 autocast on CUDA, full precision on CPU
     "grad_checkpoint": False,  # recompute block activations in the backward pass: same gradients, less memory
+    # "auto" does so only for micro-batches of more than this many tokens (rows x padded width)
+    "grad_checkpoint_tokens": 6000,
     "save_every": 100,
     "eval_every": 100,
     "val_batches": 20,
@@ -262,7 +264,8 @@ def train(cfg: dict, fresh: bool = False, model_tok=None, on_checkpoint=None) ->
     model = add_lora(model, cfg["lora"], cfg["seed"])
     params = [p for p in model.parameters() if p.requires_grad]
     n_train = sum(p.numel() for p in params)
-    if cfg["grad_checkpoint"]:
+    ckpt_on = cfg["grad_checkpoint"] is True
+    if ckpt_on:
         model.gradient_checkpointing_enable()
 
     # ---- data (stages allow sequential curricula; a single stage otherwise)
@@ -322,6 +325,9 @@ def train(cfg: dict, fresh: bool = False, model_tok=None, on_checkpoint=None) ->
         for idx in micro:
             seq_tokens += sum(len(exs[i][0]) for i in idx)
             b, l = collate([exs[i] for i in idx], cfg["max_seq_len"], device)
+            if cfg["grad_checkpoint"] == "auto" and (b.numel() > cfg["grad_checkpoint_tokens"]) != ckpt_on:
+                ckpt_on = not ckpt_on  # same gradients either way; only long micro-batches need the memory
+                (model.gradient_checkpointing_enable if ckpt_on else model.gradient_checkpointing_disable)()
             lv, nt = loss_fn(model, b, l, cfg["amp"])
             (lv / len(micro)).backward()  # gradients are averaged over micro-batches
             lsum += lv.item() * nt

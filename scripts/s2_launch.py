@@ -5,6 +5,15 @@
     python scripts/s2_launch.py settle                    # close the books on finished jobs
     python scripts/s2_launch.py pull EXPERIMENT           # copy result files from the bucket into results/study02/runs
     python scripts/s2_launch.py logs JOB_ID | cancel JOB_ID
+    python scripts/s2_launch.py status --budget e2_stage1   # a later stage: its own cap and its own ledger
+
+Budgets. `configs/study02/budget.json` is the budget of Experiments 0 and 1, now closed: nothing more can be
+submitted against it. Every later stage has its own file, `configs/study02/budget_<name>.json`, with its own
+cap and its own ledger, so money left under one cap can never be spent by another stage. A job spec names its
+budget (`"budget": "<name>"`). The provider reports one running total for the account; a stage's budget
+records that total as it stood before the stage's first job (`provider_baseline_usd`), and what the provider
+has billed above the baseline is the stage's provider-side figure. Failed jobs are billed and counted like any
+other, and a retry is a new job with a new reservation, so failures and retries are inside the cap.
 
 How the cap holds. Before a job is submitted its worst case (timeout x price per minute) is written to
 the ledger as a reservation, and the submission is refused if the billed cost of closed jobs, plus every
@@ -32,6 +41,14 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 BUDGET = ROOT / "configs/study02/budget.json"
 LEDGER = ROOT / "results/study02/ledger.jsonl"
+
+
+def load_budget(name: str | None = None) -> tuple[dict, Path]:
+    """A budget and the ledger it is kept in. No name: the (closed) budget of Experiments 0 and 1."""
+    if not name:
+        return json.loads(BUDGET.read_text()), LEDGER
+    budget = json.loads((BUDGET.parent / f"budget_{name}.json").read_text())
+    return budget, ROOT / budget["ledger"]
 TERMINAL = {"COMPLETED", "CANCELED", "ERROR", "DELETED"}
 os.environ.setdefault("HF_TOKEN", "hf_proxy_injected")  # placeholder; the proxy supplies the real credential
 
@@ -82,6 +99,8 @@ def books(ledger: list[dict]) -> dict:
 def may_submit(ledger: list[dict], budget: dict, reservation: float) -> tuple[bool, str]:
     """The budget rule. Pure, so that it can be tested without a network."""
     b = books(ledger)
+    if budget.get("closed"):
+        return False, "refused: this budget is closed; later stages have their own budget file and cap"
     limit = budget["cap_usd"] - budget["reserve_usd"]
     total = b["committed_usd"] + reservation
     if len(b["open"]) >= budget["max_parallel"]:
@@ -169,9 +188,9 @@ def head_commit() -> str:
 # ------------------------------------------------------------------ commands
 
 def submit(spec_path: str, dry_run: bool) -> None:
-    budget = json.loads(BUDGET.read_text())
     spec = json.loads(Path(spec_path).read_text())
-    ledger = read_ledger()
+    budget, ledger_path = load_budget(spec.get("budget"))
+    ledger = read_ledger(ledger_path)
     assert spec["key"] not in {e.get("key") for e in ledger}, f"job key {spec['key']} was already used"
     assert spec["flavor"] in budget["flavors"], f"flavor {spec['flavor']} is not approved in the budget file"
     price = live_price_per_min(spec["flavor"])
@@ -188,7 +207,7 @@ def submit(spec_path: str, dry_run: bool) -> None:
         print("[launch] dry run, nothing submitted:\n ", command[-1])
         return
     append({"event": "reserve", "key": spec["key"], "flavor": spec["flavor"], "timeout_min": spec["timeout_min"],
-            "price_per_min": price, "reserved_usd": need, "commit": commit, "configs": spec["configs"]})
+            "price_per_min": price, "reserved_usd": need, "commit": commit, "configs": spec["configs"]}, ledger_path)
     try:
         from huggingface_hub import Volume
         job = api().run_job(image=budget["image"], command=command, flavor=spec["flavor"],
@@ -196,16 +215,17 @@ def submit(spec_path: str, dry_run: bool) -> None:
                             labels={"project": "ccl-study02", "experiment": spec.get("experiment", "x")},
                             volumes=[Volume(type="bucket", source=budget["bucket"], mount_path="/out")])
     except Exception as e:  # nothing runs, so the reservation is released
-        append({"event": "submit_failed", "key": spec["key"], "error": repr(e)[:500]})
+        append({"event": "submit_failed", "key": spec["key"], "error": repr(e)[:500]}, ledger_path)
         raise
-    append({"event": "submitted", "key": spec["key"], "job_id": job.id, "url": job.url})
+    append({"event": "submitted", "key": spec["key"], "job_id": job.id, "url": job.url}, ledger_path)
     print(f"[launch] submitted {job.id} {job.url}")
 
 
-def settle() -> None:
+def settle(name: str | None = None) -> None:
+    budget, ledger_path = load_budget(name)
     a = api()
     total, billed = provider_usage()
-    state = books(read_ledger())
+    state = books(read_ledger(ledger_path))
     for key, j in state["open"].items():
         if "job_id" not in j:
             continue
@@ -217,18 +237,24 @@ def settle() -> None:
             cost = billed.get(j["job_id"], job_cost_usd(secs, j["price"]))  # the provider's bill where it has one
             append({"event": "settled", "key": key, "job_id": j["job_id"], "stage": info.status.stage,
                     "message": info.status.message, "running_secs": secs, "cost_usd": round(cost, 4),
-                    "cost_source": "provider" if j["job_id"] in billed else "estimate", "reserved_usd": j["reserved"]})
+                    "cost_source": "provider" if j["job_id"] in billed else "estimate", "reserved_usd": j["reserved"]},
+                   ledger_path)
     for key, j in state["closed"].items():  # replace earlier estimates by the billed cost
         if j.get("job_id") in billed and abs(billed[j["job_id"]] - j.get("cost", 0.0)) > 0.0005:
-            append({"event": "provider_cost", "key": key, "job_id": j["job_id"], "cost_usd": round(billed[j["job_id"]], 4)})
-    append({"event": "reconcile", "provider_used_usd": total, "ledger_settled_usd": books(read_ledger())["settled_usd"]})
-    status()
+            append({"event": "provider_cost", "key": key, "job_id": j["job_id"],
+                    "cost_usd": round(billed[j["job_id"]], 4)}, ledger_path)
+    # the provider's total covers the whole account: a stage counts what was billed above its baseline
+    used = round(total - budget.get("provider_baseline_usd", 0.0), 6)
+    append({"event": "reconcile", "provider_used_usd": used, "provider_account_total_usd": total,
+            "ledger_settled_usd": books(read_ledger(ledger_path))["settled_usd"]}, ledger_path)
+    status(name)
 
 
-def status() -> None:
-    budget = json.loads(BUDGET.read_text())
-    b = books(read_ledger())
-    print(json.dumps({"cap_usd": budget["cap_usd"], "reserve_usd": budget["reserve_usd"],
+def status(name: str | None = None) -> None:
+    budget, ledger_path = load_budget(name)
+    b = books(read_ledger(ledger_path))
+    print(json.dumps({"budget": name or "e0_e1", "closed": bool(budget.get("closed")),
+                      "cap_usd": budget["cap_usd"], "reserve_usd": budget["reserve_usd"],
                       **{k: v for k, v in b.items() if k not in ("open", "closed")}, "open_jobs": sorted(b["open"]),
                       "available_usd": round(budget["cap_usd"] - budget["reserve_usd"] - b["committed_usd"], 2)},
                      indent=1))
@@ -239,7 +265,7 @@ def pull(experiment: str) -> None:
     budget = json.loads(BUDGET.read_text())
     a = api()
     keep = ("metrics.jsonl", "run.json", "train_run.json", "test_access.jsonl", "train_log.jsonl", "config.json",
-            "summary.json", "adapter_config.json", "DONE")
+            "summary.json", "adapter_config.json", "DONE", "result.json", "attempts.jsonl.gz", "buffer.jsonl.gz")
     files = [f for f in a.list_bucket_tree(budget["bucket"], prefix=experiment + "/", recursive=True)
              if getattr(f, "type", "file") == "file" and f.path.endswith(keep) and "/checkpoints/" not in f.path]
     dest = ROOT / "results/study02/runs"
@@ -255,13 +281,14 @@ def main():
     ap.add_argument("command", choices=["status", "submit", "settle", "pull", "logs", "cancel"])
     ap.add_argument("arg", nargs="?")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--budget", default=None, help="name of a later stage's budget (status and settle)")
     a = ap.parse_args()
     if a.command == "status":
-        status()
+        status(a.budget)
     elif a.command == "submit":
         submit(a.arg, a.dry_run)
     elif a.command == "settle":
-        settle()
+        settle(a.budget)
     elif a.command == "pull":
         pull(a.arg)
     elif a.command == "logs":

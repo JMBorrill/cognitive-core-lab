@@ -188,7 +188,9 @@ def evaluate(policy, tasks: list[Task], split: str, out: Path, config: str, batc
             if checkpoint and n[0] % 200 == 0:
                 tf.flush()
                 checkpoint()
-        if todo:
+        if todo and hasattr(policy, "run"):  # ccl.engine.Engine drives its own groups, sized by tokens
+            policy.run(todo, on_done=on_done, fewshot=fewshot)
+        elif todo:
             run_batch(todo, policy, batch_size=batch, on_done=on_done, fewshot=fewshot)
     return {"split": split, "tasks": len(tasks), "run_now": len(todo), "seconds": round(time.time() - t0, 1)}
 

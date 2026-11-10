@@ -89,3 +89,33 @@ def test_job_command_checks_out_one_commit_and_never_carries_a_secret():
     assert "git checkout --quiet abc123" in text and "requirements-cuda.lock" in text
     assert text.index("s2_prepare_v1.py") < text.index("s2_train.py") < text.index("s2_score.py")
     assert "hf_" not in text and "TOKEN" not in text
+
+
+def test_a_closed_budget_refuses_and_a_stage_has_its_own_cap_and_ledger():
+    old, old_ledger = L.load_budget()
+    assert old["closed"] and old_ledger == L.LEDGER
+    ok, why = L.may_submit(L.read_ledger(old_ledger), old, 0.01)  # 6.6 USD are left under the old cap
+    assert not ok and "closed" in why
+    stage, ledger = L.load_budget("e2_stage1")
+    assert stage["cap_usd"] == 15.0 and 0 < stage["reserve_usd"] < stage["cap_usd"] and not stage.get("closed")
+    assert ledger != old_ledger and ledger.parent.name == "e2"
+    # the provider's total before the stage's first job is what the closed ledger adds up to
+    assert stage["provider_baseline_usd"] == pytest.approx(L.books(L.read_ledger(old_ledger))["settled_usd"], abs=0.001)
+    limit = stage["cap_usd"] - stage["reserve_usd"]
+    assert L.may_submit([], stage, limit)[0] and not L.may_submit([], stage, limit + 0.01)[0]
+    b = L.books(L.read_ledger(ledger))  # whatever has run so far is inside the cap, by the launcher's own rule
+    assert b["committed_usd"] <= limit + 1e-9
+
+
+def test_stage_one_job_specs_use_the_stage_budget_and_fit_under_its_cap_together():
+    stage, _ = L.load_budget("e2_stage1")
+    specs = [json.loads(p.read_text()) for p in sorted((ROOT / "configs/study02/jobs/e2").glob("e2s1_*.json"))]
+    assert len(specs) >= 4 and len({s["key"] for s in specs}) == len(specs)
+    worst = 0.0
+    for s in specs:
+        assert s["budget"] == "e2_stage1" and s["flavor"] in stage["flavors"] and not s["configs"] and not s["stages"]
+        worst += L.reservation_usd(s["timeout_min"], stage["flavors"][s["flavor"]] / 60)
+        text = " ".join(L.job_command(s, stage, "0" * 40))
+        assert "scripts/s2_e2.py" in text and "s2_score.py" not in text  # a Stage 1 job scores no sealed split
+        assert "hf_" not in text and "HF_TOKEN" not in text and "secret" not in text.lower()
+    assert worst <= stage["cap_usd"] - stage["reserve_usd"]  # even if every job ran to its time limit

@@ -1,0 +1,17 @@
+{
+ "name": "e2_stage1",
+ "cap_usd": 15.0,
+ "reserve_usd": 1.0,
+ "provider_baseline_usd": 50.387666,
+ "provider_baseline_time": "2026-11-10T19:05:46Z",
+ "max_parallel": 2,
+ "ledger": "results/study02/e2/ledger.jsonl",
+ "bucket": "JMBorrill/ccl-study02",
+ "image": "ghcr.io/astral-sh/uv:python3.11-bookworm",
+ "repo": "https://github.com/JMBorrill/cognitive-core-lab",
+ "flavors": {
+  "a10g-small": 1.0,
+  "l40sx1": 1.8,
+  "a100-large": 2.5
+ }
+}

@@ -1,6 +1,8 @@
 # Study 02, Experiment 2: signal source × curriculum on the 1.5B student (revised plan, 2026-11-10)
 
-Status: **draft for review. Nothing here has run and no job may be queued until a stage is approved.**
+Status: **approved by the repository owner on 2026-11-10 for Stage 0 and Stage 1 (cap 15 USD). No later
+stage may be queued without a further approval.** The text below is the plan as approved; what was settled
+when Stage 0 was built is recorded under "Clarifications" at the end, before the first Stage 1 job.
 It revises §7.3 of the [proposal](../../docs/study02/PROPOSAL.md) in the light of
 [Experiments 0 and 1](../../docs/study02/REPORT_E0_E1.md) and their
 [review](../../docs/study02/REVIEW_E0_E1.md). Hypotheses, thresholds and the primary endpoint are unchanged;
@@ -362,11 +364,64 @@ measured the engine, the yield and the teacher.
 | 8 seeds if seed sd above 0.03 in Experiment 1 | 5, extended to 8 if the pooled sd in Experiment 2 exceeds 0.03 | this student's estimate rests on three replicates |
 | 110 USD | 174 USD planning figure for Stages 1-3, plus the teacher arm | measured throughput |
 
-## Frozen inputs
+## Frozen inputs (as planned)
 
 To be recorded at the end of Stage 1, before the pilot: code commit; `data/v2/manifest.json` SHA-256
 (unchanged from Experiment 1: `eec8eb43…d005`); SHA-256 of every replicate's seed set and stream; the
 bucket list; the engine's calibration result; the teacher's identity, revision and qualification result.
+
+## Approval and clarifications (recorded 2026-11-10, before the first Stage 1 job)
+
+**Approval.** Stages 0 and 1, with these conditions from the owner: a hard cap of 15 USD on Stage 1's total
+cloud spend, covering provider billing, failures and retries; no later paid stage without approval; the
+teacher qualification thresholds and the self-practice gate (H2(a)) stay as written; a teacher, if a teacher
+arm is later justified, is an open-weight model under a licence that permits training on its outputs; the
+remaining budget is recalculated from Stage 1's measurements, not from projected speed-ups; and **item (b) of
+Stage 1, the 1.5B scoring Experiment 1 left out, is approved for planning only and is not run**. Its cost
+is reported separately.
+
+**Clarifications**, none of which changes a hypothesis, arm, endpoint or threshold:
+
+1. **Budget.** Stage 1 has its own budget file and ledger (`configs/study02/budget_e2_stage1.json`,
+   `results/study02/e2/ledger.jsonl`): cap 15.00 USD, of which 1.00 is held back for anything the provider
+   bills beyond a job's reservation. The provider's account total stood at 50.387666 USD before the first job;
+   what it bills above that is Stage 1's provider-side figure. The budget of Experiments 0 and 1 is closed, so
+   the 6.61 USD left under its cap cannot be spent. Every job, failed or repeated, is reserved at its worst
+   case before it is submitted.
+2. **Stream instances.** Pass *p* of replicate *r* uses instance seed `1000 (r + 1) + p` in the training
+   value pool; the seed set uses instances 0-7. No stream request coincides with a seed request (tested).
+3. **Where a cycle ends.** Attempts are sampled in chunks of 200 tasks, fewer as the target nears. Tasks of
+   the last chunk that come after the one giving the 480th accepted episode are not counted as offered: the
+   next cycle starts with them and samples them afresh. Sampling is seeded per replicate, arm, cycle, task,
+   attempt and turn.
+4. **Curriculum buckets.** Shape classes are assigned in the order twin, fan-out, action, list selection,
+   plain; modifier classes are none, fault (transient failure, fallback) and stop (not found, denied, refused).
+   A group under 30 families merges into the group of the same shape and modifier class nearest in hops,
+   smallest first. A group with no such neighbour stays as it is.
+5. **Calibration (a)** scores the two adapters with the new engine only and compares with the committed
+   Experiment 1 rows, which are the reference the pass criteria name. The Experiment 1 engine is not run
+   again on the same node; its speed on those tasks is on record (1.62 s per episode). On 24 tasks per
+   adapter the job also checks, on the GPU in bfloat16, that cached decoding gives the same text as full
+   re-encoding.
+6. **Yield probe (c)** is the beginning of cycle 1 of `practice`, replicate 0: the first 400 stream tasks,
+   four sampled attempts each, written as that arm's attempt files so that a pilot would continue from them.
+7. **Criterion (c), second half** (seed `dev` success at least 15 points below the 1,600-family adapters')
+   needs `dev` scores that belong to item (b) and are therefore not measured. The seed adapter's `dev` score
+   is measured; the comparison is reported against an estimate, labelled as one, with the cost of replacing
+   it by a measurement.
+8. **Teacher qualification (d)** tests up to two candidates, each on the same 200 tasks (the first 50 of each
+   number of hops in replicate 0's stream), with the few-shot prompt, one greedy attempt and one retry
+   sampled at temperature 0.7 (top-p 0.95), as in Study 01: `Qwen/Qwen3-14B` and
+   `Qwen/Qwen3-30B-A3B-Instruct-2507`, both Apache-2.0. The implementation plan chooses the teacher "by
+   verified acceptance rate on 200 practice tasks"; if both qualify, the cheaper per accepted demonstration
+   is taken. It runs after (a) and (c), and only if the cap allows.
+9. **Training cost.** Beside the seed adapter, 24 optimizer steps are timed on a cycle-1 buffer (seed set
+   plus oracle episodes for the first 480 stream tasks) with gradient checkpointing always on, on for long
+   micro-batches only, and off. The adapters are discarded. Gradients are the same in all three (tested).
+
+## Frozen inputs
+
+Recorded in [`configs/study02/e2/frozen.json`](../../configs/study02/e2/frozen.json) at the end of Stage 1.
 
 ## Deviations
 

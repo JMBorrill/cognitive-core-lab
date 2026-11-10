@@ -16,7 +16,7 @@
 | e1_s05_r0 | a10g-small | 4 | CANCELED | 211 | 4.02 | 3.52 |
 | e1_s05_r1 | a10g-small | 4 | CANCELED | 212 | 4.02 | 3.53 |
 | e1_s05_r2 | a10g-small | 4 | CANCELED | 192 | 4.02 | 3.20 |
-| e1_s05_r3 | a10g-small | 4 | CANCELED | 214 | 4.02 | 3.57 |
+| e1_s05_r3 | a10g-small | 4 | CANCELED | 215 | 4.02 | 3.58 |
 | e1_s05_r4 | a10g-small | 4 | CANCELED | 212 | 4.02 | 3.53 |
 | e1_base_s05 | a10g-small | 2 | CANCELED | 15 | 2.02 | 0.25 |
 | e1_base_s15 | a10g-small | 2 | CANCELED | 15 | 3.02 | 0.25 |
@@ -57,12 +57,12 @@
 | part | billed USD |
 |---|---|
 | Experiment 0 | 1.90 |
-| Experiment 1, 0.5B student | 28.35 |
+| Experiment 1, 0.5B student | 28.37 |
 | Experiment 1, 1.5B student | 13.45 |
 | Experiment 1, baselines | 5.32 |
 | quality gate | 1.35 |
 
-Ledger total: **50.37 USD**. Provider-reported usage at the last reconciliation: **50.37 USD**. Cap: 60.00 USD.
+Ledger total: **50.39 USD**. Provider-reported usage at the last reconciliation: **50.39 USD**. Cap: 60.00 USD.
 
 Costs are the provider's own per-job bill (per started minute, including a job's start-up and the minutes of jobs that were cancelled or failed after starting).
 
