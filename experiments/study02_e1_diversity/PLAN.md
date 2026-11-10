@@ -160,4 +160,13 @@ Written after the environment was built and tested on CPU and before any model w
 4. **How the jobs were packed.** Runs were first submitted several to a job and then, to finish sooner, one to a
    job, resuming from the checkpoints and partial results in the storage bucket. A run's results do not depend
    on which job produced them; the code commit of each job is in the ledger and in each `run.json`.
+5. **Out-of-memory failures and the 1.5B scoring set.** Four jobs failed with a GPU out-of-memory error during
+   scoring (the first quality-gate job, two untrained baselines, one 1.5B run). The fallback that halves a batch
+   retried inside the exception handler, where the failed call's memory cannot be released; it was fixed and
+   tested (`ccl/hf.py`). No result was lost: adapters and partial scores were in the storage bucket. The six 1.5B
+   runs had all finished training; their scoring was resubmitted on the fixed code with 32 episodes in lock-step
+   instead of 64 and, replacing point 3(b), on a fixed list of splits chosen for the budget before any 1.5B
+   `test_comp` result existed: own families, `test_comp`, `test_id` and the v1 anchor. `dev`, `test_depth`,
+   `test_tool` and `test_domain` are not scored for the 1.5B student, except for partial `dev` rows already
+   written before the failures.
 
