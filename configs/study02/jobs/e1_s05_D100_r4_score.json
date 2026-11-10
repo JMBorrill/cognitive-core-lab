@@ -2,7 +2,7 @@
  "key": "e1_s05_D100_r4_score",
  "experiment": "e1",
  "flavor": "a10g-small",
- "timeout_min": 65,
+ "timeout_min": 75,
  "configs": [
   "configs/study02/e1/e1_s05_D100_r4.json"
  ],

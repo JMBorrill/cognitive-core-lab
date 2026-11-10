@@ -92,3 +92,15 @@
 {"time": "2026-11-10T14:34:58Z", "event": "submitted", "key": "e1_s05_D100_r2_score", "job_id": "6af32b92ab34849891ac072b", "url": "https://huggingface.co/jobs/JMBorrill/6af32b92ab34849891ac072b"}
 {"time": "2026-11-10T14:34:58Z", "event": "reserve", "key": "e1_s05_D100_r3_score", "flavor": "a10g-small", "timeout_min": 65, "price_per_min": 0.016667, "reserved_usd": 1.1, "commit": "2d04bb457d7a18bb8e6f69d67470254eb4d51762", "configs": ["configs/study02/e1/e1_s05_D100_r3.json"]}
 {"time": "2026-11-10T14:34:59Z", "event": "submitted", "key": "e1_s05_D100_r3_score", "job_id": "6af32b939737d9a9e090b084", "url": "https://huggingface.co/jobs/JMBorrill/6af32b939737d9a9e090b084"}
+{"time": "2026-11-10T14:40:09Z", "event": "provider_cost", "key": "e0_calib_l4x1", "job_id": "6af308179737d9a9e090414c", "cost_usd": 0.1867}
+{"time": "2026-11-10T14:40:09Z", "event": "provider_cost", "key": "gate_reference", "job_id": "6af30c6e9737d9a9e09053c6", "cost_usd": 0.2}
+{"time": "2026-11-10T14:40:09Z", "event": "provider_cost", "key": "e0_repro_C_a10g", "job_id": "6af30f979737d9a9e0905c2b", "cost_usd": 0.3667}
+{"time": "2026-11-10T14:40:09Z", "event": "provider_cost", "key": "gate_reference_2", "job_id": "6af30f97ab34849891abb491", "cost_usd": 0.4167}
+{"time": "2026-11-10T14:40:09Z", "event": "provider_cost", "key": "e1_base_s05", "job_id": "6af31fb9ab34849891abe52f", "cost_usd": 0.25}
+{"time": "2026-11-10T14:40:09Z", "event": "provider_cost", "key": "e1_base_s15", "job_id": "6af31fb99737d9a9e0908dfe", "cost_usd": 0.25}
+{"time": "2026-11-10T14:40:09Z", "event": "provider_cost", "key": "e1_s15_r0", "job_id": "6af31fba9737d9a9e0908e00", "cost_usd": 0.25}
+{"time": "2026-11-10T14:40:09Z", "event": "provider_cost", "key": "e1_s15_r1", "job_id": "6af31fba9737d9a9e0908e02", "cost_usd": 0.25}
+{"time": "2026-11-10T14:40:09Z", "event": "provider_cost", "key": "e1_s15_r2", "job_id": "6af31fbbab34849891abe533", "cost_usd": 0.25}
+{"time": "2026-11-10T14:40:09Z", "event": "reconcile", "provider_used_usd": 19.020372, "ledger_settled_usd": 4.5034}
+{"time": "2026-11-10T14:40:28Z", "event": "reserve", "key": "e1_s05_D400_r0_score", "flavor": "a10g-small", "timeout_min": 75, "price_per_min": 0.016667, "reserved_usd": 1.2667, "commit": "482797c73e3f0625f56421a3f430d184ed7615e3", "configs": ["configs/study02/e1/e1_s05_D400_r0.json"]}
+{"time": "2026-11-10T14:40:28Z", "event": "submitted", "key": "e1_s05_D400_r0_score", "job_id": "6af32cdc9737d9a9e090b3c8", "url": "https://huggingface.co/jobs/JMBorrill/6af32cdc9737d9a9e090b3c8"}
