@@ -391,10 +391,14 @@ class HFPolicy:
         except torch.OutOfMemoryError:
             if len(batch) == 1:
                 raise
-            torch.cuda.empty_cache()
-            self.stats["oom_splits"] = self.stats.get("oom_splits", 0) + 1
-            half = len(batch) // 2
-            return self.generate(batch[:half]) + self.generate(batch[half:])
+        # The retry must happen here, outside the handler: while the exception is alive its traceback
+        # keeps the failed call's tensors, and no memory can be returned to the allocator.
+        import gc
+        gc.collect()
+        torch.cuda.empty_cache()
+        self.stats["oom_splits"] = self.stats.get("oom_splits", 0) + 1
+        half = len(batch) // 2
+        return self.generate(batch[:half]) + self.generate(batch[half:])
 
     @torch.inference_mode()
     def _generate(self, batch: list[list[dict]]) -> list[tuple[str, int]]:

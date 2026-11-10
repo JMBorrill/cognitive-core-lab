@@ -222,6 +222,17 @@ def test_batched_greedy_generation_equals_unbatched_and_ignores_model_sampling_d
     assert pol.generate(convs) == together
     assert pol.reference_generate(convs) == together
     assert pol.stats["calls"] == 2 + len(convs) and pol.stats["prompt_tokens"] > 0
+    # running out of memory halves the batch and retries, outside the exception handler
+    flaky = hf.HFPolicy(model, tok, "tiny", max_tokens=12)
+    real, seen = flaky._generate, []
+
+    def limited(batch):
+        seen.append(len(batch))
+        if len(batch) > 3:
+            raise torch.OutOfMemoryError("simulated")
+        return real(batch)
+    flaky._generate = limited
+    assert flaky.generate(convs) == together and max(seen) == len(convs) and flaky.stats["oom_splits"] >= 2
     long = hf.HFPolicy(model, tok, "tiny", max_tokens=40)  # runs past some end-of-turn tokens
     assert long.generate(convs) == long.reference_generate(convs)
 

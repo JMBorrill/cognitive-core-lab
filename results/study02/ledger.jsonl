@@ -107,3 +107,7 @@
 {"time": "2026-11-10T14:40:40Z", "event": "reserve", "key": "e1_s05_D400_r1_score", "flavor": "a10g-small", "timeout_min": 75, "price_per_min": 0.016667, "reserved_usd": 1.2667, "commit": "e182721f22e07e60c2553cf73935af1661d8a909", "configs": ["configs/study02/e1/e1_s05_D400_r1.json"]}
 {"time": "2026-11-10T14:40:41Z", "event": "submitted", "key": "e1_s05_D400_r1_score", "job_id": "6af32ce9ab34849891ac0a48", "url": "https://huggingface.co/jobs/JMBorrill/6af32ce9ab34849891ac0a48"}
 {"time": "2026-11-10T14:41:09Z", "event": "reconcile", "provider_used_usd": 19.020372, "ledger_settled_usd": 4.5034}
+{"time": "2026-11-10T14:43:15Z", "event": "reconcile", "provider_used_usd": 20.037059, "ledger_settled_usd": 4.5034}
+{"time": "2026-11-10T14:45:21Z", "event": "reconcile", "provider_used_usd": 20.737073, "ledger_settled_usd": 4.5034}
+{"time": "2026-11-10T14:47:27Z", "event": "settled", "key": "e1_s15_fewshot", "job_id": "6af32301ab34849891abeec1", "stage": "ERROR", "message": "Job failed with exit code: 1. Reason: Error", "running_secs": 2843, "cost_usd": 0.8167, "cost_source": "provider", "reserved_usd": 2.5167}
+{"time": "2026-11-10T14:47:29Z", "event": "reconcile", "provider_used_usd": 21.42042, "ledger_settled_usd": 5.3201}
