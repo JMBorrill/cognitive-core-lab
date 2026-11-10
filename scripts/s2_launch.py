@@ -135,7 +135,8 @@ def job_command(spec: dict, budget: dict, commit: str) -> list[str]:
 
 def head_commit() -> str:
     dirty = subprocess.run(["git", "status", "--porcelain", "--", "ccl", "scripts", "configs", "data",
-                            "requirements-cuda.lock"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
+                            "requirements-cuda.lock", ":!configs/study02/jobs"], cwd=ROOT, capture_output=True,
+                           text=True).stdout.strip()
     assert not dirty, "commit and push code, configs and data before submitting a job:\n" + dirty
     commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
     remote = subprocess.run(["git", "branch", "-r", "--contains", commit], cwd=ROOT, capture_output=True,
