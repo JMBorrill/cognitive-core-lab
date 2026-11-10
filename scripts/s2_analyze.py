@@ -31,9 +31,33 @@ V1 = ["v1/eval_id", "v1/eval_ood", "v1/eval_unseen", "v1/eval_renamed"]
 N_BOOT = 10_000
 
 
+_ROWS: dict = {}
+
+
 def load(exp: str, name: str) -> list[dict]:
-    p = RUNS / exp / name / "metrics.jsonl"
-    return [json.loads(l) for l in open(p)] if p.exists() else []
+    """Per-episode rows of a run. Experiment 1 files are committed gzip-compressed (`pack`)."""
+    key = (str(RUNS), exp, name)
+    if key not in _ROWS:
+        p = RUNS / exp / name / "metrics.jsonl"
+        if p.exists():
+            _ROWS[key] = [json.loads(l) for l in open(p)]
+        elif p.with_suffix(".jsonl.gz").exists():
+            import gzip
+            with gzip.open(p.with_suffix(".jsonl.gz"), "rt") as f:
+                _ROWS[key] = [json.loads(l) for l in f]
+        else:
+            _ROWS[key] = []
+    return _ROWS[key]
+
+
+def pack() -> None:
+    """Compress the Experiment 1 per-episode files for the repository (deterministic gzip)."""
+    import gzip
+    for p in sorted((RUNS / "e1").glob("*/metrics.jsonl")):
+        with open(p.with_suffix(".jsonl.gz"), "wb") as f, gzip.GzipFile(fileobj=f, mode="wb", mtime=0) as g:
+            g.write(p.read_bytes())
+        p.unlink()
+        print("packed", p.parent.name)
 
 
 def by_split(rows: list[dict]) -> dict[str, list[dict]]:
@@ -286,7 +310,9 @@ def e1() -> None:
         return ok
 
     for tag, levels, reps in (("s05", LEVELS, range(5)), ("s15", [25, 1600], range(3))):
-        have = [d for d in levels if all((RUNS / "e1" / n / "DONE").exists() for n in names(tag, d, reps))]
+        def scored(n, split, k):  # a run counts for a split once every task of the split has a row
+            return sum(r["split"] == split for r in load("e1", n)) >= k
+        have = [d for d in levels if all(scored(n, "v2/test_comp", 1200) for n in names(tag, d, reps))]
         if len(have) < 2:
             continue
         R: dict = {"levels": have, "replicates": len(list(reps)), "splits": {}}
@@ -321,7 +347,10 @@ def e1() -> None:
         # ---- every split
         md += ["### All splits (success %)", "", "| split | " + " | ".join(f"D = {d}" for d in have) +
                " | D1600 - D25 |", "|---|" + "---|" * (len(have) + 1)]
-        for split in TESTS:
+        sizes = {"v2/test_comp": 1200, "v2/test_depth": 400, "v2/test_tool": 400, "v2/test_domain": 400,
+                 "v2/test_id": 400, "v2/dev": 600}
+        R["splits_not_scored"] = [x for x in TESTS if not all(scored(n, x, sizes[x]) for d in have for n in names(tag, d, reps))]
+        for split in [x for x in TESTS if x not in R["splits_not_scored"]]:
             ys = [cube(names(tag, d, reps), split)[0] for d in have]
             bs = boot(ys)
             mm = [float(y.mean()) for y in ys]
@@ -350,6 +379,9 @@ def e1() -> None:
         md.append("| v1 anchor, 720 hand-written tasks (range over replicates) | " +
                   " | ".join(rng(v1row[str(d)]) for d in have) +
                   f" | {100 * (v1row['1600']['mean'] - v1row['25']['mean']):+.1f} |")
+        if R["splits_not_scored"]:
+            md += ["", "Not scored for this student (budget; see the plan's deviations): " +
+                   ", ".join(x[3:] for x in R["splits_not_scored"]) + "."]
         md += ["", "v1 anchor reference points: " + "; ".join(f"{k} {pct(v)}%" for k, v in V1_REF.items()) + ".", ""]
 
         # ---- secondary: restricted to families the run's training set covers; strict success
@@ -440,8 +472,11 @@ def e1() -> None:
         sp = by_split(load("e1", n))
         if not sp:
             continue
-        vals = {s: float(np.mean([r["success"] for r in sp[s]])) for s in TESTS if sp.get(s)}
-        vals["v1"] = float(np.mean([r["success"] for s in V1 for r in sp[s]]))
+        full = {"v2/test_comp": 1200, "v2/test_depth": 400, "v2/test_tool": 400, "v2/test_domain": 400, "v2/test_id": 400,
+                "v2/dev": 600}
+        vals = {s: float(np.mean([r["success"] for r in sp[s]])) for s in TESTS if len(sp.get(s, [])) >= full[s]}
+        v1 = [r["success"] for s in V1 for r in sp.get(s, [])]
+        vals["v1"] = float(np.mean(v1)) if len(v1) == 720 else None
         S["baselines"][n] = vals
         md.append(f"| {n[3:]} | " + " | ".join(pct(vals.get(s)) for s in TESTS) + f" | {pct(vals['v1'])} |")
     md.append("")
@@ -472,6 +507,81 @@ def e1() -> None:
                f"{8 if sd > 0.03 else 5} seeds per main arm).", ""]
     (out / "summary.json").write_text(json.dumps(S, indent=1) + "\n")
     (out / "tables.md").write_text("\n".join(md) + "\n")
+    print("\n".join(md))
+
+
+# ------------------------------------------------------------------ post-hoc analyses
+
+def posthoc() -> None:
+    """Analyses chosen after the Experiment 1 results were seen. Exploratory; written to e1/posthoc.{json,md}."""
+    sets = json.loads((OUT / "e1" / "training_sets.json").read_text())
+    sealed = {f["id"]: f for f in s2.read_gz(s2.V2 / "sealed/families.jsonl.gz")}
+    held = set(json.loads((s2.V2 / "sealed/partition.json").read_text())["test_edges"])
+    res: dict = {}
+    md = ["# Study 02, Experiment 1: post-hoc analyses (generated by scripts/s2_analyze.py posthoc)", "",
+          "Everything here was chosen after the results were seen and is exploratory.", ""]
+    for tag, levels, reps in (("s05", LEVELS, range(5)), ("s15", [25, 1600], range(3))):
+        R: dict = {}
+        label = {"s05": "0.5B", "s15": "1.5B"}[tag]
+        runs = {(d, r): by_split(load("e1", f"e1_{tag}_D{d}_r{r}")) for d in levels for r in reps}
+
+        # 1. the same test families at both levels: those whose tools and practised edges the replicate's
+        #    25-family training set already contains, against the rest
+        md += [f"## {label}: `test_comp` on the same families at every level", "",
+               "For each replicate, test families are split by whether its 25-family training set already contains "
+               "all of their tools and practised edges. Every level is then scored on those same two groups.", "",
+               "| group (defined at D = 25) | families per replicate | " + " | ".join(f"D = {d}" for d in levels) + " |",
+               "|---|---|" + "---|" * len(levels)]
+        groups = {"covered at D = 25": [], "not covered at D = 25": []}
+        for r in reps:
+            have = sets[f"r{r}_D25"]
+            cov = {f for f, v in sealed.items() if v["eval_split"] == "test_comp" and set(v["tools"]) <= set(have["tools"])
+                   and set(v["edges"]) - held <= set(have["edges"])}
+            for name, pick in (("covered at D = 25", lambda f: f in cov), ("not covered at D = 25", lambda f: f not in cov)):
+                groups[name].append({d: [x["success"] for x in runs[(d, r)]["v2/test_comp"] if pick(x["template"])] for d in levels})
+        for name, per_rep in groups.items():
+            means = {d: float(np.mean([np.mean(g[d]) for g in per_rep])) for d in levels}
+            n = float(np.mean([len(g[levels[0]]) / 2 for g in per_rep]))
+            diffs = [np.mean(g[levels[-1]]) - np.mean(g[levels[0]]) for g in per_rep]
+            R[name] = {"families_per_replicate": n, "success": {str(d): means[d] for d in levels},
+                       "D1600_minus_D25_per_replicate": [float(x) for x in diffs]}
+            md.append(f"| {name} | {n:.0f} | " + " | ".join(pct(means[d]) for d in levels) + " |")
+        md += ["", "Difference D = 1,600 minus D = 25 per replicate, covered group: " +
+               ", ".join(f"{100 * x:+.1f}" for x in R["covered at D = 25"]["D1600_minus_D25_per_replicate"]) +
+               "; not covered: " + ", ".join(f"{100 * x:+.1f}" for x in R["not covered at D = 25"]["D1600_minus_D25_per_replicate"]) + ".", ""]
+
+        # 2. held-out against in-distribution at the same number of hops
+        md += [f"## {label}: success by number of hops (replicates pooled)", "",
+               "| split | hops | " + " | ".join(f"D = {d}" for d in levels) + " |", "|---|---|" + "---|" * len(levels)]
+        R["by_hops"] = {}
+        for split in ("own", "v2/test_id", "v2/test_comp", "v2/test_tool", "v2/test_domain", "v2/test_depth"):
+            rows = {d: [x for r in reps for x in runs[(d, r)].get(split, [])] for d in levels}
+            if not all(rows.values()):
+                continue
+            for h in sorted({x["hops"] for x in rows[levels[0]]}):
+                cells = {d: float(np.mean([x["success"] for x in rows[d] if x["hops"] == h])) for d in levels}
+                R["by_hops"][f"{split}|{h}"] = {str(d): v for d, v in cells.items()}
+                md.append(f"| {split.replace('v2/', '')} | {h} | " + " | ".join(pct(cells[d]) for d in levels) + " |")
+        md.append("")
+
+        # 3. where episodes fail
+        md += [f"## {label}: which check fails on `test_comp` (% of all episodes, replicates pooled)", "",
+               "| D | success | required calls missing | wrong status | facts missing | effects wrong | not terminated |",
+               "|---|---|---|---|---|---|---|"]
+        R["failed_checks"] = {}
+        for d in levels:
+            rows = [x for r in reps for x in runs[(d, r)]["v2/test_comp"]]
+            f = lambda k: float(np.mean([1 - x[k] for x in rows]))  # noqa: E731
+            v = {"success": float(np.mean([x["success"] for x in rows])), "required_calls": f("check_required_calls"),
+                 "status": f("check_status"), "facts": f("check_facts"), "effects": f("check_effects"),
+                 "terminated": f("check_terminated")}
+            R["failed_checks"][str(d)] = v
+            md.append(f"| {d} | " + " | ".join(pct(v[k]) for k in ("success", "required_calls", "status", "facts", "effects",
+                                                                  "terminated")) + " |")
+        md.append("")
+        res[tag] = R
+    (OUT / "e1" / "posthoc.json").write_text(json.dumps(res, indent=1) + "\n")
+    (OUT / "e1" / "posthoc.md").write_text("\n".join(md) + "\n")
     print("\n".join(md))
 
 
@@ -548,25 +658,34 @@ def books() -> None:
             j.update(flavor=e["flavor"], timeout_min=e["timeout_min"], reserved=e["reserved_usd"], commit=e["commit"][:10],
                      runs=len(e.get("configs", [])))
         elif e["event"] == "settled":
-            j.update(stage=e["stage"], minutes=(e.get("running_secs") or 0) / 60, cost=e["cost_usd"])
+            j.update(stage=e["stage"], cost=e["cost_usd"])
+        elif e["event"] == "provider_cost":
+            j.update(cost=e["cost_usd"])
     provider = max((e["provider_used_usd"] for e in ledger if e["event"] == "reconcile"), default=0.0)
+    price = json.loads((ROOT / "configs/study02/budget.json").read_text())["flavors"]
     md = ["# Study 02 compute ledger (generated by scripts/s2_analyze.py books)", "",
-          "| job | flavour | runs | outcome | running minutes | reserved USD | cost USD |", "|---|---|---|---|---|---|---|"]
+          "| job | flavour | runs | outcome | billed minutes | reserved USD | billed USD |", "|---|---|---|---|---|---|---|"]
     total = 0.0
     for k, j in jobs.items():
         if k is None or "flavor" not in j:
             continue
         total += j.get("cost", 0.0)
-        md.append(f"| {k} | {j['flavor']} | {j['runs']} | {j.get('stage', 'open')} | {j.get('minutes', 0):.1f} | "
-                  f"{j['reserved']:.2f} | {j.get('cost', float('nan')):.2f} |")
+        md.append(f"| {k} | {j['flavor']} | {j['runs']} | {j.get('stage', 'open')} | "
+                  f"{j.get('cost', 0.0) / price[j['flavor']] * 60:.0f} | {j['reserved']:.2f} | {j.get('cost', float('nan')):.2f} |")
     by_split = defaultdict(int)
     for r in access:
         by_split[r["split"]] += 1
+    by_exp = defaultdict(float)
+    for k, j in jobs.items():
+        if k and "flavor" in j:
+            by_exp["Experiment 0" if k.startswith("e0") else "quality gate" if k.startswith("gate") else
+                   "Experiment 1, 1.5B student" if "s15_D" in k or "s15_r" in k else
+                   "Experiment 1, baselines" if "base" in k or "fewshot" in k else "Experiment 1, 0.5B student"] += j.get("cost", 0.0)
+    md += ["", "| part | billed USD |", "|---|---|"] + [f"| {k} | {v:.2f} |" for k, v in sorted(by_exp.items())]
     md += ["", f"Ledger total: **{total:.2f} USD**. Provider-reported usage at the last reconciliation: "
                f"**{provider:.2f} USD**. Cap: 60.00 USD.", "",
-           "The ledger rounds every job up to the started minute plus one. A job cancelled after it had started is "
-           "recorded by the provider even where the ledger shows no duration, which is why the provider's figure is "
-           "the one that counts when it is larger.", "",
+           "Costs are the provider's own per-job bill (per started minute, including a job's start-up and the minutes "
+           "of jobs that were cancelled or failed after starting).", "",
            f"Sealed-split and anchor accesses logged: {len(access)} (one line per run and split in "
            f"`results/study02/test_access.jsonl`). By split: " +
            ", ".join(f"{k} {v}" for k, v in sorted(by_split.items())) + "."]
@@ -575,4 +694,4 @@ def books() -> None:
 
 
 if __name__ == "__main__":
-    {"e0": e0, "e1": e1, "books": books, "glmm": glmm, "unsolved": unsolved}[sys.argv[1]]()
+    {"e0": e0, "e1": e1, "books": books, "glmm": glmm, "unsolved": unsolved, "posthoc": posthoc, "pack": pack}[sys.argv[1]]()

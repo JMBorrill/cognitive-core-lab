@@ -170,3 +170,15 @@ Written after the environment was built and tested on CPU and before any model w
    `test_tool` and `test_domain` are not scored for the 1.5B student, except for partial `dev` rows already
    written before the failures.
 
+## Outcome (2026-11-10)
+
+- **H1 (0.5B): supported.** `test_comp` 18.9% at 25 families and 37.7% at 1,600: +18.9 points [15.7, 22.2].
+- H1 (1.5B, secondary): supported. 50.0% and 76.9%: +26.9 points [22.2, 31.4].
+- `test_comp` at D = 1,600: 37.7% [33.7, 41.5] for the 0.5B student, below the 40% this plan requires for
+  running Experiment 2 on it; 76.9% for the 1.5B student.
+- No row of the decision table above covers this combination. The proposal's stop/go rule (held-out success
+  below 40% for the chosen student: raise the model size) does, and the recommendation is Experiment 2 on the
+  1.5B student. See `docs/study02/REPORT_E0_E1.md` §8.
+- Largest standard deviation of replicate means on `test_comp`: 0.056 (0.5B), 0.022 (1.5B, three replicates).
+- Cost of Experiments 0 and 1 together: 50.37 USD of the 60 USD cap.
+
