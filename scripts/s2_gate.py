@@ -45,12 +45,15 @@ def run(a) -> None:
         first, second = attempts(split)
         if a.limit:
             first = first[: a.limit]
-        print(s2.evaluate(policy, first, f"{split}#1", out, "reference", batch=a.batch, fewshot=True), flush=True)
+        save = lambda: s2.sync(out, remote)  # noqa: E731
+        print(s2.evaluate(policy, first, f"{split}#1", out, "reference", batch=a.batch, fewshot=True, checkpoint=save),
+              flush=True)
         s2.sync(out, remote)
         rows = [json.loads(l) for l in open(out / "metrics.jsonl")]
         failed = {r["template"] for r in rows if r["split"] == f"{split}#1" and not r["success"]}
         retry = [second[f] for f in sorted(failed)]
-        print(s2.evaluate(policy, retry, f"{split}#2", out, "reference", batch=a.batch, fewshot=True), flush=True)
+        print(s2.evaluate(policy, retry, f"{split}#2", out, "reference", batch=a.batch, fewshot=True, checkpoint=save),
+              flush=True)
         s2.sync(out, remote)
     (out / "run.json").write_text(json.dumps({"reference": REFERENCE, "generation": policy.stats,
                                               **s2.environment()}, indent=1))
@@ -88,7 +91,7 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="runs2")
     ap.add_argument("--bucket", default=None)
-    ap.add_argument("--batch", type=int, default=16)
+    ap.add_argument("--batch", type=int, default=8)
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--report", default=None)
     a = ap.parse_args()

@@ -78,7 +78,7 @@ def main():
                                         "config_sha256": s2.config_sha256(cfg),
                                         "commit": s2.environment()["commit"]}) + "\n")
             timings.append(s2.evaluate(policy, tasks, split, out, name, batch=cfg.get("eval_batch", 64),
-                                       fewshot=cfg.get("fewshot", False)))
+                                       fewshot=cfg.get("fewshot", False), checkpoint=lambda: s2.sync(out, remote)))
             print(f"[s2_score] {name} {timings[-1]}", flush=True)
             s2.sync(out, remote)
         (out / "run.json").write_text(json.dumps(

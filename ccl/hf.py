@@ -380,8 +380,20 @@ class HFPolicy:
         self.gen = torch.Generator(device=self.device).manual_seed(seed)
         torch.manual_seed(seed)
 
-    @torch.inference_mode()
     def generate(self, batch: list[list[dict]], episodes=None) -> list[tuple[str, int]]:
+        """Generate for a batch; if the GPU runs out of memory the batch is halved and retried."""
+        try:
+            return self._generate(batch)
+        except torch.OutOfMemoryError:
+            if len(batch) == 1:
+                raise
+            torch.cuda.empty_cache()
+            self.stats["oom_splits"] = self.stats.get("oom_splits", 0) + 1
+            half = len(batch) // 2
+            return self.generate(batch[:half]) + self.generate(batch[half:])
+
+    @torch.inference_mode()
+    def _generate(self, batch: list[list[dict]]) -> list[tuple[str, int]]:
         from transformers import GenerationConfig
         prompts = [render_prompt_ids(self.tokenizer, m) for m in batch]
         width = max(map(len, prompts))

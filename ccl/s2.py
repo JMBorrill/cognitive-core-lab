@@ -161,8 +161,9 @@ def done_keys(metrics_path: Path) -> set:
 
 
 def evaluate(policy, tasks: list[Task], split: str, out: Path, config: str, batch: int = 64,
-             fewshot: bool = False) -> dict:
-    """Score `tasks` and append one metrics row and one trace per episode. Resumable."""
+             fewshot: bool = False, checkpoint=None) -> dict:
+    """Score `tasks` and append one metrics row and one trace per episode. Resumable; `checkpoint`
+    is called every 200 finished episodes (used to mirror partial results to durable storage)."""
     out.mkdir(parents=True, exist_ok=True)
     mpath = out / "metrics.jsonl"
     if mpath.exists() and mpath.read_bytes()[-1:] not in (b"", b"\n"):
@@ -170,12 +171,21 @@ def evaluate(policy, tasks: list[Task], split: str, out: Path, config: str, batc
             f.write("\n")
     done = done_keys(mpath)
     todo = [t for t in tasks if (split, t.task_id) not in done]
+    # Episodes advance in lock-step and every prompt in a batch is padded to the longest, so tasks of similar
+    # depth and prompt length are scored together. The order is fixed and does not depend on any outcome.
+    todo.sort(key=lambda t: (-t.depth, -len(t.request) - sum(len(x.signature()) for x in t.catalog), t.task_id))
     t0 = time.time()
     with open(mpath, "a") as mf, gzip.open(out / "traces.jsonl.gz", "at") as tf:
+        n = [0]
+
         def on_done(ep):
             mf.write(json.dumps(metrics_row(ep.task, ep, split, config)) + "\n")
             mf.flush()
             tf.write(json.dumps({"split": split, "task_id": ep.task.task_id, "trace": ep.trace.to_dict()}) + "\n")
+            n[0] += 1
+            if checkpoint and n[0] % 200 == 0:
+                tf.flush()
+                checkpoint()
         if todo:
             run_batch(todo, policy, batch_size=batch, on_done=on_done, fewshot=fewshot)
     return {"split": split, "tasks": len(tasks), "run_now": len(todo), "seconds": round(time.time() - t0, 1)}

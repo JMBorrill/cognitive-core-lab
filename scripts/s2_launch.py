@@ -192,8 +192,8 @@ def settle() -> None:
         d = info.durations
         print(f"[settle] {key} {j['job_id']}: {info.status.stage} {info.status.message or ''} durations={d}")
         if info.status.stage in TERMINAL:
-            # Billed while starting or running; the whole reported lifetime is used.
-            secs = d.total_secs if d and d.total_secs is not None else 0
+            # Billed per started minute while starting or running.
+            secs = (d.running_secs or 0) if d else 0  # a job cancelled while queued never ran and costs nothing
             if not secs and info.started_at and info.finished_at:
                 secs = (info.finished_at - info.started_at).total_seconds()
             append({"event": "settled", "key": key, "job_id": j["job_id"], "stage": info.status.stage,
