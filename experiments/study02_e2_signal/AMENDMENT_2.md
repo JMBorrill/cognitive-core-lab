@@ -224,6 +224,14 @@ include job overhead and a 25% contingency; the twins are 13 and 6 USD of them. 
 path for test splits the two blocks would be 171 and 83 USD. In the cost model the test splits of a block's
 adapters are costed inside the block; they are scored only after the last block that runs.
 
+**Not yet built** (no cost; to be done, tested and dry-run before the first Stage 3 job, and not started
+without approval): the two static arms (`oracle` at cycles 3 and 6, `oracle-matched`) in the job script;
+scoring of Experiment 2's final adapters by `scripts/s2_score.py` on the corrected engine; the confirmatory
+analysis (the two intervals, Holm, the with-and-without-replicate-0 table, the tier shares of §7.3); the
+audit sampler for a block; the job specifications and the budget file. What exists and is tested: the three
+practice arms, protocol 2, the seed adapter's job, the twins and their manifest, the selection measure, the
+stop marker and the cost model.
+
 Stage 4 (teacher arm) is conditional on H2(a), as the plan has it. With the teacher of §3 its demonstrations
 would cost about 63 USD for five replicates and 38 USD for three (4.6 GPU-seconds per accepted demonstration
 on `a100-large`, with overhead and contingency), and its adapters 8 to 13 USD. The plan's rule (five
