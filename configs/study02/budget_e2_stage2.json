@@ -3,7 +3,7 @@
  "cap_usd": 10.0,
  "reserve_usd": 1.0,
  "provider_baseline_usd": 52.42602,
- "provider_baseline_time": "2026-11-11, before any Stage 2 job",
+ "provider_baseline_time": "2026-11-11, read immediately before the first Stage 2 job",
  "max_parallel": 2,
  "ledger": "results/study02/e2/ledger_stage2.jsonl",
  "bucket": "JMBorrill/ccl-study02",
@@ -12,6 +12,6 @@
  "flavors": {
   "a10g-small": 1.0
  },
- "closed": true,
- "closed_note": "Prepared, not approved. Opened only on the owner's approval of Stage 2 and its cap."
+ "closed": false,
+ "approval": "Owner, 2026-11-11: Stage 2 at a hard cap of 10 USD, with one calibration of the corrected engine revision R6. Not approved: dev scoring of Experiment 1's adapters."
 }

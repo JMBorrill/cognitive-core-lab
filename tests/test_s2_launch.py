@@ -138,3 +138,4 @@ def test_stage_two_is_prepared_with_its_own_cap_and_its_job_specs_fit_under_it()
         text = " ".join(L.job_command(s, stage, "0" * 40))
         assert "scripts/s2_e2.py" in text and "s2_score.py" not in text  # the pilot scores no sealed split
     assert len(specs) >= 2 and worst <= stage["cap_usd"] - stage["reserve_usd"]
+    assert not any("e1dev" in " ".join(s["extra"]) for s in specs)  # not approved for paid execution

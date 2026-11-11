@@ -421,8 +421,11 @@ is reported separately.
 
 ## Stage 2: clarifications recorded before its first job (2026-11-11)
 
-Stage 2 is prepared and **not approved**: its budget file exists and is closed, so the launcher refuses its
-jobs until the owner approves the stage and its cap.
+Stage 2 was prepared with its budget closed. **Approved by the owner on 2026-11-11**, after the clarifications
+below were written: a hard cap of 10 USD; of the two optional items of point 6, the calibration of the
+corrected R6 is approved and the `dev` scoring of Experiment 1's adapters is not (its job spec is removed and
+it is not run); episodes found by elimination stay under the pre-registered acceptance rule and are counted
+as point 4 says. Stage 3 is not approved.
 
 1. **Budget.** `configs/study02/budget_e2_stage2.json`, cap 10.00 USD with 1.00 held back, its own ledger
    (`results/study02/e2/ledger_stage2.jsonl`), A10G only. The four prepared jobs fit under the cap together
