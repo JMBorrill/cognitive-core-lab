@@ -1,0 +1,17 @@
+{
+ "name": "e2_stage2",
+ "cap_usd": 10.0,
+ "reserve_usd": 1.0,
+ "provider_baseline_usd": 52.42602,
+ "provider_baseline_time": "2026-11-11, before any Stage 2 job",
+ "max_parallel": 2,
+ "ledger": "results/study02/e2/ledger_stage2.jsonl",
+ "bucket": "JMBorrill/ccl-study02",
+ "image": "ghcr.io/astral-sh/uv:python3.11-bookworm",
+ "repo": "https://github.com/JMBorrill/cognitive-core-lab",
+ "flavors": {
+  "a10g-small": 1.0
+ },
+ "closed": true,
+ "closed_note": "Prepared, not approved. Opened only on the owner's approval of Stage 2 and its cap."
+}

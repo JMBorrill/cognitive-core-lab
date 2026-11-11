@@ -168,6 +168,37 @@ def by_elimination(trace: dict) -> bool:
     return False
 
 
+def unobserved_identifier(task: Task, trace: dict) -> bool:
+    """True if a call uses an identifier that was neither in the request nor in an earlier observation."""
+    import re
+    ident = re.compile(r"^[A-Z]{1,3}-\d{2,6}$")
+    known = task.request
+    calls = [c for c in trace["calls"] if c["outcome"] != "limit"]
+    for turn in sorted({c["turn"] for c in calls}):
+        now = [c for c in calls if c["turn"] == turn]
+        for c in now:
+            flat = [y for x in (c["args"] or {}).values() for y in (x if isinstance(x, list) else [x])]
+            if any(isinstance(x, str) and ident.match(x.strip()) and x.strip() not in known for x in flat):
+                return True
+        known += " " + json.dumps([c["result"] for c in now])
+    return False
+
+
+def audit_sample(accepted: list[dict], n: int = 200, seed: str = "e2|audit") -> list[dict]:
+    """The verifier audit's sample (plan §5): `n` accepted episodes, half of them from those that are not
+    strictly successful (all of those if there are fewer), each with the weight that carries it back to the
+    population. `accepted` holds one dict per accepted episode with at least `strict`; the order of the
+    result is the order of `accepted`."""
+    rng = random.Random(seed)
+    loose = [i for i, x in enumerate(accepted) if not x["strict"]]
+    clean = [i for i, x in enumerate(accepted) if x["strict"]]
+    n_loose = min(len(loose), n // 2)
+    n_clean = min(len(clean), n - n_loose)
+    take = {i: len(loose) / n_loose for i in rng.sample(loose, n_loose)}
+    take.update({i: len(clean) / n_clean for i in rng.sample(clean, n_clean)})
+    return [{**accepted[i], "weight": take[i]} for i in sorted(take)]
+
+
 def attempt_row(index: int, ep: Episode) -> dict:
     m = episode_metrics(ep.task, ep)
     return {"index": index, "task_id": ep.task.task_id, "attempt": ep.attempt, "success": m["success"],
@@ -294,10 +325,11 @@ class Practice:
             names = [x for x in names if queue[x]]
         return take
 
-    def cycle(self, k: int, run, max_tasks: int = CYCLE_TASK_CAP) -> dict:
-        """Cycle `k`: offer tasks until `CYCLE_ACCEPT` are accepted or `max_tasks` were attempted. Returns
-        the cycle record; it is stored in the arm's state only when the cycle is complete (`max_tasks` at
-        its default), so a probe on fewer tasks leaves a cycle that a later job continues."""
+    def cycle(self, k: int, run, max_tasks: int | None = None) -> dict:
+        """Cycle `k`: offer tasks until `CYCLE_ACCEPT` are accepted or the task cap is reached. Returns the
+        cycle record and stores it in the arm's state. With `max_tasks` it is a probe: it stops there and
+        stores nothing, so a later job continues the cycle from the probe's attempt files."""
+        complete, max_tasks = max_tasks is None, CYCLE_TASK_CAP if max_tasks is None else max_tasks
         assert k == len(self.state["cycles"]) + 1, f"cycle {k} does not follow the {len(self.state['cycles'])} stored"
         verified = self.arm != "practice-unverified"
         used = {i for c in self.state["cycles"] for i in c["offered"]}
@@ -350,7 +382,7 @@ class Practice:
                 if len(accepted) == CYCLE_ACCEPT:
                     break
             chunk += 1
-        rec = {"cycle": k, "offered": offered, "accepted": accepted, "complete": max_tasks == CYCLE_TASK_CAP,
+        rec = {"cycle": k, "offered": offered, "accepted": accepted, "complete": complete,
                "yield": len(accepted) / max(1, len(offered)), **counts, "chunks": chunk,
                "rows_sha256": s2.rows_sha256(rows)}
         if rec["complete"]:

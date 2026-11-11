@@ -7,6 +7,9 @@
     python scripts/s2_e2.py probe   --replicate 0 --tasks 400 --out runs2 [--bucket /out]
     python scripts/s2_e2.py teacher --repo R --revision V --out runs2 [--bucket /out]
     python scripts/s2_e2.py replay  DIR                                         # CPU, any machine
+    python scripts/s2_e2.py cycle   --replicate 0 --arm practice --cycle 1 --out runs2 [--bucket /out]   # Stage 2
+    python scripts/s2_e2.py e1dev   --out runs2 [--bucket /out]                 # dev for Experiment 1's 1,600-family adapters
+    python scripts/s2_e2.py audit   DIR                                         # CPU: the verifier audit's sample
 
 Inputs are the practice space and `dev`, nothing else (tests/test_e2.py). The probe is the beginning of
 cycle 1 of the `practice` arm of a replicate: it writes that arm's attempt files, so a later pilot
@@ -240,6 +243,111 @@ def cmd_probe(a) -> None:
                          "token_budget": a.token_budget, "max_rows": a.max_rows})
 
 
+# ------------------------------------------------------------------ one cycle of a practice arm (plan §3.5)
+
+def cmd_cycle(a) -> None:
+    """Rollouts with the current adapter, replay, buffer; a new adapter trained from the base model on seed
+    plus buffer; that adapter on `dev`. Every part is skipped if it is already done, so a job that was cut
+    off is submitted again as it is. The run stops (exit 3) if the cycle's yield is under 20% or `dev` falls
+    by more than 5 points against the adapter that produced the cycle's rollouts (plan §7)."""
+    import gc
+
+    import torch
+    from ccl import engine, hf
+    k, name = a.cycle, f"r{a.replicate}_{a.arm}"
+    out, remote = dirs(a, name)
+    s2.restore(remote, out)
+    sub, sub_remote = out / f"c{k}", (remote / f"c{k}" if remote else None)
+    sub.mkdir(parents=True, exist_ok=True)
+    result = json.loads((sub / "result.json").read_text()) if (sub / "result.json").exists() else {"name": f"{name}_c{k}"}
+    fams, tools = s2.load_practice()
+    arm = L.Practice(out, a.replicate, a.arm, fams, tools)
+    before = f"r{a.replicate}_seed" if k == 1 else f"{name}/c{k - 1}"
+    if len(arm.state["cycles"]) < k:  # ---- rollouts
+        model, tok = engine.load_policy_model(s2.fetch_model(S15), adapter_dir(a, "e2", before))
+        eng = engine.Engine(model, tok, name, temperature=L.TEMPERATURE, top_p=L.TOP_P, token_budget=a.token_budget,
+                            max_rows=a.max_rows)
+        clock = {"seconds": 0.0, "attempts": 0}
+
+        def run(tasks, seed):
+            eng.seed = seed
+            t0 = time.time()
+            eps = eng.run(tasks, attempts=range(L.ATTEMPTS), stop_on_error=True)
+            clock["seconds"] += time.time() - t0
+            clock["attempts"] += len(eps)
+            s2.sync(out, remote)
+            return eps
+        rec = arm.cycle(k, run)
+        result.update({"rollout_seconds_this_job": round(clock["seconds"], 1), "attempts_sampled_this_job": clock["attempts"],
+                       "seconds_per_attempt": round(clock["seconds"] / max(1, clock["attempts"]), 4), "engine": eng.stats})
+        del model, eng
+        gc.collect()
+        torch.cuda.empty_cache()
+    rec = arm.state["cycles"][k - 1]
+    result.update({"cycle": k, "tasks_offered": len(rec["offered"]), "accepted": len(rec["accepted"]), "yield": rec["yield"],
+                   "accepted_strict": rec.get("accepted_strict", 0), "replay_failed": rec.get("replay_failed", 0),
+                   "attempts": rec["attempts"], "buffer_rows_sha256": rec["rows_sha256"]})
+    finish(sub, sub_remote, result)
+    s2.sync(out, remote)
+    if rec["yield"] < 0.20:
+        sys.exit(3)
+    # ---- a new adapter from the base model on seed plus buffer, two passes at the planned number of steps
+    rows = seed_rows(a.replicate)[0] + [r for c in range(1, k + 1) for r in s2.read_gz(out / f"buffer/c{c}.jsonl.gz")]
+    data = Path(a.out) / "_data"
+    sha = write_jsonl(data / f"e2_{name}_c{k}.jsonl", rows)
+    steps = (L.SEED_FAMILIES * L.SEED_INSTANCES + k * L.CYCLE_ACCEPT) // 4
+    cfg = {**train_settings(), "steps": steps, "model": s2.fetch_model(S15), "train_files": [str(data / f"e2_{name}_c{k}.jsonl")],
+           "val_file": val_file(data), "out_dir": str(sub / "train"), "seed": a.replicate}
+    summary = hf.train(cfg, on_checkpoint=lambda: s2.sync(out, remote))
+    result.update({"train_data_sha256": sha, "train_episodes": len({(r["meta"]["task_id"], r["meta"]["source"]) for r in rows}),
+                   "steps": steps, "adapter_sha256": summary["adapter_sha256"], "train_seconds": round(summary["train_time_s"], 1),
+                   "seconds_per_step": round(summary["train_time_s"] / max(1, steps - summary["resumed_from"]), 3)})
+    finish(sub, sub_remote, result)
+    gc.collect()
+    torch.cuda.empty_cache()
+    # ---- that adapter on dev
+    model, tok = engine.load_policy_model(s2.fetch_model(S15), sub / "train")
+    policy = engine.Engine(model, tok, f"{name}_c{k}", token_budget=a.token_budget, max_rows=a.max_rows)
+    timing = s2.evaluate(policy, s2.load_split("dev"), "v2/dev", sub, f"{name}_c{k}", checkpoint=lambda: s2.sync(out, remote))
+    scored = [json.loads(l) for l in open(sub / "metrics.jsonl")]
+    dev = sum(r["success"] for r in scored) / len(scored)
+    prior = adapter_dir(a, "e2", before).parent
+    for f in ("result.json", "metrics.jsonl"):  # the dev score of the adapter this cycle's rollouts came from
+        if not (prior / f).exists() and a.bucket and (Path(a.bucket) / "e2" / before / f).exists():
+            shutil.copyfile(Path(a.bucket) / "e2" / before / f, prior / f)
+    was = [json.loads(l) for l in open(prior / "metrics.jsonl")] if (prior / "metrics.jsonl").exists() else []
+    was = [r["success"] for r in was if r["split"] == "v2/dev"]
+    result.update({"dev_success": dev, "dev_tasks": len(scored), "dev_seconds_this_job": timing["seconds"],
+                   "dev_success_before": sum(was) / len(was) if was else None})
+    finish(sub, sub_remote, result)
+    s2.sync(out, remote)
+    if was and dev < sum(was) / len(was) - 0.05:
+        sys.exit(3)
+
+
+def cmd_e1dev(a) -> None:
+    """`dev` for the three 1,600-family adapters of Experiment 1, which that experiment did not score: the
+    comparator of Stage 1's criterion (c) and of the pilot's monitoring. Scored after the fact, on the engine
+    as calibrated in Stage 1, and labelled so wherever it is quoted."""
+    from ccl import engine
+    for r in range(3):
+        run = f"e1_s15_D1600_r{r}"
+        cfg = json.loads((ROOT / f"configs/study02/e1/{run}.json").read_text())
+        name = f"e1dev_{run}"
+        out, remote = dirs(a, name)
+        s2.restore(remote, out)
+        if (out / "result.json").exists():
+            continue
+        model, tok = engine.load_policy_model(s2.fetch_model(cfg["model"]), adapter_dir(a, "e1", run))
+        eng = engine.Engine(model, tok, name, token_budget=a.token_budget, max_rows=a.max_rows)
+        timing = s2.evaluate(eng, s2.load_split("dev"), "v2/dev", out, name, checkpoint=lambda: s2.sync(out, remote))
+        rows = [json.loads(l) for l in open(out / "metrics.jsonl")]
+        finish(out, remote, {"name": name, "adapter_of": run, "dev_tasks": len(rows),
+                             "dev_success": sum(x["success"] for x in rows) / len(rows), "dev_seconds": timing["seconds"],
+                             "engine": eng.stats, "scored_after_the_fact": True})
+        del model
+
+
 # ------------------------------------------------------------------ teacher qualification
 
 def teacher_tasks(replicate: int = 0):
@@ -326,14 +434,63 @@ def cmd_replay(a) -> None:
             if why != "ok":
                 failures.append({"file": f.name, "index": r["index"], "attempt": r["attempt"], "why": why})
     out = {"dir": d.name, "accepted_attempts_replayed": checked, "failed": len(failures), "failures": failures}
-    (d / "replay.json").write_text(json.dumps(out, indent=1) + "\n")
+    (d / f"replay{a.tag}.json").write_text(json.dumps(out, indent=1) + "\n")
     print(json.dumps({k: v for k, v in out.items() if k != "failures"}))
     sys.exit(1 if failures else 0)
 
 
+def cmd_audit(a) -> None:
+    """The verifier audit's sample for a practice arm (plan §5), with what a program can say about each
+    episode: whether it makes the oracle's calls, was found by elimination, used an identifier it had not
+    observed, or states values the reference answer does not. Episodes that differ from the oracle are listed
+    for reading; verdicts are recorded by hand in `audit_verdicts.json` beside the output."""
+    import re
+
+    from ccl.oracle import OraclePolicy
+    from ccl.runtime import run_batch
+    d = Path(a.dir)
+    fams, tools = s2.load_practice()
+    arm = L.Practice(d, a.replicate, a.arm, fams, tools)
+    value = re.compile(r"-?\d[\d,]*(?:\.\d+)?|[A-Z]{1,3}-\d{2,6}")
+    accepted = []
+    for c in arm.state["cycles"]:
+        recs = [x for f in sorted(d.glob(f"attempts/c{c['cycle']}_*.jsonl.gz")) for x in s2.read_gz(f)]
+        by = defaultdict(list)
+        for x in recs:
+            by[x["index"]].append(x)
+        for i in c["accepted"]:
+            p = L.choose(by[i], a.arm != "practice-unverified", f"e2|{a.replicate}|{a.arm}|{c['cycle']}")
+            accepted.append({"cycle": c["cycle"], "index": i, "attempt": p["attempt"], "strict": p["strict"], "row": p})
+    sample = L.audit_sample(accepted, a.sample)
+    out = []
+    for x in sample:
+        task, p = arm.stream.get(x["index"]), x.pop("row")
+        o = run_batch([task], OraclePolicy())[0]
+        gold = sorted((c.tool_key, json.dumps(c.canonical_args, sort_keys=True)) for c in o.trace.calls)
+        mine = sorted((c["tool_key"] or c["tool"], json.dumps(c["canonical_args"], sort_keys=True))
+                      for c in p["trace"]["calls"] if c["outcome"] != "limit")
+        num = lambda v: v if "-" in v[1:] else str(float(v.replace(",", "")))  # noqa: E731  "87.8" is "87.80"
+        said = {num(v) for v in value.findall(p["trace"]["final"] or "")}
+        extra = sorted(said - {num(v) for v in value.findall(task.reference_answer + " " + task.request)})
+        flags = [k for k, on in (("found_by_elimination", L.by_elimination(p["trace"])),
+                                 ("unobserved_identifier", L.unobserved_identifier(task, p["trace"])),
+                                 ("values_not_in_the_reference_answer", bool(extra)),
+                                 ("calls_differ_from_the_oracle", mine != gold)) if on]
+        out.append({**x, "task_id": task.task_id, "hops": task.depth, "flags": flags, "extra_values": extra,
+                    "request": task.request, "reference_answer": task.reference_answer, "answer": p["trace"]["final"],
+                    "calls": [[c["turn"], c["tool"], c["args"], c["outcome"], c["result"].get("error", "")]
+                              for c in p["trace"]["calls"]],
+                    "oracle_calls": [[c.turn, c.tool, c.args] for c in o.trace.calls]})
+    res = {"arm": d.name, "accepted_episodes": len(accepted), "not_strict": sum(not x["strict"] for x in accepted),
+           "sampled": len(out), "to_read": sum(bool(x["flags"]) for x in out), "sample": out}
+    (d / "audit.json").write_text(json.dumps(res, indent=1) + "\n")
+    print(json.dumps({k: v for k, v in res.items() if k != "sample"}))
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("command", choices=["seed", "bench", "calib", "dev", "probe", "teacher", "replay"])
+    ap.add_argument("command", choices=["seed", "bench", "calib", "dev", "probe", "teacher", "replay", "cycle", "e1dev",
+                                        "audit"])
     ap.add_argument("dir", nargs="?")
     ap.add_argument("--out", default="runs2")
     ap.add_argument("--bucket", default=None, help="mounted storage directory to mirror outputs to")
@@ -345,7 +502,10 @@ def main():
     ap.add_argument("--revision")
     ap.add_argument("--token-budget", type=int, default=160_000)
     ap.add_argument("--max-rows", type=int, default=128)
-    ap.add_argument("--tag", default="", help="calib: suffix of the result directories")
+    ap.add_argument("--arm", default="practice", choices=list(L.ARMS))
+    ap.add_argument("--cycle", type=int, default=1)
+    ap.add_argument("--sample", type=int, default=200, help="audit: episodes to sample")
+    ap.add_argument("--tag", default="", help="calib: suffix of the result directories; replay: of replay.json")
     ap.add_argument("--grouped", action="store_true", help="calib: with R6, which is otherwise off everywhere")
     ap.add_argument("--max-changed", type=float, default=1.0, help="calib: fail above this share of changed outcomes")
     a = ap.parse_args()

@@ -293,6 +293,29 @@ def test_elimination_is_recognised_from_the_trace_and_a_corrected_identifier_is_
     assert not L.by_elimination({"calls": [listed, retry, get("IS-3", True)]})  # a retry after a transient failure
 
 
+def test_audit_sample_takes_half_from_the_not_strict_and_weights_back_to_the_population(practice):
+    pop = [{"index": i, "strict": i % 20 != 0} for i in range(960)]  # 48 episodes are not strict
+    sample = L.audit_sample(pop)
+    assert len(sample) == 200 and sample == L.audit_sample(pop) and sample != L.audit_sample(pop, seed="other")
+    loose = [x for x in sample if not x["strict"]]
+    assert len(loose) == 48 and all(x["weight"] == 1.0 for x in loose)  # fewer than 100 exist: all are read
+    assert sum(x["weight"] for x in sample) == pytest.approx(960)
+    many = L.audit_sample([{"index": i, "strict": i % 2 == 0} for i in range(960)])
+    assert sum(not x["strict"] for x in many) == 100 and sum(x["weight"] for x in many) == pytest.approx(960)
+    assert len(L.audit_sample(pop[:30])) == 30
+    fams, tools = practice
+    task = next(t for t in L.Stream(fams, tools, 0).first(60) if t.depth == 2 and "mod=none" in t.tags)
+    e = Episode(task, "x")
+    while not e.done:
+        e.step(OraclePolicy().act(e))
+    trace = json.loads(json.dumps(e.trace.to_dict()))
+    assert not L.unobserved_identifier(task, trace) and not L.by_elimination(trace)
+    second = next(c for c in trace["calls"] if c["turn"] == 2)
+    key = next(k for k, v in second["args"].items() if isinstance(v, str) and "-" in v)
+    second["args"][key] = second["args"][key][:3] + "0000"  # an identifier no observation contained
+    assert L.unobserved_identifier(task, trace)
+
+
 def test_practice_cycle_is_deterministic_resumable_and_stops_at_its_targets(practice, tmp_path):
     fams, tools = practice
     run = scripted_run(0.45)
@@ -396,3 +419,61 @@ def test_no_sealed_input_is_reachable_from_the_loop_or_its_job_script():
     used = {f["id"] for f in st.family} | {f["id"] for f in L.seed_families(fams, 0)}
     assert not used & (sealed | dev)
     assert not {e for f in st.family for e in f["edges"]} & held_edges
+
+
+# ---------------------------------------------------------------- Stage 2: audit and pilot analysis on a scripted arm
+
+def test_audit_and_pilot_analysis_run_on_a_scripted_two_cycle_arm(practice, tmp_path):
+    import importlib.util
+    import shutil
+    import types
+
+    def load(name):
+        spec = importlib.util.spec_from_file_location(name, ROOT / f"scripts/{name}.py")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return mod
+    fams, tools = practice
+    runs = tmp_path / "runs"
+    arm = L.Practice(runs / "r0_practice", 0, "practice", fams, tools)
+    seed_metrics = ROOT / "results/study02/runs/e2/r0_seed/metrics.jsonl"
+    (runs / "r0_seed").mkdir(parents=True)
+    shutil.copyfile(seed_metrics, runs / "r0_seed/metrics.jsonl")
+    for k, skill in ((1, 0.3), (2, 0.6)):
+        rec = arm.cycle(k, scripted_run(skill))
+        sub = runs / f"r0_practice/c{k}"
+        sub.mkdir()
+        shutil.copyfile(seed_metrics, sub / "metrics.jsonl")  # stands in for the cycle adapter's dev rows
+        (sub / "result.json").write_text(json.dumps({
+            "rollout_seconds_this_job": 0.4 * rec["attempts"], "attempts_sampled_this_job": rec["attempts"],
+            "steps": 100 + 120 * k, "train_seconds": 3.6 * (100 + 120 * k), "seconds_per_step": 3.6,
+            "dev_seconds_this_job": 300.0}))
+    E = load("s2_e2")
+    E.cmd_audit(types.SimpleNamespace(dir=str(runs / "r0_practice"), replicate=0, arm="practice", sample=200))
+    au = json.loads((runs / "r0_practice/audit.json").read_text())
+    assert au["accepted_episodes"] == 2 * L.CYCLE_ACCEPT and au["sampled"] == 200 and 0 < au["to_read"] < 200
+    flagged = [x for x in au["sample"] if x["flags"]]
+    # every episode with an unnecessary call is listed for reading (a repeated failed call is listed too)
+    assert all(x["flags"] for x in au["sample"] if not x["strict"])
+    assert {f for x in flagged for f in x["flags"]} == {"calls_differ_from_the_oracle"}
+    assert sum(x["weight"] for x in au["sample"]) == pytest.approx(au["accepted_episodes"])
+    (runs / "r0_practice/audit_verdicts.json").write_text(json.dumps(
+        {f"{x['cycle']}:{x['index']}": {"false_accept": False, "note": "repeats a call"} for x in flagged}))
+    M = load("s2_e2_stage2")
+    M.RUNS, M.OUT = runs, tmp_path / "out"
+    M.OUT.mkdir()
+    shutil.copyfile(ROOT / "results/study02/e2/stage1.json", M.OUT / "stage1.json")
+    M.main()
+    res = json.loads((M.OUT / "stage2.json").read_text())
+    c1, c2 = res["cycles"]
+    assert c1["accepted"] == c2["accepted"] == L.CYCLE_ACCEPT and c2["yield"] > c1["yield"] >= 0.2
+    assert res["gates"] == {"yield": True, "audit": True, "cost": True, "dev": True} and res["passed"]
+    assert res["audit"]["false_accept_rate_counting_elimination"] == 0 and res["audit"]["read"] == res["audit"]["flagged"]
+    assert all(v["difference"] > 0 for v in res["yield_change_by_hops"].values())  # the better policy is accepted more
+    assert c1["diversity"]["oracle arm, this cycle"]["tasks"] == L.CYCLE_ACCEPT and c1["accepted_by_elimination"] == 0
+    assert res["rebudget"]["by_the_plans_rules"]["stage3_block_a_usd"] > res["rebudget"]["sealed_on_new_engine"]["stage3_block_a_usd"]
+    text = (M.OUT / "stage2.md").read_text()
+    assert "Pilot passed" in text and "Does practice climb?" in text
+    (runs / "r0_practice/audit_verdicts.json").write_text("{}")  # an audit that was not read does not pass
+    M.main()
+    assert not json.loads((M.OUT / "stage2.json").read_text())["gates"]["audit"]

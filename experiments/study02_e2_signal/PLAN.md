@@ -419,6 +419,34 @@ is reported separately.
    plus oracle episodes for the first 480 stream tasks) with gradient checkpointing always on, on for long
    micro-batches only, and off. The adapters are discarded. Gradients are the same in all three (tested).
 
+## Stage 2: clarifications recorded before its first job (2026-11-11)
+
+Stage 2 is prepared and **not approved**: its budget file exists and is closed, so the launcher refuses its
+jobs until the owner approves the stage and its cap.
+
+1. **Budget.** `configs/study02/budget_e2_stage2.json`, cap 10.00 USD with 1.00 held back, its own ledger
+   (`results/study02/e2/ledger_stage2.jsonl`), A10G only. The four prepared jobs fit under the cap together
+   even if each ran to its time limit.
+2. **What runs.** `scripts/s2_e2.py cycle`, once per cycle: rollouts with the current adapter (cycle 1
+   continues from the probe's 400 tasks and their attempt files), replay, buffer; a new adapter trained from
+   the base model on seed plus buffer at (400 + 480 k) / 4 steps with training seed 0; that adapter on `dev`.
+   Everything on the engine as calibrated in Stage 1 (R1-R4), whatever item 5 finds.
+3. **Stop rules inside the job.** A cycle whose yield is under 20%, or whose adapter falls more than 5 points
+   on `dev` below the adapter that produced its rollouts, ends the run there (§7).
+4. **Verifier audit** (§5), after cycle 2: 200 of the accepted episodes of both cycles, all that are not
+   strictly successful up to 100, weighted back. Every sampled episode that differs from the oracle's calls,
+   states a value the reference answer lacks, was found by elimination or used an unobserved identifier is
+   read, and the verdict recorded in `audit_verdicts.json`. For the 2% gate an episode found by elimination or
+   with an unobserved identifier counts as a false accept whatever the reading says (kinds (iii) and (ii)).
+   The rate by reading alone is reported beside it.
+5. **Cost criterion.** "Within twice the model's" compares a cycle's GPU-seconds (rollouts, training, `dev`)
+   with the cost model at Stage 1's measured inputs.
+6. **Two optional items, each only if the owner approves it:** one calibration of the corrected R6 under the
+   unchanged criteria (`calib3_*`; the job stops above 5% changed outcomes); and `dev` for Experiment 1's three
+   1,600-family adapters (`e1dev_*`), which is part of item (b) of Stage 1 and is scored after the fact.
+7. **Reported per cycle:** yield by hops and by list selections, the diversity table, strict share, the count
+   found by elimination, throughput, and `dev` by hops (`scripts/s2_e2_stage2.py`).
+
 ## Frozen inputs
 
 Recorded in [`configs/study02/e2/frozen.json`](../../configs/study02/e2/frozen.json) at the end of Stage 1

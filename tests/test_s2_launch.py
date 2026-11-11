@@ -121,3 +121,20 @@ def test_stage_one_job_specs_use_the_stage_budget_and_fit_under_its_cap_together
         assert "scripts/s2_e2.py" in text and "s2_score.py" not in text  # a Stage 1 job scores no sealed split
         assert "hf_" not in text and "HF_TOKEN" not in text and "secret" not in text.lower()
     assert worst <= stage["cap_usd"] - stage["reserve_usd"]  # even if every job ran to its time limit
+
+
+def test_stage_two_is_prepared_with_its_own_cap_and_its_job_specs_fit_under_it():
+    stage, ledger = L.load_budget("e2_stage2")
+    assert stage["cap_usd"] == 10.0 and ledger.name == "ledger_stage2.jsonl" and set(stage["flavors"]) == {"a10g-small"}
+    spent = L.books(L.read_ledger(ledger))
+    if stage.get("closed") and not spent["closed"] and not spent["open"]:  # not approved yet: nothing can be submitted
+        assert not L.may_submit([], stage, 0.01)[0]
+    assert spent["committed_usd"] <= stage["cap_usd"] - stage["reserve_usd"] + 1e-9
+    specs = [json.loads(p.read_text()) for p in sorted((ROOT / "configs/study02/jobs/e2").glob("e2s2_*.json"))]
+    worst = 0.0
+    for s in specs:
+        assert s["budget"] == "e2_stage2" and s["flavor"] in stage["flavors"]
+        worst += L.reservation_usd(s["timeout_min"], stage["flavors"][s["flavor"]] / 60)
+        text = " ".join(L.job_command(s, stage, "0" * 40))
+        assert "scripts/s2_e2.py" in text and "s2_score.py" not in text  # the pilot scores no sealed split
+    assert len(specs) >= 2 and worst <= stage["cap_usd"] - stage["reserve_usd"]
