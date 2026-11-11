@@ -61,6 +61,7 @@ def dev_table(d: Path) -> dict:
     if not rows:
         return {}
     return {"episodes": len(rows), "shortcut_successes": sum(bool(r["success"]) and r["shortcut"] for r in rows),
+            "successes": int(sum(r["success"] for r in rows)), "episodes_using_the_shortcut": sum(r["shortcut"] for r in rows),
             "wrong_part_successes": sum(bool(r["success"]) and not r["check_parts"] for r in rows),
             **{k: {"all": rate(rows, k), **{str(h): rate(rows, k, h) for h in (1, 2, 3, 4)}} for k, _ in MEASURES}}
 
@@ -233,6 +234,19 @@ def main() -> None:
                            "yield": [c["yield"] for c in first["cycles"]],
                            "accepted_by_shortcut": [c["accepted_by_shortcut"] for c in first["cycles"]],
                            "seconds_per_attempt": [c["seconds_per_attempt"] for c in first["cycles"]]}}
+    r6 = [json.loads((d / "result.json").read_text())["seconds_per_episode"] for d in sorted(RUNS.glob("calib3_*"))]
+    r4 = [json.loads((d / "result.json").read_text())["seconds_per_episode"] for d in sorted(RUNS.glob("calib_e1_s15_*"))]
+    if len(cyc) == 2 and r6 and r4:  # the remaining stages once more, with this pilot and the corrected engine as inputs
+        R = load("s2_e2_rebudget")
+        gain = (sum(r4) / len(r4)) / (sum(r6) / len(r6))  # greedy scoring, R6 against the engine Stage 1 measured
+        y = sum(c["accepted"] for c in cyc) / sum(c["tasks_offered"] for c in cyc)
+        att = sum(c["rollout_seconds"] for c in cyc) / sum(c["attempts_sampled"] for c in cyc)
+        step = sum(c["train_seconds"] for c in cyc) / sum(c["steps"] for c in cyc)
+        x2 = {**x, "train_seconds_per_step": step, "seconds_per_episode": {k: v / gain for k, v in x["seconds_per_episode"].items()},
+              "untrained_seconds_per_episode": x["untrained_seconds_per_episode"] / gain}
+        keep = lambda v: {k: z for k, z in v.items() if k.endswith("_usd") and "stage1" not in k and not isinstance(z, (list, dict))}  # noqa: E731
+        res["rebudget"] = {"yield": y, "attempt_seconds": att, "train_seconds_per_step": step, "greedy_speed_gain_of_r6": gain,
+                           "by_the_plans_rules": keep(R.cost(x2, y, att)), "sealed_on_new_engine": keep(R.cost(x2, y, att, True))}
     (OUT / "stage2r.json").write_text(json.dumps(res, indent=1) + "\n")
 
     ok = lambda b: "met" if b else "**not met**"  # noqa: E731
@@ -275,7 +289,8 @@ def main() -> None:
         for name, d in dev.items():
             for key, label in MEASURES if d else ():
                 rows.append([name if key == "success" else "", label, *[pc(d[key][h]) for h in ("all", "1", "2", "3", "4")],
-                             (f"{d['shortcut_successes']} by shortcut, {d['wrong_part_successes']} with a wrong part" if key == "success" else "")])
+                             (f"{d['shortcut_successes']} of {d['successes']} by shortcut, {d['wrong_part_successes']} with a wrong part; "
+                              f"{d['episodes_using_the_shortcut']} of {d['episodes']} episodes show the shortcut" if key == "success" else "")])
         md += table(["adapter", "success", "all", "1 hop", "2", "3", "4", "of the successes"], rows)
         fp = res["first_pilot"]
         md += ["First pilot (protocol 1, engine R1-R4), original validator: " + " → ".join(pc(v) for v in fp["dev"])
@@ -326,6 +341,17 @@ def main() -> None:
               f"{c['model_gpu_seconds']:.0f}", f"{c['cost_ratio_to_model']:.2f}"] for c in cyc])
         md += ["First pilot, engine R1-R4: " + " and ".join(f"{v:.3f}" for v in res["first_pilot"]["seconds_per_attempt"])
                + " s per attempt. The model is the cost model at Stage 1's measurements, which were made on that engine.", ""]
+    if "rebudget" in res:
+        rb = res["rebudget"]
+        md += ["## The main run's cost with this pilot as input (USD; not approved, not run)", "",
+               f"Yield {pc(rb['yield'])} over both cycles, {rb['attempt_seconds']:.3f} s per attempt, {rb['train_seconds_per_step']:.2f} s per "
+               f"training step, greedy scoring {rb['greedy_speed_gain_of_r6']:.2f} times faster than on the engine Stage 1 costed; otherwise "
+               "the cost model of [budget_stage1.md](../../../experiments/study02_e2_signal/budget_stage1.md). The adversarial set and a "
+               "second evaluation of sealed splits are not in the model.", ""]
+        md += table(["", "Stage 3A", "Stage 3B", "3A + 3B", "extension"], [
+            [k, f"{v['stage3_block_a_usd']:.0f}", f"{v['stage3_block_b_usd']:.0f}", f"{v['stage3_block_a_usd'] + v['stage3_block_b_usd']:.0f}",
+             f"{v['extension_usd']:.0f}"] for k, v in (("sealed splits on the Experiment 1 scoring path (the plan's rule)", rb["by_the_plans_rules"]),
+                                                      ("sealed splits on the corrected engine", rb["sealed_on_new_engine"]))])
     m = res["books"]
     if m:
         md += ["## Money", ""] + table(["job", "flavour", "outcome", "reserved USD", "billed USD"], [

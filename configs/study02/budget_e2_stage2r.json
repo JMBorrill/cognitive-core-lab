@@ -13,6 +13,7 @@
   "a10g-small": 1.0
  },
  "approval": "Owner, 2026-11-11: a repeat of Stage 2 under protocol 2 on the corrected engine, hard cap 5 USD in total. No sealed split, no main experiment.",
- "closed": false,
- "opened": "After commit 916d37c (amendment 1, pushed; draft PR #3) and a full local test run: 87 passed, 1 skipped."
+ "closed": true,
+ "opened": "After commit 916d37c (amendment 1, pushed; draft PR #3) and a full local test run: 87 passed, 1 skipped.",
+ "closed_note": "The repeated pilot ended on 2026-11-11 at 1.77 USD. Stage 3 is not approved."
 }

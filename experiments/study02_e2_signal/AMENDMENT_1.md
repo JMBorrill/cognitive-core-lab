@@ -143,7 +143,16 @@ two jobs whose worst cases sum to 3.57 USD. Expected about 1.7 USD.
 - The detector describes the shortcut in the forms seen so far. The audit's wider flag and its blind reading
   exist because a third form is possible.
 
-## 8. Not changed, not done
+## 8. Outcome of the repeated pilot (added 2026-11-11, after it ran; nothing above was edited)
+
+Report: [docs/study02/REPORT_E2_STAGE2R.md](../../docs/study02/REPORT_E2_STAGE2R.md). All four gates met:
+yield 33.2% and 42.0%; audit 0 false accepts in 200 (19 flagged and 20 unflagged episodes read); cost 0.79
+and 0.81 of the model; `dev` 25.8% → 30.7% → 44.2% by the original validator. Buffers: no shortcut, no wrong
+part. Cycle-2 adapter: `dev` 44.2% (original validator), 43.5% (each fact for its own part), 40.8% (and no
+shortcut); adversarial set 18.3%, against 23.7% on the same 350 tasks' original worlds. 1.77 USD of the 5 USD
+cap. Stage 3 is not approved.
+
+## 9. Not changed, not done
 
 Hypotheses and thresholds; arms; seed set and stream (frozen hashes); training settings; sampling; the
 curriculum; the teacher thresholds; `data/v2`. No sealed split is scored. Stage 3 is not run. The 1.5B scoring

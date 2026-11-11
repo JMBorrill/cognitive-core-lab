@@ -4,3 +4,5 @@
 {"time": "2026-11-11T16:16:38Z", "event": "reconcile", "provider_used_usd": 0.866684, "provider_account_total_usd": 55.292744, "ledger_settled_usd": 0.8667}
 {"time": "2026-11-11T16:16:38Z", "event": "reserve", "key": "e2s2r_cycle2", "flavor": "a10g-small", "timeout_min": 120, "price_per_min": 0.016667, "reserved_usd": 2.0334, "commit": "ccffe6521bfab3ce543c3874105dadf6150ab801", "configs": []}
 {"time": "2026-11-11T16:16:39Z", "event": "submitted", "key": "e2s2r_cycle2", "job_id": "6af494e79737d9a9e093176c", "url": "https://huggingface.co/jobs/JMBorrill/6af494e79737d9a9e093176c"}
+{"time": "2026-11-11T17:09:34Z", "event": "settled", "key": "e2s2r_cycle2", "job_id": "6af494e79737d9a9e093176c", "stage": "COMPLETED", "message": null, "running_secs": 3154, "cost_usd": 0.9, "cost_source": "provider", "reserved_usd": 2.0334}
+{"time": "2026-11-11T17:09:34Z", "event": "reconcile", "provider_used_usd": 1.766702, "provider_account_total_usd": 56.192762, "ledger_settled_usd": 1.7667}

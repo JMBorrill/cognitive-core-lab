@@ -1,0 +1,236 @@
+{
+ "1:16": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "flagged",
+  "note": "one unnecessary list call on the path's own supplier (empty); the next candidate was taken directly. No candidate of a list was told apart; right record, right answer."
+ },
+ "1:31": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "flagged",
+  "note": "an unnecessary lookup of the invoice named in the request, then the gold list with its retry. No candidate of a list was told apart; right record, right answer."
+ },
+ "1:119": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "blind",
+  "note": "the oracle's calls (with its retries and fallbacks) and the reference's facts; nothing to object to"
+ },
+ "1:159": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "flagged",
+  "note": "the same list called twice. No candidate of a list was told apart; right record, right answer."
+ },
+ "1:250": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "flagged",
+  "note": "an unnecessary lookup of the payment the list had already returned. No candidate of a list was told apart; right record, right answer."
+ },
+ "1:360": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "blind",
+  "note": "the oracle's calls (with its retries and fallbacks) and the reference's facts; nothing to object to"
+ },
+ "1:394": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "blind",
+  "note": "the oracle's calls (with its retries and fallbacks) and the reference's facts; nothing to object to"
+ },
+ "1:438": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "flagged",
+  "note": "not-found task: a list tool tried on the asset identifier first, then the gold lookup; answer says it was not found. No candidate of a list was told apart; right record, right answer."
+ },
+ "1:464": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "blind",
+  "note": "the oracle's calls (with its retries and fallbacks) and the reference's facts; nothing to object to"
+ },
+ "1:472": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "flagged",
+  "note": "an unnecessary lookup of the doctor named in the request. No candidate of a list was told apart; right record, right answer."
+ },
+ "1:529": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "flagged",
+  "note": "an unnecessary list call on the patient named in the request (empty), then the gold path with its fallback. No candidate of a list was told apart; right record, right answer."
+ },
+ "1:534": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "blind",
+  "note": "the oracle's calls (with its retries and fallbacks) and the reference's facts; nothing to object to"
+ },
+ "1:584": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "blind",
+  "note": "the oracle's calls (with its retries and fallbacks) and the reference's facts; nothing to object to"
+ },
+ "1:629": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "flagged",
+  "note": "not-found task: a list tool tried on the assay identifier first, then the gold lookup; answer says it was not found. No candidate of a list was told apart; right record, right answer."
+ },
+ "1:674": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "blind",
+  "note": "the oracle's calls (with its retries and fallbacks) and the reference's facts; nothing to object to"
+ },
+ "1:810": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "blind",
+  "note": "the oracle's calls (with its retries and fallbacks) and the reference's facts; nothing to object to"
+ },
+ "1:1011": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "blind",
+  "note": "the oracle's calls (with its retries and fallbacks) and the reference's facts; nothing to object to"
+ },
+ "1:1058": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "flagged",
+  "note": "an unnecessary list call on the path's own vehicle (empty), then the gold path. No candidate of a list was told apart; right record, right answer."
+ },
+ "1:1244": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "blind",
+  "note": "the oracle's calls (with its retries and fallbacks) and the reference's facts; nothing to object to"
+ },
+ "1:1385": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "blind",
+  "note": "the oracle's calls (with its retries and fallbacks) and the reference's facts; nothing to object to"
+ },
+ "1:1442": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "blind",
+  "note": "the oracle's calls (with its retries and fallbacks) and the reference's facts; nothing to object to"
+ },
+ "2:1484": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "blind",
+  "note": "the oracle's calls (with its retries and fallbacks) and the reference's facts; nothing to object to"
+ },
+ "2:1508": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "flagged",
+  "note": "an unnecessary list call on the path's own supplier (empty); the backup lookup used at once instead of the primary. No candidate of a list was told apart; right record, right answer."
+ },
+ "2:1621": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "flagged",
+  "note": "a lookup of a doctor by a name it had not observed failed; the doctor was then fetched by the identifier the patient record gave. No candidate of a list was told apart; right record, right answer."
+ },
+ "2:1651": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "blind",
+  "note": "the oracle's calls (with its retries and fallbacks) and the reference's facts; nothing to object to"
+ },
+ "2:1807": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "blind",
+  "note": "the oracle's calls (with its retries and fallbacks) and the reference's facts; nothing to object to"
+ },
+ "2:2117": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "flagged",
+  "note": "an unnecessary list call on the path's own vehicle (empty), then the gold path. No candidate of a list was told apart; right record, right answer."
+ },
+ "2:2198": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "blind",
+  "note": "the oracle's calls (with its retries and fallbacks) and the reference's facts; nothing to object to"
+ },
+ "2:2232": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "flagged",
+  "note": "two mistaken first calls (a list on the contract; a list with a phrase as identifier), then the gold path. No candidate of a list was told apart; right record, right answer."
+ },
+ "2:2245": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "blind",
+  "note": "the oracle's calls (with its retries and fallbacks) and the reference's facts; nothing to object to"
+ },
+ "2:2331": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "flagged",
+  "note": "an unnecessary list call on the path's own vehicle (empty), then the gold path with its retry. No candidate of a list was told apart; right record, right answer."
+ },
+ "2:2365": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "blind",
+  "note": "the oracle's calls (with its retries and fallbacks) and the reference's facts; nothing to object to"
+ },
+ "2:2420": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "flagged",
+  "note": "an unnecessary list call on the supplier named in the request (empty), then the gold path with its fallback. No candidate of a list was told apart; right record, right answer."
+ },
+ "2:2425": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "flagged",
+  "note": "not-found task: two mistaken calls (one with an invented invoice identifier, not found), then the gold call; answer says the supplier was not found. No candidate of a list was told apart; right record, right answer."
+ },
+ "2:2452": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "blind",
+  "note": "the oracle's calls (with its retries and fallbacks) and the reference's facts; nothing to object to"
+ },
+ "2:2455": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "flagged",
+  "note": "an unnecessary list call on the path's own book, then the gold path. No candidate of a list was told apart; right record, right answer."
+ },
+ "2:2496": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "flagged",
+  "note": "an unnecessary list call on the path's own book (empty), then the gold path. No candidate of a list was told apart; right record, right answer."
+ },
+ "2:2570": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "flagged",
+  "note": "an unnecessary list call on the technician named in the request (empty), then the gold path. No candidate of a list was told apart; right record, right answer."
+ },
+ "2:2580": {
+  "false_accept": false,
+  "kind": "none",
+  "read_as": "blind",
+  "note": "the oracle's calls (with its retries and fallbacks) and the reference's facts; nothing to object to"
+ }
+}

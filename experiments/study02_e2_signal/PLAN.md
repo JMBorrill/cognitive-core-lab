@@ -479,6 +479,10 @@ each fact of a multi-part answer given for its own part), an adversarial evaluat
 records, three separately reported measures on the unchanged `dev`, and a pre-registered audit with the 2%
 gate. Where this plan and the amendment differ, the amendment holds.
 
+**Outcome of the repeated pilot**: all four gates met, the audit with 0 false accepts in 200
+([report](../../docs/study02/REPORT_E2_STAGE2R.md)). 1.77 USD of the 5 USD cap. Stage 3 is not approved; its
+endpoint and its teacher arm are open decisions the report lists.
+
 ## Frozen inputs
 
 Recorded in [`configs/study02/e2/frozen.json`](../../configs/study02/e2/frozen.json) at the end of Stage 1
