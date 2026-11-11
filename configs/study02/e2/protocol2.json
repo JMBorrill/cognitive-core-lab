@@ -1,0 +1,42 @@
+{
+ "protocol": 2,
+ "amendment": "experiments/study02_e2_signal/AMENDMENT_1.md",
+ "acceptance_rule": {
+  "protocol_1": "passes the validator; no parse error, unknown tool or invalid argument (ccl.s2.rejection)",
+  "added_by_protocol_2": [
+   "answer_parts: a multi-part answer gives each fact for its own part (ccl.verify.parts_ok)",
+   "shortcut: no probe and hit on one column of a list (ccl.verify.shortcut)"
+  ],
+  "applies_to": "every buffer of every arm, a teacher's demonstrations included"
+ },
+ "adversarial_dev": {
+  "tasks": 350,
+  "sha256": "c19010c9cb77bfeb83e41d292ed848cbf248f5b3874e5cb2c589e58bb8cf65ff",
+  "built_by": "ccl.adversarial.adversarial_dev",
+  "from": "the dev tasks in which a gold call depends on a list selection (status done or blocked)",
+  "hops": {
+   "2": 50,
+   "3": 136,
+   "4": 164
+  }
+ },
+ "dev_reporting": [
+  "success: the original validator (as in Experiments 0 and 1 and the first pilot)",
+  "success_parts: and each fact given for its own part",
+  "success_clean: and no shortcut in the trace",
+  "v2/dev_adv success_parts: the adversarial set, beside the same adapter's success on the 350 original tasks"
+ ],
+ "audit": {
+  "sample": 200,
+  "from_not_strictly_successful": "all, up to 100",
+  "blind_unflagged_read": 20,
+  "seed": "e2|audit",
+  "false_accept_limit": 0.02
+ },
+ "engine": "R1-R4 with R6 (grouped attention, computed in float32); calibrated in Stage 2: 4 and 1 of 400 outcomes changed",
+ "repeat_pilot": {
+  "arm_directory": "r0_practice_p2",
+  "cap_usd": 5.0,
+  "cycles": 2
+ }
+}

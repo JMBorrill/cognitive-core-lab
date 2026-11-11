@@ -139,3 +139,18 @@ def test_stage_two_is_prepared_with_its_own_cap_and_its_job_specs_fit_under_it()
         assert "scripts/s2_e2.py" in text and "s2_score.py" not in text  # the pilot scores no sealed split
     assert len(specs) >= 2 and worst <= stage["cap_usd"] - stage["reserve_usd"]
     assert not any("e1dev" in " ".join(s["extra"]) for s in specs)  # not approved for paid execution
+
+
+def test_the_repeated_pilot_has_a_hard_cap_of_five_dollars_and_its_jobs_fit_under_it():
+    stage, ledger = L.load_budget("e2_stage2r")
+    assert stage["cap_usd"] == 5.0 and stage["max_parallel"] == 1 and set(stage["flavors"]) == {"a10g-small"}
+    assert ledger.name == "ledger_stage2r.jsonl"
+    spent = L.books(L.read_ledger(ledger))
+    assert max(spent["committed_usd"], spent["provider_used_usd"]) <= stage["cap_usd"]
+    specs = [json.loads(p.read_text()) for p in sorted((ROOT / "configs/study02/jobs/e2").glob("e2s2r_*.json"))]
+    worst = sum(L.reservation_usd(s["timeout_min"], stage["flavors"][s["flavor"]] / 60) for s in specs)
+    assert len(specs) == 2 and worst <= stage["cap_usd"] - stage["reserve_usd"]
+    for s in specs:
+        text = " ".join(L.job_command(s, stage, "0" * 40))
+        assert s["budget"] == "e2_stage2r" and "s2_score.py" not in text and "--tag _p2 --grouped --adv" in text
+        assert "teacher" not in text and "e1dev" not in text  # nothing but the pilot

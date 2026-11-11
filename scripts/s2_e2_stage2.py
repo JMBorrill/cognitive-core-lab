@@ -122,7 +122,7 @@ def cycles() -> list[dict]:
                     for name, v in sorted(g.items())}
         picks = {i: L.choose(by[i]) for i in offered if i in accepted}
         admissible = [x for i in offered for x in by[i] if not x["rejection"]]
-        cut = {i for i, p in picks.items() if L.shortcut(p["trace"])}
+        cut = {i for i, p in picks.items() if L.shortcut_v1(p["trace"])}
         clean = defaultdict(lambda: [0, 0])
         for i in offered:
             clean[str(fam[i]["hops"])][0] += 1

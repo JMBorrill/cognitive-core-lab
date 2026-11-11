@@ -298,7 +298,7 @@ def test_elimination_is_recognised_from_the_trace_and_a_corrected_identifier_is_
     assert not L.by_empty_list({"calls": [listed, under("IS-3", [{"assay_id": "AS-9"}])]})
     assert not L.by_empty_list({"calls": [listed, under("IS-1", [])]})  # nothing found afterwards
     assert not L.by_empty_list({"calls": [listed, under("ZZ-1", []), under("IS-3", [{"assay_id": "AS-9"}])]})  # not a candidate
-    assert L.shortcut({"calls": [listed, under("IS-1", []), under("IS-3", [{"assay_id": "AS-9"}])]})
+    assert L.shortcut_v1({"calls": [listed, under("IS-1", []), under("IS-3", [{"assay_id": "AS-9"}])]})
     assert not L.by_elimination({"calls": [listed, under("IS-1", []), under("IS-3", [{"assay_id": "AS-9"}])]})
 
 

@@ -1,0 +1,12 @@
+{
+ "key": "e2s2r_cycle2",
+ "experiment": "e2",
+ "budget": "e2_stage2r",
+ "flavor": "a10g-small",
+ "timeout_min": 120,
+ "configs": [],
+ "stages": [],
+ "extra": [
+  "python scripts/s2_e2.py cycle --replicate 0 --arm practice --cycle 2 --tag _p2 --grouped --adv --out /work/runs --bucket /out"
+ ]
+}

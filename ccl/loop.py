@@ -22,7 +22,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 from . import compose as C
-from . import s2
+from . import s2, verify
 from .data import episode_to_examples
 from .evaluate import episode_metrics
 from .runtime import Episode
@@ -102,10 +102,15 @@ def tasks_sha256(tasks: list[Task]) -> str:
 
 # ------------------------------------------------------------------ acceptance and replay
 
-def well_formed(task: Task, ep: Episode) -> bool:
+PROTOCOL = verify.PROTOCOL  # the acceptance rule in force for Experiment 2 (2 since amendment 1)
+
+
+def well_formed(task: Task, ep: Episode, protocol: int = PROTOCOL) -> bool:
     """The acceptance rule without the validator: a final answer and no parse error, unknown tool or
-    invalid argument. What `practice-unverified` may keep."""
-    return ep.trace.termination == "final" and s2.rejection(task, ep) in ([], ["not_success"])
+    invalid argument. What `practice-unverified` may keep. Under protocol 2 an episode that used the
+    shortcut is kept out of this buffer too (the check reads the trace, not the validator)."""
+    return ep.trace.termination == "final" and s2.rejection(task, ep) in ([], ["not_success"]) \
+        and not (protocol >= 2 and verify.shortcut(ep.trace.to_dict()))
 
 
 def choose(rows: list[dict], verified: bool = True, key: str = "") -> dict | None:
@@ -120,7 +125,7 @@ def choose(rows: list[dict], verified: bool = True, key: str = "") -> dict | Non
     return random.Random(f"e2|unverified|{key}|{rows[0]['task_id']}").choice(ok) if ok else None
 
 
-def replay(task: Task, trace: dict, verified: bool = True) -> tuple[Episode | None, str]:
+def replay(task: Task, trace: dict, verified: bool = True, protocol: int = PROTOCOL) -> tuple[Episode | None, str]:
     """Run a recorded attempt again, from its recorded assistant turns, against a fresh simulator.
 
     The replayed episode must see exactly the observations that were recorded, end the same way and (for a
@@ -135,9 +140,9 @@ def replay(task: Task, trace: dict, verified: bool = True) -> tuple[Episode | No
         return None, f"ends as {ep.trace.termination or 'unfinished'}, recorded {trace['termination']}"
     if ep.trace.messages != trace["messages"]:
         return None, "the observations differ from the recorded ones"
-    if verified and s2.rejection(task, ep):
-        return None, "rejected on replay: " + ",".join(s2.rejection(task, ep))
-    if not verified and not well_formed(task, ep):
+    if verified and s2.rejection(task, ep, protocol=protocol):
+        return None, "rejected on replay: " + ",".join(s2.rejection(task, ep, protocol=protocol))
+    if not verified and not well_formed(task, ep, protocol):
         return None, "not well-formed on replay"
     return ep, "ok"
 
@@ -194,7 +199,9 @@ def by_empty_list(trace: dict) -> bool:
     return False
 
 
-def shortcut(trace: dict) -> bool:
+def shortcut_v1(trace: dict) -> bool:
+    """The two forms as the first pilot's report counted them. The acceptance rule of protocol 2 uses
+    `ccl.verify.shortcut`, one definition that covers both and does not depend on tool or order."""
     return by_elimination(trace) or by_empty_list(trace)
 
 
@@ -229,10 +236,13 @@ def audit_sample(accepted: list[dict], n: int = 200, seed: str = "e2|audit") -> 
     return [{**accepted[i], "weight": take[i]} for i in sorted(take)]
 
 
-def attempt_row(index: int, ep: Episode) -> dict:
+def attempt_row(index: int, ep: Episode, protocol: int = PROTOCOL) -> dict:
+    """One attempt as it is stored. `rejection` is under `protocol`; `rejection_v1` is what the rule of the
+    proposal says, kept so that both can be counted from the same attempts."""
     m = episode_metrics(ep.task, ep)
     return {"index": index, "task_id": ep.task.task_id, "attempt": ep.attempt, "success": m["success"],
-            "rejection": s2.rejection(ep.task, ep, m), "well_formed": well_formed(ep.task, ep),
+            "protocol": protocol, "rejection": s2.rejection(ep.task, ep, m, protocol),
+            "rejection_v1": s2.rejection(ep.task, ep, m), "well_formed": well_formed(ep.task, ep, protocol),
             "strict": bool(m["success"]) and s2.dependency_safe(ep.task, ep) and m["unnecessary_calls"] == 0,
             "n_calls": m["n_calls"], "turns": m["turns"], "gen_tokens": m["gen_tokens"],
             "trace": ep.trace.to_dict()}
@@ -298,13 +308,21 @@ class Practice:
     """One practice arm of one replicate. `run(tasks, seed)` must return `ATTEMPTS` episodes per task,
     adjacent and in order, each with `.attempt`."""
 
-    def __init__(self, out: Path, replicate: int, arm: str, fams: list[dict], tools: list[str]):
+    def __init__(self, out: Path, replicate: int, arm: str, fams: list[dict], tools: list[str],
+                 protocol: int | None = None):
         assert arm in ARMS
         self.out, self.replicate, self.arm = Path(out), replicate, arm
         self.stream = Stream(fams, tools, replicate)
         self.bucket = buckets(fams)
         self.state_path = self.out / "state.json"
-        self.state = json.loads(self.state_path.read_text()) if self.state_path.exists() else {"cycles": []}
+        if self.state_path.exists():  # an arm keeps the protocol it was started under (1 before amendment 1)
+            self.state = json.loads(self.state_path.read_text())
+            stored = self.state.get("protocol", 1)
+            assert protocol in (None, stored), f"{self.out} was run under protocol {stored}, not {protocol}"
+            self.protocol = stored
+        else:
+            self.protocol = PROTOCOL if protocol is None else protocol
+            self.state = {"protocol": self.protocol, "cycles": []}
 
     def _save(self) -> None:
         self.out.mkdir(parents=True, exist_ok=True)
@@ -382,7 +400,7 @@ class Practice:
             else:
                 eps = run([self.stream.get(i) for i in idx], seed)
                 assert len(eps) == ATTEMPTS * len(idx)
-                recs = [attempt_row(idx[j // ATTEMPTS], e) for j, e in enumerate(eps)]
+                recs = [attempt_row(idx[j // ATTEMPTS], e, self.protocol) for j, e in enumerate(eps)]
                 path.parent.mkdir(parents=True, exist_ok=True)
                 tmp = path.with_suffix(".tmp")
                 with gzip.open(tmp, "wt") as f:
@@ -396,10 +414,14 @@ class Practice:
                 offered.append(i)
                 counts["attempts"] += len(mine)
                 counts["any_success"] += any(r["success"] for r in mine)
+                # what the rule of the proposal would have admitted, and why protocol 2 turned attempts away
+                counts["tasks_admissible_under_protocol_1"] += any(not r.get("rejection_v1", r["rejection"]) for r in mine)
+                counts["attempts_rejected_for_shortcut"] += sum("shortcut" in r["rejection"] for r in mine)
+                counts["attempts_rejected_for_answer_parts"] += sum("answer_parts" in r["rejection"] for r in mine)
                 pick = choose(mine, verified, seed)
                 if pick is None:
                     continue
-                ep, why = replay(task, pick["trace"], verified)
+                ep, why = replay(task, pick["trace"], verified, self.protocol)
                 if ep is None:
                     counts["replay_failed"] += 1
                     continue
@@ -412,7 +434,7 @@ class Practice:
                 if len(accepted) == CYCLE_ACCEPT:
                     break
             chunk += 1
-        rec = {"cycle": k, "offered": offered, "accepted": accepted, "complete": complete,
+        rec = {"cycle": k, "protocol": self.protocol, "offered": offered, "accepted": accepted, "complete": complete,
                "yield": len(accepted) / max(1, len(offered)), **counts, "chunks": chunk,
                "rows_sha256": s2.rows_sha256(rows)}
         if rec["complete"]:

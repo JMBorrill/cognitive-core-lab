@@ -470,6 +470,15 @@ Report: [docs/study02/REPORT_E2_STAGE2.md](../../docs/study02/REPORT_E2_STAGE2.m
   points); 0.43 s per episode, so the speed criterion is not met. It stays off.
 - **Cost**: 2.00 USD of the 10 USD cap. The stage's budget is closed.
 
+## Amendment 1: protocol version 2 (2026-11-11)
+
+After the first pilot the owner approved a repeat of Stage 2 under an amended protocol, at a hard cap of
+5 USD. The amendment is a document of its own, recorded before any job of the repeat:
+**[AMENDMENT_1.md](AMENDMENT_1.md)**. It adds two conditions to the acceptance rule (no shortcut in the trace;
+each fact of a multi-part answer given for its own part), an adversarial evaluation with complete candidate
+records, three separately reported measures on the unchanged `dev`, and a pre-registered audit with the 2%
+gate. Where this plan and the amendment differ, the amendment holds.
+
 ## Frozen inputs
 
 Recorded in [`configs/study02/e2/frozen.json`](../../configs/study02/e2/frozen.json) at the end of Stage 1

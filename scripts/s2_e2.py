@@ -191,23 +191,36 @@ def cmd_calib(a) -> None:
 
 # ------------------------------------------------------------------ seed adapter on dev, and the yield probe
 
+def adversarial_tasks():
+    """The adversarial set of amendment 1: `dev` tasks on worlds with complete candidate records."""
+    from ccl import adversarial
+    return adversarial.adversarial_dev()
+
+
 def cmd_dev(a) -> None:
+    """The seed adapter on `dev`. With a tag the result goes to its own directory (`r0_seed<tag>`), so an
+    adapter can be scored again on another engine beside the first scoring; with --adv also on the
+    adversarial set."""
     from ccl import engine, hf
-    name = f"r{a.replicate}_seed"
+    name = f"r{a.replicate}_seed{a.tag}"
     out, remote = dirs(a, name)
-    model_path, adapter = s2.fetch_model(S15), adapter_dir(a, "e2", name)
+    s2.restore(remote, out)
+    model_path, adapter = s2.fetch_model(S15), adapter_dir(a, "e2", f"r{a.replicate}_seed")
     if a.engine == "e1":  # the Experiment 1 path, if the new engine did not pass its calibration
         model, tok = hf.load_policy_model(model_path, adapter)
         policy = hf.HFPolicy(model, tok, name)
     else:
         model, tok = engine.load_policy_model(model_path, adapter)
-        policy = engine.Engine(model, tok, name, token_budget=a.token_budget, max_rows=a.max_rows)
+        policy = engine.Engine(model, tok, name, token_budget=a.token_budget, max_rows=a.max_rows, grouped=a.grouped)
     timing = s2.evaluate(policy, s2.load_split("dev"), "v2/dev", out, name, batch=32,
                          checkpoint=lambda: s2.sync(out, remote))
-    rows = [json.loads(l) for l in open(out / "metrics.jsonl")]
-    result = {"name": name}
-    result.update({"dev_engine": a.engine, "dev_tasks": len(rows), "dev_success": sum(r["success"] for r in rows) / len(rows),
-                   "dev_seconds": timing["seconds"], "dev_generation": policy.stats})
+    result = {"name": name, "dev_engine": a.engine, "grouped_attention": a.grouped, "dev_seconds": timing["seconds"]}
+    if a.adv:
+        result["adv_seconds"] = s2.evaluate(policy, adversarial_tasks(), "v2/dev_adv", out, name, batch=32,
+                                            checkpoint=lambda: s2.sync(out, remote))["seconds"]
+    rows = [r for r in map(json.loads, open(out / "metrics.jsonl")) if r["split"] == "v2/dev"]
+    result.update({"dev_tasks": len(rows), "dev_success": sum(r["success"] for r in rows) / len(rows),
+                   "dev_generation": policy.stats})
     finish(out, remote, result)
 
 
@@ -254,7 +267,7 @@ def cmd_cycle(a) -> None:
 
     import torch
     from ccl import engine, hf
-    k, name = a.cycle, f"r{a.replicate}_{a.arm}"
+    k, name = a.cycle, f"r{a.replicate}_{a.arm}{a.tag}"  # a tag keeps a repeated pilot beside the first
     out, remote = dirs(a, name)
     s2.restore(remote, out)
     sub, sub_remote = out / f"c{k}", (remote / f"c{k}" if remote else None)
@@ -262,11 +275,12 @@ def cmd_cycle(a) -> None:
     result = json.loads((sub / "result.json").read_text()) if (sub / "result.json").exists() else {"name": f"{name}_c{k}"}
     fams, tools = s2.load_practice()
     arm = L.Practice(out, a.replicate, a.arm, fams, tools)
-    before = f"r{a.replicate}_seed" if k == 1 else f"{name}/c{k - 1}"
+    before = f"r{a.replicate}_seed" if k == 1 else f"{name}/c{k - 1}"  # the adapter this cycle's rollouts come from
+    scored = f"r{a.replicate}_seed{a.tag}" if k == 1 else before  # and where its dev rows are
     if len(arm.state["cycles"]) < k:  # ---- rollouts
         model, tok = engine.load_policy_model(s2.fetch_model(S15), adapter_dir(a, "e2", before))
         eng = engine.Engine(model, tok, name, temperature=L.TEMPERATURE, top_p=L.TOP_P, token_budget=a.token_budget,
-                            max_rows=a.max_rows)
+                            max_rows=a.max_rows, grouped=a.grouped)
         clock = {"seconds": 0.0, "attempts": 0}
 
         def run(tasks, seed):
@@ -284,7 +298,8 @@ def cmd_cycle(a) -> None:
         gc.collect()
         torch.cuda.empty_cache()
     rec = arm.state["cycles"][k - 1]
-    result.update({"cycle": k, "tasks_offered": len(rec["offered"]), "accepted": len(rec["accepted"]), "yield": rec["yield"],
+    result.update({"cycle": k, "protocol": arm.protocol, "grouped_attention": a.grouped,
+                   "tasks_offered": len(rec["offered"]), "accepted": len(rec["accepted"]), "yield": rec["yield"],
                    "accepted_strict": rec.get("accepted_strict", 0), "replay_failed": rec.get("replay_failed", 0),
                    "attempts": rec["attempts"], "buffer_rows_sha256": rec["rows_sha256"]})
     finish(sub, sub_remote, result)
@@ -307,22 +322,31 @@ def cmd_cycle(a) -> None:
     torch.cuda.empty_cache()
     # ---- that adapter on dev
     model, tok = engine.load_policy_model(s2.fetch_model(S15), sub / "train")
-    policy = engine.Engine(model, tok, f"{name}_c{k}", token_budget=a.token_budget, max_rows=a.max_rows)
+    policy = engine.Engine(model, tok, f"{name}_c{k}", token_budget=a.token_budget, max_rows=a.max_rows, grouped=a.grouped)
     timing = s2.evaluate(policy, s2.load_split("dev"), "v2/dev", sub, f"{name}_c{k}", checkpoint=lambda: s2.sync(out, remote))
-    scored = [json.loads(l) for l in open(sub / "metrics.jsonl")]
-    dev = sum(r["success"] for r in scored) / len(scored)
-    prior = adapter_dir(a, "e2", before).parent
+    rows = [r for r in map(json.loads, open(sub / "metrics.jsonl")) if r["split"] == "v2/dev"]
+    dev = sum(r["success"] for r in rows) / len(rows)  # the original validator, as in the first pilot
+    prior = Path(a.out) / "e2" / scored
+    prior.mkdir(parents=True, exist_ok=True)
     for f in ("result.json", "metrics.jsonl"):  # the dev score of the adapter this cycle's rollouts came from
-        if not (prior / f).exists() and a.bucket and (Path(a.bucket) / "e2" / before / f).exists():
-            shutil.copyfile(Path(a.bucket) / "e2" / before / f, prior / f)
+        if not (prior / f).exists() and a.bucket and (Path(a.bucket) / "e2" / scored / f).exists():
+            shutil.copyfile(Path(a.bucket) / "e2" / scored / f, prior / f)
     was = [json.loads(l) for l in open(prior / "metrics.jsonl")] if (prior / "metrics.jsonl").exists() else []
     was = [r["success"] for r in was if r["split"] == "v2/dev"]
-    result.update({"dev_success": dev, "dev_tasks": len(scored), "dev_seconds_this_job": timing["seconds"],
-                   "dev_success_before": sum(was) / len(was) if was else None})
+    result.update({"dev_success": dev, "dev_tasks": len(rows), "dev_seconds_this_job": timing["seconds"],
+                   "dev_success_before": sum(was) / len(was) if was else None,
+                   "dev_success_clean": sum(r.get("success_clean", r["success"]) for r in rows) / len(rows)})
     finish(sub, sub_remote, result)
     s2.sync(out, remote)
     if was and dev < sum(was) / len(was) - 0.05:
         sys.exit(3)
+    if a.adv:  # ---- and on the adversarial set (amendment 1); reported, never used by a stop rule
+        t = s2.evaluate(policy, adversarial_tasks(), "v2/dev_adv", sub, f"{name}_c{k}", checkpoint=lambda: s2.sync(out, remote))
+        adv = [r for r in map(json.loads, open(sub / "metrics.jsonl")) if r["split"] == "v2/dev_adv"]
+        result.update({"adv_tasks": len(adv), "adv_seconds_this_job": t["seconds"],
+                       "adv_success_parts": sum(r["success_parts"] for r in adv) / len(adv)})
+        finish(sub, sub_remote, result)
+        s2.sync(out, remote)
 
 
 def cmd_e1dev(a) -> None:
@@ -420,16 +444,17 @@ def cmd_replay(a) -> None:
         for r in s2.read_gz(f):
             if r["rejection"]:
                 continue
+            protocol = r.get("protocol", 1)  # files written before amendment 1 hold protocol-1 attempts
             task = st.get(r["index"])
             assert task.task_id == r["task_id"]
             if r["trace"]["messages"][0]["content"].endswith(FEWSHOT):  # a teacher sees the few-shot prompt
                 ep = Episode(task, "replay", fewshot=True)
                 for t in r["trace"]["turns"]:
                     ep.step(t["raw"])
-                ok = ep.done and ep.trace.messages == r["trace"]["messages"] and not s2.rejection(task, ep)
+                ok = ep.done and ep.trace.messages == r["trace"]["messages"] and not s2.rejection(task, ep, protocol=protocol)
                 why = "ok" if ok else "differs on replay"
             else:
-                why = L.replay(task, r["trace"])[1]
+                why = L.replay(task, r["trace"], protocol=protocol)[1]
             checked += 1
             if why != "ok":
                 failures.append({"file": f.name, "index": r["index"], "attempt": r["attempt"], "why": why})
@@ -443,8 +468,16 @@ def cmd_audit(a) -> None:
     """The verifier audit's sample for a practice arm (plan §5), with what a program can say about each
     episode: whether it makes the oracle's calls, was found by elimination, used an identifier it had not
     observed, or states values the reference answer does not. Episodes that differ from the oracle are listed
-    for reading; verdicts are recorded by hand in `audit_verdicts.json` beside the output."""
+    for reading; verdicts are recorded by hand in `audit_verdicts.json` beside the output.
+
+    For an arm run under protocol 2 the procedure is the one pre-registered in amendment 1: the flags also
+    include the shortcut and per-part checks of the acceptance rule (which no buffered episode should fail)
+    and any use of two candidates of one list, and 20 sampled episodes that carry no flag are marked for
+    reading as well, as a check on the flags themselves."""
+    import random
     import re
+
+    from ccl import verify
 
     from ccl.oracle import OraclePolicy
     from ccl.runtime import run_batch
@@ -472,10 +505,14 @@ def cmd_audit(a) -> None:
         num = lambda v: v if "-" in v[1:] else str(float(v.replace(",", "")))  # noqa: E731  "87.8" is "87.80"
         said = {num(v) for v in value.findall(p["trace"]["final"] or "")}
         extra = sorted(said - {num(v) for v in value.findall(task.reference_answer + " " + task.request)})
-        flags = [k for k, on in (("found_by_elimination", L.by_elimination(p["trace"])),
-                                 ("unobserved_identifier", L.unobserved_identifier(task, p["trace"])),
-                                 ("values_not_in_the_reference_answer", bool(extra)),
-                                 ("calls_differ_from_the_oracle", mine != gold)) if on]
+        checks = [("found_by_elimination", L.by_elimination(p["trace"])),
+                  ("unobserved_identifier", L.unobserved_identifier(task, p["trace"])),
+                  ("values_not_in_the_reference_answer", bool(extra)),
+                  ("calls_differ_from_the_oracle", mine != gold)]
+        if arm.protocol >= 2:
+            checks = [("shortcut", verify.shortcut(p["trace"])), ("answer_parts", not verify.parts_ok(task, p["trace"]["final"])),
+                      ("uses_two_candidates_of_a_list", verify.enumerates(p["trace"]))] + checks[1:]
+        flags = [k for k, on in checks if on]
         out.append({**x, "task_id": task.task_id, "hops": task.depth, "flags": flags, "extra_values": extra,
                     "request": task.request, "reference_answer": task.reference_answer, "answer": p["trace"]["final"],
                     "calls": [[c["turn"], c["tool"], c["args"], c["outcome"], c["result"].get("error", "")]
@@ -483,6 +520,12 @@ def cmd_audit(a) -> None:
                     "oracle_calls": [[c.turn, c.tool, c.args] for c in o.trace.calls]})
     res = {"arm": d.name, "accepted_episodes": len(accepted), "not_strict": sum(not x["strict"] for x in accepted),
            "sampled": len(out), "to_read": sum(bool(x["flags"]) for x in out), "sample": out}
+    if arm.protocol >= 2:
+        plain = [x for x in out if not x["flags"]]
+        for x in random.Random("e2|audit|blind").sample(plain, min(20, len(plain))):
+            x["blind"] = True
+        res = {**res, "protocol": arm.protocol, "blind": sum(bool(x.get("blind")) for x in out),
+               "to_read": sum(bool(x["flags"]) or bool(x.get("blind")) for x in out), "sample": out}
     (d / "audit.json").write_text(json.dumps(res, indent=1) + "\n")
     print(json.dumps({k: v for k, v in res.items() if k != "sample"}))
 
@@ -506,7 +549,8 @@ def main():
     ap.add_argument("--cycle", type=int, default=1)
     ap.add_argument("--sample", type=int, default=200, help="audit: episodes to sample")
     ap.add_argument("--tag", default="", help="calib: suffix of the result directories; replay: of replay.json")
-    ap.add_argument("--grouped", action="store_true", help="calib: with R6, which is otherwise off everywhere")
+    ap.add_argument("--grouped", action="store_true", help="the corrected engine revision R6 (calib, dev, cycle)")
+    ap.add_argument("--adv", action="store_true", help="dev, cycle: also score the adversarial set of amendment 1")
     ap.add_argument("--max-changed", type=float, default=1.0, help="calib: fail above this share of changed outcomes")
     a = ap.parse_args()
     globals()[f"cmd_{a.command}"](a)
