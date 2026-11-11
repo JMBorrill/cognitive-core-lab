@@ -1,0 +1,19 @@
+{
+ "name": "e2_teacher2",
+ "cap_usd": 2.0,
+ "reserve_usd": 0.0,
+ "provider_baseline_usd": 56.192762,
+ "provider_baseline_time": "2026-11-11, read immediately before the job (the account total after the repeated pilot)",
+ "max_parallel": 1,
+ "ledger": "results/study02/e2/ledger_teacher2.jsonl",
+ "bucket": "JMBorrill/ccl-study02",
+ "image": "ghcr.io/astral-sh/uv:python3.11-bookworm",
+ "repo": "https://github.com/JMBorrill/cognitive-core-lab",
+ "flavors": {
+  "a100-large": 2.5
+ },
+ "approval": "Owner, 2026-11-11: teacher re-qualification under protocol 2, hard cap 2 USD, thresholds unchanged. No sealed split, no Stage 3 training.",
+ "opened": "With amendment 2, section 3, recorded and pushed before the job.",
+ "closed": true,
+ "closed_note": "Re-qualification ended on 2026-11-11 at 0.67 USD: the first candidate qualified, so the second was not run. Stage 3 is not approved."
+}

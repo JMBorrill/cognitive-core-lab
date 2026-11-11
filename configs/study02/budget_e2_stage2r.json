@@ -1,0 +1,19 @@
+{
+ "name": "e2_stage2r",
+ "cap_usd": 5.0,
+ "reserve_usd": 0.5,
+ "provider_baseline_usd": 54.42606,
+ "provider_baseline_time": "2026-11-11, read immediately before the first job of the repeat",
+ "max_parallel": 1,
+ "ledger": "results/study02/e2/ledger_stage2r.jsonl",
+ "bucket": "JMBorrill/ccl-study02",
+ "image": "ghcr.io/astral-sh/uv:python3.11-bookworm",
+ "repo": "https://github.com/JMBorrill/cognitive-core-lab",
+ "flavors": {
+  "a10g-small": 1.0
+ },
+ "approval": "Owner, 2026-11-11: a repeat of Stage 2 under protocol 2 on the corrected engine, hard cap 5 USD in total. No sealed split, no main experiment.",
+ "closed": true,
+ "opened": "After commit 916d37c (amendment 1, pushed; draft PR #3) and a full local test run: 87 passed, 1 skipped.",
+ "closed_note": "The repeated pilot ended on 2026-11-11 at 1.77 USD. Stage 3 is not approved."
+}

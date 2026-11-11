@@ -196,3 +196,5 @@
 {"time": "2026-11-10T16:52:00Z", "event": "settled", "key": "e1_s05_D100_r0_score_b", "job_id": "6af33bac9737d9a9e090de98", "stage": "COMPLETED", "message": null, "running_secs": 1235, "cost_usd": 0.3667, "cost_source": "provider", "reserved_usd": 0.6}
 {"time": "2026-11-10T16:52:00Z", "event": "settled", "key": "e1_s05_D100_r3_score_b", "job_id": "6af33c519737d9a9e090e091", "stage": "COMPLETED", "message": null, "running_secs": 1498, "cost_usd": 0.4333, "cost_source": "provider", "reserved_usd": 0.6}
 {"time": "2026-11-10T16:52:00Z", "event": "reconcile", "provider_used_usd": 50.370999, "ledger_settled_usd": 50.3708}
+{"time": "2026-11-10T19:21:52Z", "event": "provider_cost", "key": "e1_s05_r3", "job_id": "6af319149737d9a9e09076bc", "cost_usd": 3.5834}
+{"time": "2026-11-10T19:21:52Z", "event": "reconcile", "provider_used_usd": 50.387666, "provider_account_total_usd": 50.387666, "ledger_settled_usd": 50.3875}

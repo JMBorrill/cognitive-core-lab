@@ -1,0 +1,69 @@
+{
+ "name": "teacher_Qwen3-14B",
+ "model": {
+  "repo": "Qwen/Qwen3-14B",
+  "revision": "40c069824f4251a91eefaf281ebe4c544efd3e18"
+ },
+ "tasks": 200,
+ "load_seconds": 120.3,
+ "thresholds": {
+  "overall": 0.6,
+  "four_hop": 0.4
+ },
+ "passes": {
+  "greedy": {
+   "attempts": 200,
+   "accepted": 116,
+   "seconds": 472.3,
+   "engine": {
+    "episodes": 200,
+    "groups": 7,
+    "turn_batches": 46,
+    "decode_steps": 2791,
+    "fed_tokens": 237335,
+    "refed_tokens": 20901,
+    "gen_tokens": 25754,
+    "gen_time_s": 471.90213225300045,
+    "oom_splits": 0,
+    "stopped": 28
+   }
+  },
+  "retry": {
+   "attempts": 84,
+   "accepted": 6,
+   "seconds": 204.5,
+   "engine": {
+    "episodes": 84,
+    "groups": 3,
+    "turn_batches": 24,
+    "decode_steps": 1349,
+    "fed_tokens": 102321,
+    "refed_tokens": 9145,
+    "gen_tokens": 10897,
+    "gen_time_s": 204.3110600230002,
+    "oom_splits": 0,
+    "stopped": 26
+   }
+  }
+ },
+ "accepted": 122,
+ "acceptance": 0.61,
+ "acceptance_by_hops": {
+  "1": 0.86,
+  "2": 0.74,
+  "3": 0.54,
+  "4": 0.3
+ },
+ "rollout_seconds": 676.8,
+ "complete": true,
+ "qualifies": false,
+ "python": "3.11.14",
+ "machine": "x86_64",
+ "job_id": "6af382949737d9a9e091942c",
+ "accelerator": "gpu",
+ "commit": "2331ff1b2e13ee93967fc3bca71717ec10384f91",
+ "torch": "2.15.0+cu132",
+ "transformers": "5.22.2",
+ "peft": "0.21.2",
+ "gpu": "NVIDIA L40S"
+}

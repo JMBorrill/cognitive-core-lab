@@ -1,0 +1,12 @@
+{"time": "2026-11-11T12:30:17Z", "event": "reserve", "key": "e2s2_cycle1", "flavor": "a10g-small", "timeout_min": 100, "price_per_min": 0.016667, "reserved_usd": 1.7, "commit": "c430399c81ffe2af2e1f5a670e86117cf5ffde70", "configs": []}
+{"time": "2026-11-11T12:30:17Z", "event": "submitted", "key": "e2s2_cycle1", "job_id": "6af45fd9ab34849891ae1497", "url": "https://huggingface.co/jobs/JMBorrill/6af45fd9ab34849891ae1497"}
+{"time": "2026-11-11T12:30:17Z", "event": "reserve", "key": "e2s2_r6_calib", "flavor": "a10g-small", "timeout_min": 25, "price_per_min": 0.016667, "reserved_usd": 0.45, "commit": "c430399c81ffe2af2e1f5a670e86117cf5ffde70", "configs": []}
+{"time": "2026-11-11T12:30:18Z", "event": "submitted", "key": "e2s2_r6_calib", "job_id": "6af45fdaab34849891ae1499", "url": "https://huggingface.co/jobs/JMBorrill/6af45fdaab34849891ae1499"}
+{"time": "2026-11-11T12:40:56Z", "event": "settled", "key": "e2s2_r6_calib", "job_id": "6af45fdaab34849891ae1499", "stage": "COMPLETED", "message": null, "running_secs": 496, "cost_usd": 0.15, "cost_source": "provider", "reserved_usd": 0.45}
+{"time": "2026-11-11T12:40:56Z", "event": "reconcile", "provider_used_usd": 0.300006, "provider_account_total_usd": 52.726026, "ledger_settled_usd": 0.15}
+{"time": "2026-11-11T13:16:39Z", "event": "settled", "key": "e2s2_cycle1", "job_id": "6af45fd9ab34849891ae1497", "stage": "COMPLETED", "message": null, "running_secs": 2648, "cost_usd": 0.75, "cost_source": "provider", "reserved_usd": 1.7}
+{"time": "2026-11-11T13:16:39Z", "event": "reconcile", "provider_used_usd": 0.900018, "provider_account_total_usd": 53.326038, "ledger_settled_usd": 0.9}
+{"time": "2026-11-11T13:16:40Z", "event": "reserve", "key": "e2s2_cycle2", "flavor": "a10g-small", "timeout_min": 170, "price_per_min": 0.016667, "reserved_usd": 2.8667, "commit": "c430399c81ffe2af2e1f5a670e86117cf5ffde70", "configs": []}
+{"time": "2026-11-11T13:16:40Z", "event": "submitted", "key": "e2s2_cycle2", "job_id": "6af46ab89737d9a9e092ee04", "url": "https://huggingface.co/jobs/JMBorrill/6af46ab89737d9a9e092ee04"}
+{"time": "2026-11-11T14:21:22Z", "event": "settled", "key": "e2s2_cycle2", "job_id": "6af46ab89737d9a9e092ee04", "stage": "COMPLETED", "message": null, "running_secs": 3870, "cost_usd": 1.1, "cost_source": "provider", "reserved_usd": 2.8667}
+{"time": "2026-11-11T14:21:22Z", "event": "reconcile", "provider_used_usd": 2.00004, "provider_account_total_usd": 54.42606, "ledger_settled_usd": 2.0}

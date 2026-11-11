@@ -1,0 +1,14 @@
+{
+ "key": "e2s1_calib2_dev_probe",
+ "experiment": "e2",
+ "budget": "e2_stage1",
+ "flavor": "a10g-small",
+ "timeout_min": 50,
+ "configs": [],
+ "stages": [],
+ "extra": [
+  "python scripts/s2_e2.py calib --tag 2 --max-changed 0.05 --out /work/runs --bucket /out",
+  "python scripts/s2_e2.py dev --replicate 0 --out /work/runs --bucket /out",
+  "python scripts/s2_e2.py probe --replicate 0 --tasks 400 --out /work/runs --bucket /out"
+ ]
+}

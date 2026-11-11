@@ -1,0 +1,12 @@
+{
+ "key": "e2s1_teacher_qwen3_32b",
+ "experiment": "e2",
+ "budget": "e2_stage1",
+ "flavor": "a100-large",
+ "timeout_min": 55,
+ "configs": [],
+ "stages": [],
+ "extra": [
+  "python scripts/s2_e2.py teacher --repo Qwen/Qwen3-32B --revision 9216db5781bf21249d130ec9da846c4624c16137 --token-budget 28000 --max-rows 16 --out /work/runs --bucket /out"
+ ]
+}

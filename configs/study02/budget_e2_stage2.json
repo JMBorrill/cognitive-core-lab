@@ -1,0 +1,18 @@
+{
+ "name": "e2_stage2",
+ "cap_usd": 10.0,
+ "reserve_usd": 1.0,
+ "provider_baseline_usd": 52.42602,
+ "provider_baseline_time": "2026-11-11, read immediately before the first Stage 2 job",
+ "max_parallel": 2,
+ "ledger": "results/study02/e2/ledger_stage2.jsonl",
+ "bucket": "JMBorrill/ccl-study02",
+ "image": "ghcr.io/astral-sh/uv:python3.11-bookworm",
+ "repo": "https://github.com/JMBorrill/cognitive-core-lab",
+ "flavors": {
+  "a10g-small": 1.0
+ },
+ "closed": true,
+ "approval": "Owner, 2026-11-11: Stage 2 at a hard cap of 10 USD, with one calibration of the corrected engine revision R6. Not approved: dev scoring of Experiment 1's adapters.",
+ "closed_note": "Stage 2 ended on 2026-11-11 at 2.00 USD. The pilot did not pass its audit gate; Stage 3 is not approved."
+}

@@ -1,0 +1,751 @@
+{
+ "engine": {
+  "runs": {
+   "e1_s15_D1600_r0": {
+    "episodes": 400,
+    "seconds_per_episode": 0.6583,
+    "success": 0.875,
+    "success_experiment_1": 0.875,
+    "changed_outcome": 4,
+    "same_text_as_full_re_encoding": "22/24",
+    "episodes_compared": 400,
+    "changed_share": 0.01,
+    "success_difference_points": 0.0,
+    "speed_up": 2.4608840953972355,
+    "tokens_read_per_episode": 968.5575,
+    "tokens_written_per_episode": 131.09,
+    "out_of_memory_splits": 0,
+    "gpu": "NVIDIA A10G"
+   },
+   "e1_s15_D25_r0": {
+    "episodes": 400,
+    "seconds_per_episode": 0.6488,
+    "success": 0.8875,
+    "success_experiment_1": 0.89,
+    "changed_outcome": 1,
+    "same_text_as_full_re_encoding": "24/24",
+    "episodes_compared": 400,
+    "changed_share": 0.0025,
+    "success_difference_points": -0.2500000000000058,
+    "speed_up": 2.49691738594328,
+    "tokens_read_per_episode": 1009.26,
+    "tokens_written_per_episode": 134.765,
+    "out_of_memory_splits": 0,
+    "gpu": "NVIDIA A10G"
+   }
+  },
+  "criteria": {
+   "speed": false,
+   "flips": true,
+   "success": true
+  },
+  "passed": false,
+  "outcomes_equivalent": true,
+  "seconds_per_episode": 0.6535500000000001,
+  "speed_up": 2.4787697957310075
+ },
+ "engine_revision_r6": {
+  "runs": {
+   "e1_s15_D1600_r0": {
+    "episodes": 400,
+    "seconds_per_episode": 0.2938,
+    "success": 0.6225,
+    "success_experiment_1": 0.875,
+    "changed_outcome": 113,
+    "same_text_as_full_re_encoding": "12/24",
+    "episodes_compared": 400,
+    "changed_share": 0.2825,
+    "success_difference_points": -25.249999999999993,
+    "speed_up": 5.513955071477196,
+    "tokens_read_per_episode": 877.7525,
+    "tokens_written_per_episode": 116.995,
+    "out_of_memory_splits": 0,
+    "gpu": "NVIDIA A10G"
+   }
+  },
+  "criteria": {
+   "speed": true,
+   "flips": false,
+   "success": false
+  },
+  "passed": false,
+  "outcomes_equivalent": false,
+  "seconds_per_episode": 0.2938,
+  "speed_up": 5.513955071477196
+ },
+ "seed": {
+  "seed_set_sha256": "430c3c7f92004fa56e8e78374bdf87b18de6fd7b1cc921cca13fb9391cfd49a1",
+  "steps": 100,
+  "seconds_per_step": 3.271,
+  "train_seconds": 327.1,
+  "peak_mem_gb": 9.444838912,
+  "adapter_sha256": "ce6bc4f5aa7163d07baa92e844258d2a60a515d77f443059732de3824c828610",
+  "dev_success": 0.25666666666666665,
+  "dev_tasks": 600,
+  "dev_seconds": 254.2,
+  "dev_engine": "new",
+  "dev_by_hops": {
+   "1": 0.85,
+   "2": 0.510989010989011,
+   "3": 0.042105263157894736,
+   "4": 0.011904761904761904
+  },
+  "dev_strict": 0.24666666666666667,
+  "dev_seconds_per_episode": 0.42366666666666664
+ },
+ "bench": {
+  "episodes": 880,
+  "settings": {
+   "always": {
+    "seconds_per_step": 3.604,
+    "peak_mem_gb": 9.536230912,
+    "tokens_per_step": 8043,
+    "tokens_per_second": 2241,
+    "last_loss": 0.07800826791259978
+   },
+   "long_only": {
+    "out_of_memory": "OutOfMemoryError('CUDA out of memory. Tried to allocate 100.00 MiB. GPU 0 has a total capacity of 22.30 GiB of which 34.69 MiB is free. Process 50591 has 22.26 GiB memory in use. Of the allocated memo"
+   },
+   "off": {
+    "out_of_memory": "OutOfMemoryError('CUDA out of memory. Tried to allocate 130.00 MiB. GPU 0 has a total capacity of 22.30 GiB of which 92.69 MiB is free. Process 50591 has 22.21 GiB memory in use. Of the allocated memo"
+   }
+  }
+ },
+ "probe": {
+  "tasks": 400,
+  "accepted": 133,
+  "yield": 0.3325,
+  "attempts": 1600,
+  "attempt_success": 0.23875,
+  "attempt_accepted": 0.23875,
+  "tasks_with_a_success": 0.3325,
+  "termination": {
+   "final": 1453,
+   "stopped": 143,
+   "max_turns": 4
+  },
+  "rejection_reasons": {
+   "not_success": 1218,
+   "unknown_tool": 64,
+   "accepted": 382,
+   "invalid_args": 74,
+   "parse_error": 5
+  },
+  "seconds_per_attempt": 0.3639,
+  "rollout_seconds": 582.3,
+  "tokens_read_per_attempt": 726.415,
+  "tokens_written_per_attempt": 90.7325,
+  "stream_dropped": 0,
+  "by_hops": {
+   "1": {
+    "offered": 71,
+    "accepted": 58,
+    "yield": 0.8169014084507042,
+    "attempt_success": 0.721830985915493
+   },
+   "2": {
+    "offered": 101,
+    "accepted": 52,
+    "yield": 0.5148514851485149,
+    "attempt_success": 0.3613861386138614
+   },
+   "3": {
+    "offered": 112,
+    "accepted": 19,
+    "yield": 0.16964285714285715,
+    "attempt_success": 0.05803571428571429
+   },
+   "4": {
+    "offered": 116,
+    "accepted": 4,
+    "yield": 0.034482758620689655,
+    "attempt_success": 0.010775862068965518
+   }
+  },
+  "by_selections": {
+   "0": {
+    "offered": 60,
+    "accepted": 49,
+    "yield": 0.8166666666666667,
+    "attempt_success": 0.7708333333333334
+   },
+   "1": {
+    "offered": 122,
+    "accepted": 54,
+    "yield": 0.4426229508196721,
+    "attempt_success": 0.2786885245901639
+   },
+   "2": {
+    "offered": 150,
+    "accepted": 28,
+    "yield": 0.18666666666666668,
+    "attempt_success": 0.09833333333333333
+   },
+   "3": {
+    "offered": 52,
+    "accepted": 1,
+    "yield": 0.019230769230769232,
+    "attempt_success": 0.004807692307692308
+   },
+   "4": {
+    "offered": 16,
+    "accepted": 1,
+    "yield": 0.0625,
+    "attempt_success": 0.015625
+   }
+  },
+  "by_novelty": {
+   "0 a seed family": {
+    "offered": 19,
+    "accepted": 13,
+    "yield": 0.6842105263157895,
+    "attempt_success": 0.5789473684210527
+   },
+   "1 seed depth, tools and edges all in the seed": {
+    "offered": 44,
+    "accepted": 34,
+    "yield": 0.7727272727272727,
+    "attempt_success": 0.6647727272727273
+   },
+   "2 seed depth, a tool or edge the seed lacks": {
+    "offered": 109,
+    "accepted": 63,
+    "yield": 0.5779816513761468,
+    "attempt_success": 0.43577981651376146
+   },
+   "3 deeper than any seed family": {
+    "offered": 228,
+    "accepted": 23,
+    "yield": 0.10087719298245613,
+    "attempt_success": 0.03399122807017544
+   }
+  },
+  "by_bucket": {
+   "h1-2|action|none": {
+    "offered": 5,
+    "accepted": 5,
+    "yield": 1.0,
+    "attempt_success": 0.75
+   },
+   "h1-2|action|stop": {
+    "offered": 15,
+    "accepted": 12,
+    "yield": 0.8,
+    "attempt_success": 0.7166666666666667
+   },
+   "h1-2|list|fault": {
+    "offered": 25,
+    "accepted": 15,
+    "yield": 0.6,
+    "attempt_success": 0.4
+   },
+   "h1-2|list|none": {
+    "offered": 37,
+    "accepted": 22,
+    "yield": 0.5945945945945946,
+    "attempt_success": 0.3783783783783784
+   },
+   "h1|list|stop": {
+    "offered": 1,
+    "accepted": 1,
+    "yield": 1.0,
+    "attempt_success": 1.0
+   },
+   "h1|plain|fault": {
+    "offered": 12,
+    "accepted": 12,
+    "yield": 1.0,
+    "attempt_success": 1.0
+   },
+   "h1|plain|none": {
+    "offered": 11,
+    "accepted": 11,
+    "yield": 1.0,
+    "attempt_success": 1.0
+   },
+   "h1|plain|stop": {
+    "offered": 3,
+    "accepted": 0,
+    "yield": 0.0,
+    "attempt_success": 0.0
+   },
+   "h1|twin|none": {
+    "offered": 13,
+    "accepted": 9,
+    "yield": 0.6923076923076923,
+    "attempt_success": 0.5961538461538461
+   },
+   "h2-3-4|plain|none": {
+    "offered": 5,
+    "accepted": 4,
+    "yield": 0.8,
+    "attempt_success": 0.6
+   },
+   "h2-3|fanout|fault": {
+    "offered": 6,
+    "accepted": 3,
+    "yield": 0.5,
+    "attempt_success": 0.4166666666666667
+   },
+   "h2-3|fanout|none": {
+    "offered": 5,
+    "accepted": 3,
+    "yield": 0.6,
+    "attempt_success": 0.3
+   },
+   "h2|action|fault": {
+    "offered": 3,
+    "accepted": 1,
+    "yield": 0.3333333333333333,
+    "attempt_success": 0.3333333333333333
+   },
+   "h2|plain|fault": {
+    "offered": 6,
+    "accepted": 5,
+    "yield": 0.8333333333333334,
+    "attempt_success": 0.6666666666666666
+   },
+   "h2|twin|none": {
+    "offered": 29,
+    "accepted": 9,
+    "yield": 0.3103448275862069,
+    "attempt_success": 0.20689655172413793
+   },
+   "h3-4|plain|fault": {
+    "offered": 1,
+    "accepted": 0,
+    "yield": 0.0,
+    "attempt_success": 0.0
+   },
+   "h3|action|fault": {
+    "offered": 7,
+    "accepted": 1,
+    "yield": 0.14285714285714285,
+    "attempt_success": 0.03571428571428571
+   },
+   "h3|action|none": {
+    "offered": 12,
+    "accepted": 4,
+    "yield": 0.3333333333333333,
+    "attempt_success": 0.125
+   },
+   "h3|action|stop": {
+    "offered": 10,
+    "accepted": 4,
+    "yield": 0.4,
+    "attempt_success": 0.175
+   },
+   "h3|list|fault": {
+    "offered": 29,
+    "accepted": 4,
+    "yield": 0.13793103448275862,
+    "attempt_success": 0.034482758620689655
+   },
+   "h3|list|none": {
+    "offered": 49,
+    "accepted": 4,
+    "yield": 0.08163265306122448,
+    "attempt_success": 0.030612244897959183
+   },
+   "h4|action|fault": {
+    "offered": 5,
+    "accepted": 1,
+    "yield": 0.2,
+    "attempt_success": 0.05
+   },
+   "h4|action|none": {
+    "offered": 16,
+    "accepted": 1,
+    "yield": 0.0625,
+    "attempt_success": 0.015625
+   },
+   "h4|action|stop": {
+    "offered": 15,
+    "accepted": 1,
+    "yield": 0.06666666666666667,
+    "attempt_success": 0.016666666666666666
+   },
+   "h4|fanout|none": {
+    "offered": 5,
+    "accepted": 0,
+    "yield": 0.0,
+    "attempt_success": 0.0
+   },
+   "h4|list|fault": {
+    "offered": 31,
+    "accepted": 1,
+    "yield": 0.03225806451612903,
+    "attempt_success": 0.016129032258064516
+   },
+   "h4|list|none": {
+    "offered": 44,
+    "accepted": 0,
+    "yield": 0.0,
+    "attempt_success": 0.0
+   }
+  },
+  "diversity": {
+   "offered": {
+    "tasks": 400,
+    "families": 400,
+    "base_graphs": 460,
+    "tools": 79,
+    "edges": 199,
+    "hops": {
+     "1": 0.177,
+     "2": 0.253,
+     "3": 0.28,
+     "4": 0.29
+    },
+    "modifier": {
+     "fault": 0.312,
+     "none": 0.578,
+     "stop": 0.11
+    },
+    "shape": {
+     "action": 0.22,
+     "fanout": 0.04,
+     "list": 0.54,
+     "plain": 0.095,
+     "twin": 0.105
+    },
+    "mean_gold_calls": 2.91,
+    "mean_selections": 1.605,
+    "selections": {
+     "0": 0.15,
+     "1": 0.305,
+     "2": 0.375,
+     "3": 0.13,
+     "4": 0.04
+    },
+    "outside_reference": {
+     "new_family": 0.953,
+     "new_tool": 0.49,
+     "new_edge": 0.795,
+     "deeper": 0.57
+    }
+   },
+   "accepted by practice": {
+    "tasks": 133,
+    "families": 133,
+    "base_graphs": 150,
+    "tools": 73,
+    "edges": 78,
+    "hops": {
+     "1": 0.436,
+     "2": 0.391,
+     "3": 0.143,
+     "4": 0.03
+    },
+    "modifier": {
+     "fault": 0.323,
+     "none": 0.541,
+     "stop": 0.135
+    },
+    "shape": {
+     "action": 0.226,
+     "fanout": 0.045,
+     "list": 0.353,
+     "plain": 0.241,
+     "twin": 0.135
+    },
+    "mean_gold_calls": 2.015,
+    "mean_selections": 0.88,
+    "selections": {
+     "0": 0.368,
+     "1": 0.406,
+     "2": 0.211,
+     "3": 0.008,
+     "4": 0.008
+    },
+    "outside_reference": {
+     "new_family": 0.902,
+     "new_tool": 0.421,
+     "new_edge": 0.519,
+     "deeper": 0.173
+    }
+   },
+   "oracle arm, same number of tasks": {
+    "tasks": 133,
+    "families": 133,
+    "base_graphs": 144,
+    "tools": 73,
+    "edges": 138,
+    "hops": {
+     "1": 0.18,
+     "2": 0.256,
+     "3": 0.278,
+     "4": 0.286
+    },
+    "modifier": {
+     "fault": 0.308,
+     "none": 0.579,
+     "stop": 0.113
+    },
+    "shape": {
+     "action": 0.233,
+     "fanout": 0.045,
+     "list": 0.504,
+     "plain": 0.105,
+     "twin": 0.113
+    },
+    "mean_gold_calls": 2.932,
+    "mean_selections": 1.654,
+    "selections": {
+     "0": 0.15,
+     "1": 0.301,
+     "2": 0.361,
+     "3": 0.12,
+     "4": 0.068
+    },
+    "outside_reference": {
+     "new_family": 0.932,
+     "new_tool": 0.489,
+     "new_edge": 0.782,
+     "deeper": 0.564
+    }
+   },
+   "seed set": {
+    "tasks": 400,
+    "families": 50,
+    "base_graphs": 49,
+    "tools": 50,
+    "edges": 26,
+    "hops": {
+     "1": 0.5,
+     "2": 0.5
+    },
+    "modifier": {
+     "fault": 0.26,
+     "none": 0.58,
+     "stop": 0.16
+    },
+    "shape": {
+     "action": 0.22,
+     "fanout": 0.02,
+     "list": 0.4,
+     "plain": 0.18,
+     "twin": 0.18
+    },
+    "mean_gold_calls": 1.78
+   }
+  },
+  "accepted_episodes": {
+   "n": 133,
+   "strict": 126,
+   "same_calls_as_oracle": 126,
+   "more_calls_than_oracle": 7,
+   "fewer_turns_than_oracle": 0,
+   "more_turns_than_oracle": 11,
+   "tasks_with_two_or_more_distinct_passing_attempts": 17,
+   "found_by_elimination": {
+    "accepted_episodes": [
+     178
+    ],
+    "admissible_attempts": 2,
+    "of_admissible_attempts": 382
+   }
+  },
+  "tasks_per_cycle_at_this_yield": 1443.609022556391,
+  "replay": {
+   "dir": "r0_practice",
+   "accepted_attempts_replayed": 382,
+   "failed": 0,
+   "failures": []
+  }
+ },
+ "teachers": {
+  "teacher_Qwen3-14B": {
+   "accepted_strict": 83,
+   "accepted_by_elimination": 7,
+   "accepted_n": 122,
+   "acceptance_without_elimination": {
+    "overall": 0.575,
+    "1": 0.86,
+    "2": 0.72,
+    "3": 0.46,
+    "4": 0.26
+   },
+   "acceptance_strict_only": {
+    "overall": 0.415,
+    "1": 0.72,
+    "2": 0.52,
+    "3": 0.28,
+    "4": 0.14
+   },
+   "model": {
+    "repo": "Qwen/Qwen3-14B",
+    "revision": "40c069824f4251a91eefaf281ebe4c544efd3e18"
+   },
+   "complete": true,
+   "acceptance": 0.61,
+   "acceptance_by_hops": {
+    "1": 0.86,
+    "2": 0.74,
+    "3": 0.54,
+    "4": 0.3
+   },
+   "qualifies": false,
+   "greedy_acceptance": 0.58,
+   "attempts": 284,
+   "rollout_seconds": 676.8,
+   "load_seconds": 120.3,
+   "seconds_per_attempt": 2.3830985915492957,
+   "flavor": "gpu",
+   "usd_per_hour": 1.7999999999999998,
+   "replay": {
+    "dir": "teacher_Qwen3-14B",
+    "accepted_attempts_replayed": 122,
+    "failed": 0,
+    "failures": []
+   },
+   "usd_per_accepted_demonstration": 0.0027737704918032787,
+   "usd_for_14400_demonstrations": 39.94229508196722
+  },
+  "teacher_Qwen3-32B": {
+   "accepted_strict": 120,
+   "accepted_by_elimination": 8,
+   "accepted_n": 155,
+   "acceptance_without_elimination": {
+    "overall": 0.735,
+    "1": 0.96,
+    "2": 0.9,
+    "3": 0.62,
+    "4": 0.46
+   },
+   "acceptance_strict_only": {
+    "overall": 0.6,
+    "1": 0.92,
+    "2": 0.86,
+    "3": 0.42,
+    "4": 0.2
+   },
+   "model": {
+    "repo": "Qwen/Qwen3-32B",
+    "revision": "9216db5781bf21249d130ec9da846c4624c16137"
+   },
+   "complete": true,
+   "acceptance": 0.775,
+   "acceptance_by_hops": {
+    "1": 0.96,
+    "2": 0.9,
+    "3": 0.66,
+    "4": 0.58
+   },
+   "qualifies": true,
+   "greedy_acceptance": 0.745,
+   "attempts": 251,
+   "rollout_seconds": 1098.3,
+   "load_seconds": 67.3,
+   "seconds_per_attempt": 4.375697211155378,
+   "flavor": "gpu",
+   "usd_per_hour": 2.50002,
+   "replay": {
+    "dir": "teacher_Qwen3-32B",
+    "accepted_attempts_replayed": 155,
+    "failed": 0,
+    "failures": []
+   },
+   "usd_per_accepted_demonstration": 0.004920738290322581,
+   "usd_for_14400_demonstrations": 70.85863138064516
+  }
+ },
+ "books": {
+  "cap_usd": 15.0,
+  "reserve_usd": 1.0,
+  "settled_usd": 2.0383,
+  "provider_used_usd": 2.038354,
+  "open_reservations_usd": 0,
+  "committed_usd": 2.0384,
+  "jobs": {
+   "e2s1_seed_calib": {
+    "flavor": "a10g-small",
+    "timeout_min": 50,
+    "reserved_usd": 0.8667,
+    "price_per_min": 0.016667,
+    "commit": "0f0a8aab0a",
+    "stage": "COMPLETED",
+    "running_secs": 1146,
+    "cost_usd": 0.3333,
+    "message": null
+   },
+   "e2s1_calib2_dev_probe": {
+    "flavor": "a10g-small",
+    "timeout_min": 50,
+    "reserved_usd": 0.8667,
+    "price_per_min": 0.016667,
+    "commit": "0c2a864a9e",
+    "stage": "ERROR",
+    "running_secs": 220,
+    "cost_usd": 0.0833,
+    "message": "Job failed with exit code: 1. Reason: Error"
+   },
+   "e2s1_dev_probe": {
+    "flavor": "a10g-small",
+    "timeout_min": 60,
+    "reserved_usd": 1.0334,
+    "price_per_min": 0.016667,
+    "commit": "2331ff1b2e",
+    "stage": "COMPLETED",
+    "running_secs": 930,
+    "cost_usd": 0.2667,
+    "message": null
+   },
+   "e2s1_teacher_qwen3_14b": {
+    "flavor": "l40sx1",
+    "timeout_min": 55,
+    "reserved_usd": 1.71,
+    "price_per_min": 0.03,
+    "commit": "2331ff1b2e",
+    "stage": "COMPLETED",
+    "running_secs": 855,
+    "cost_usd": 0.48,
+    "message": null
+   },
+   "e2s1_teacher_qwen3_32b": {
+    "flavor": "a100-large",
+    "timeout_min": 55,
+    "reserved_usd": 2.375,
+    "price_per_min": 0.041667,
+    "commit": "3fdaf594c9",
+    "stage": "COMPLETED",
+    "running_secs": 1201,
+    "cost_usd": 0.875,
+    "message": null
+   }
+  },
+  "prices": {
+   "e2s1_seed_calib": 1.0000200000000001,
+   "e2s1_calib2_dev_probe": 1.0000200000000001,
+   "e2s1_dev_probe": 1.0000200000000001,
+   "e2s1_teacher_qwen3_14b": 1.7999999999999998,
+   "e2s1_teacher_qwen3_32b": 2.50002
+  }
+ },
+ "headroom": {
+  "seed_dev": 0.25666666666666665,
+  "comparator_measured": false,
+  "bracket_for_1600_family_dev": [
+   0.7688888888888888,
+   0.8141666666666666
+  ],
+  "bracket_holds_for_0.5B": true,
+  "0.5B": {
+   "25": {
+    "dev": 0.263,
+    "test_comp": 0.18849999999999997,
+    "test_id": 0.3095
+   },
+   "1600": {
+    "dev": 0.4646666666666667,
+    "test_comp": 0.377,
+    "test_id": 0.509
+   }
+  },
+  "margin_points_at_bracket": [
+   51.222222222222214,
+   55.749999999999986
+  ],
+  "met_under_the_estimate": true
+ }
+}

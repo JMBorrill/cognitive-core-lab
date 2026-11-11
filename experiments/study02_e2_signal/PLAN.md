@@ -1,6 +1,8 @@
 # Study 02, Experiment 2: signal source × curriculum on the 1.5B student (revised plan, 2026-11-10)
 
-Status: **draft for review. Nothing here has run and no job may be queued until a stage is approved.**
+Status: **approved by the repository owner on 2026-11-10 for Stage 0 and Stage 1 (cap 15 USD). No later
+stage may be queued without a further approval.** The text below is the plan as approved; what was settled
+when Stage 0 was built is recorded under "Clarifications" at the end, before the first Stage 1 job.
 It revises §7.3 of the [proposal](../../docs/study02/PROPOSAL.md) in the light of
 [Experiments 0 and 1](../../docs/study02/REPORT_E0_E1.md) and their
 [review](../../docs/study02/REVIEW_E0_E1.md). Hypotheses, thresholds and the primary endpoint are unchanged;
@@ -362,12 +364,208 @@ measured the engine, the yield and the teacher.
 | 8 seeds if seed sd above 0.03 in Experiment 1 | 5, extended to 8 if the pooled sd in Experiment 2 exceeds 0.03 | this student's estimate rests on three replicates |
 | 110 USD | 174 USD planning figure for Stages 1-3, plus the teacher arm | measured throughput |
 
-## Frozen inputs
+## Frozen inputs (as planned)
 
 To be recorded at the end of Stage 1, before the pilot: code commit; `data/v2/manifest.json` SHA-256
 (unchanged from Experiment 1: `eec8eb43…d005`); SHA-256 of every replicate's seed set and stream; the
 bucket list; the engine's calibration result; the teacher's identity, revision and qualification result.
 
+## Approval and clarifications (recorded 2026-11-10, before the first Stage 1 job)
+
+**Approval.** Stages 0 and 1, with these conditions from the owner: a hard cap of 15 USD on Stage 1's total
+cloud spend, covering provider billing, failures and retries; no later paid stage without approval; the
+teacher qualification thresholds and the self-practice gate (H2(a)) stay as written; a teacher, if a teacher
+arm is later justified, is an open-weight model under a licence that permits training on its outputs; the
+remaining budget is recalculated from Stage 1's measurements, not from projected speed-ups; and **item (b) of
+Stage 1, the 1.5B scoring Experiment 1 left out, is approved for planning only and is not run**. Its cost
+is reported separately.
+
+**Clarifications**, none of which changes a hypothesis, arm, endpoint or threshold:
+
+1. **Budget.** Stage 1 has its own budget file and ledger (`configs/study02/budget_e2_stage1.json`,
+   `results/study02/e2/ledger.jsonl`): cap 15.00 USD, of which 1.00 is held back for anything the provider
+   bills beyond a job's reservation. The provider's account total stood at 50.387666 USD before the first job;
+   what it bills above that is Stage 1's provider-side figure. The budget of Experiments 0 and 1 is closed, so
+   the 6.61 USD left under its cap cannot be spent. Every job, failed or repeated, is reserved at its worst
+   case before it is submitted.
+2. **Stream instances.** Pass *p* of replicate *r* uses instance seed `1000 (r + 1) + p` in the training
+   value pool; the seed set uses instances 0-7. No stream request coincides with a seed request (tested).
+3. **Where a cycle ends.** Attempts are sampled in chunks of 200 tasks, fewer as the target nears. Tasks of
+   the last chunk that come after the one giving the 480th accepted episode are not counted as offered: the
+   next cycle starts with them and samples them afresh. Sampling is seeded per replicate, arm, cycle, task,
+   attempt and turn.
+4. **Curriculum buckets.** Shape classes are assigned in the order twin, fan-out, action, list selection,
+   plain; modifier classes are none, fault (transient failure, fallback) and stop (not found, denied, refused).
+   A group under 30 families merges into the group of the same shape and modifier class nearest in hops,
+   smallest first. A group with no such neighbour stays as it is.
+5. **Calibration (a)** scores the two adapters with the new engine only and compares with the committed
+   Experiment 1 rows, which are the reference the pass criteria name. The Experiment 1 engine is not run
+   again on the same node; its speed on those tasks is on record (1.62 s per episode). On 24 tasks per
+   adapter the job also checks, on the GPU in bfloat16, that cached decoding gives the same text as full
+   re-encoding.
+6. **Yield probe (c)** is the beginning of cycle 1 of `practice`, replicate 0: the first 400 stream tasks,
+   four sampled attempts each, written as that arm's attempt files so that a pilot would continue from them.
+7. **Criterion (c), second half** (seed `dev` success at least 15 points below the 1,600-family adapters')
+   needs `dev` scores that belong to item (b) and are therefore not measured. The seed adapter's `dev` score
+   is measured; the comparison is reported against an estimate, labelled as one, with the cost of replacing
+   it by a measurement.
+8. **Teacher qualification (d)** tests up to two candidates, each on the same 200 tasks (the first 50 of each
+   number of hops in replicate 0's stream), with the few-shot prompt, one greedy attempt and one retry
+   sampled at temperature 0.7 (top-p 0.95), as in Study 01: `Qwen/Qwen3-14B` and
+   `Qwen/Qwen3-30B-A3B-Instruct-2507`, both Apache-2.0. The implementation plan chooses the teacher "by
+   verified acceptance rate on 200 practice tasks"; if both qualify, the cheaper per accepted demonstration
+   is taken. It runs after (a) and (c), and only if the cap allows.
+9. **Training cost.** Beside the seed adapter, 24 optimizer steps are timed on a cycle-1 buffer (seed set
+   plus oracle episodes for the first 480 stream tasks) with gradient checkpointing always on, on for long
+   micro-batches only, and off. The adapters are discarded. Gradients are the same in all three (tested).
+
+## Stage 2: clarifications recorded before its first job (2026-11-11)
+
+Stage 2 was prepared with its budget closed. **Approved by the owner on 2026-11-11**, after the clarifications
+below were written: a hard cap of 10 USD; of the two optional items of point 6, the calibration of the
+corrected R6 is approved and the `dev` scoring of Experiment 1's adapters is not (its job spec is removed and
+it is not run); episodes found by elimination stay under the pre-registered acceptance rule and are counted
+as point 4 says. Stage 3 is not approved.
+
+1. **Budget.** `configs/study02/budget_e2_stage2.json`, cap 10.00 USD with 1.00 held back, its own ledger
+   (`results/study02/e2/ledger_stage2.jsonl`), A10G only. The four prepared jobs fit under the cap together
+   even if each ran to its time limit.
+2. **What runs.** `scripts/s2_e2.py cycle`, once per cycle: rollouts with the current adapter (cycle 1
+   continues from the probe's 400 tasks and their attempt files), replay, buffer; a new adapter trained from
+   the base model on seed plus buffer at (400 + 480 k) / 4 steps with training seed 0; that adapter on `dev`.
+   Everything on the engine as calibrated in Stage 1 (R1-R4), whatever item 5 finds.
+3. **Stop rules inside the job.** A cycle whose yield is under 20%, or whose adapter falls more than 5 points
+   on `dev` below the adapter that produced its rollouts, ends the run there (§7).
+4. **Verifier audit** (§5), after cycle 2: 200 of the accepted episodes of both cycles, all that are not
+   strictly successful up to 100, weighted back. Every sampled episode that differs from the oracle's calls,
+   states a value the reference answer lacks, was found by elimination or used an unobserved identifier is
+   read, and the verdict recorded in `audit_verdicts.json`. For the 2% gate an episode found by elimination or
+   with an unobserved identifier counts as a false accept whatever the reading says (kinds (iii) and (ii)).
+   The rate by reading alone is reported beside it.
+5. **Cost criterion.** "Within twice the model's" compares a cycle's GPU-seconds (rollouts, training, `dev`)
+   with the cost model at Stage 1's measured inputs.
+6. **Two optional items, each only if the owner approves it:** one calibration of the corrected R6 under the
+   unchanged criteria (`calib3_*`; the job stops above 5% changed outcomes); and `dev` for Experiment 1's three
+   1,600-family adapters (`e1dev_*`), which is part of item (b) of Stage 1 and is scored after the fact.
+7. **Reported per cycle:** yield by hops and by list selections, the diversity table, strict share, the count
+   found by elimination, throughput, and `dev` by hops (`scripts/s2_e2_stage2.py`).
+
+## Outcome of Stage 2 (2026-11-11)
+
+Report: [docs/study02/REPORT_E2_STAGE2.md](../../docs/study02/REPORT_E2_STAGE2.md).
+
+- **Yield**: 34.2% and 45.2% (gate 20% in both cycles): met.
+- **`dev`**: 25.7% (seed) → 35.8% → 47.0%: met.
+- **Cost per cycle**: 0.94 and 1.00 of the model: met.
+- **Verifier audit: not met.** 200 episodes audited, 80 read. 5.7% false accepts by the count recorded before
+  the pilot, 5.6% by reading; the limit is 2%. Accepted episodes reached by trying a list's candidates in turn
+  were 9 of 480 in cycle 1 and 45 of 480 in cycle 2 (both forms; the second form, through empty lists, was found
+  by the audit's reading and its count is post-hoc). The same shortcut accounts for 43 of the cycle-2 adapter's
+  282 `dev` successes, and for 1 of 705 successes of two adapters trained on oracle episodes.
+- **The pilot did not pass. By §7: stop and report.** The arms of Stage 3 would be compared on an endpoint that
+  counts the shortcut, which practice arms learn and oracle arms do not. Stage 3 is not run as designed; the
+  report proposes an amendment to the acceptance rule and the endpoint, and a repeated pilot under it. Neither
+  is adopted until the owner decides.
+- **Corrected R6**, one calibration: outcome criteria met (4 and 1 of 400 outcomes changed, success within 0.5
+  points); 0.43 s per episode, so the speed criterion is not met. It stays off.
+- **Cost**: 2.00 USD of the 10 USD cap. The stage's budget is closed.
+
+## Amendment 1: protocol version 2 (2026-11-11)
+
+After the first pilot the owner approved a repeat of Stage 2 under an amended protocol, at a hard cap of
+5 USD. The amendment is a document of its own, recorded before any job of the repeat:
+**[AMENDMENT_1.md](AMENDMENT_1.md)**. It adds two conditions to the acceptance rule (no shortcut in the trace;
+each fact of a multi-part answer given for its own part), an adversarial evaluation with complete candidate
+records, three separately reported measures on the unchanged `dev`, and a pre-registered audit with the 2%
+gate. Where this plan and the amendment differ, the amendment holds.
+
+**Outcome of the repeated pilot**: all four gates met, the audit with 0 false accepts found (200 sampled
+and checked by program, 39 of them read; bounds in amendment 2 §5)
+([report](../../docs/study02/REPORT_E2_STAGE2R.md)). 1.77 USD of the 5 USD cap. Stage 3 is not approved; its
+endpoint and its teacher arm are open decisions the report lists.
+
+## Amendment 2: preparation of Stage 3 (2026-11-11)
+
+[AMENDMENT_2.md](AMENDMENT_2.md): the primary endpoint becomes correctly attributed, shortcut-free success;
+complete-world twins of the test tasks are pre-registered (version 2 of the twins); the corrected engine's
+evidence and known differences are recorded; the audit's denominators and bounds are restated and the Stage 3
+audit is sized for them; a teacher is re-qualified under protocol 2 (`Qwen/Qwen2.5-32B-Instruct`: 82%, 70%
+at four hops; 0.67 USD of a 2 USD cap); PR #3 is reviewed and its findings acted on
+([docs/study02/REVIEW_PR3.md](../../docs/study02/REVIEW_PR3.md)). Stage 3 is not started.
+
+## Frozen inputs
+
+Recorded in [`configs/study02/e2/frozen.json`](../../configs/study02/e2/frozen.json) at the end of Stage 1
+(2026-11-10): `data/v2/manifest.json` SHA-256, unchanged; the SHA-256 of the seed set and of the 14,400-task
+stream of replicates 0 to 4 (no task was dropped by the selection check); the 28 curriculum buckets; the
+engine's calibration; both teacher qualifications (`Qwen/Qwen3-32B` at revision `9216db5781bf` qualifies).
+The code commit of every job is in `results/study02/e2/ledger.jsonl`. A pilot's jobs record their own.
+
+## Outcome of Stages 0 and 1 (2026-11-10)
+
+Report: [docs/study02/REPORT_E2_STAGE1.md](../../docs/study02/REPORT_E2_STAGE1.md).
+
+- **Stage 0**: gates met (CPU tests, dry run of every job spec).
+- **Stage 1 (a), engine**: outcome criteria met (1.0% and 0.25% of outcomes changed; success within 0.25
+  points); speed criterion not met (0.65 s per episode, 2.5 times faster than Experiment 1, against four
+  times). By the table in §7: re-cost, new approval.
+- **(b)**: not run. On the new engine it would cost 3.79 USD, on the Experiment 1 path 9.41 USD.
+- **(c)**: yield 33.3% (133 of 400 tasks; gate 20%). Seed `dev` success 25.7%, against an estimated 77 to 81%
+  for the 1,600-family adapters (not measured).
+- **(d)**: `Qwen3-14B` does not qualify (61%, 30% at four hops); `Qwen3-32B` qualifies (77.5%, 58%).
+- **Cost**: 2.04 USD of the 15 USD cap.
+- **Re-costing** ([budget_stage1.md](budget_stage1.md)): Stages 2-3 at 214 USD from the measurements, by this
+  plan's rules; 176 USD if sealed splits may be scored on the new engine.
+- **No later stage is approved or queued.**
+
 ## Deviations
 
-None yet.
+1. **One engine revision after the first calibration** (recorded 2026-11-10 at 20:50 UTC, after job
+   `e2s1_seed_calib` and before any other Stage 1 job). The first calibration met both outcome criteria and
+   missed the speed criterion: 0.658 and 0.649 s per episode on the two adapters (2.5 times faster than
+   Experiment 1, against the four times required); 4 and 1 of 400 outcomes changed (1.0% and 0.25%); success
+   87.5% and 88.75% against 87.5% and 89.0%. For "between 2 and 4 times faster" the plan says re-cost and ask
+   again, and that stands: no later stage is queued on this result.
+   The engine's counters gave the cause. Decoding took 0.18 s per step for a group of about 100 episodes,
+   because with an attention mask present the library copies every layer's cached keys and values from 2
+   key-value heads out to 12 query heads at every step. That is a property of how the computation was
+   carried out, not of the model or the task, so it was removed inside Stage 1 instead of being costed into
+   the main run: **R6**, attention per key-value head while one token per row is decoded
+   (`ccl.engine.grouped_attention`; the same sums in another order, tested against the stock function).
+   The calibration is run a second time on the revised engine, under the same criteria, with its results kept
+   beside the first (`calib2_*`); the job stops if more than 5% of outcomes change. `dev` and the yield probe
+   use the revised engine. Both calibrations are reported, and the budget is recalculated from the second
+   measurement whatever it is. R5 (vLLM) was not tried.
+   **Outcome (21:05 UTC).** The second calibration failed on outcomes and the job stopped itself after
+   the first adapter, four minutes in: 0.294 s per episode, but 113 of 400 outcomes changed and success fell
+   from 87.5% to 62.3% (`calib2_e1_s15_D1600_r0`). R6 as written rounded attention scores to bfloat16 before
+   the softmax, where the library's GPU kernel keeps them in float32; on CPU both paths round, which is why
+   the CPU checks had passed. **R6 is switched off.** It was one revision, it failed, and it is not tried
+   again in Stage 1. `dev` and the yield probe run on the engine as first calibrated (R1-R4), and the budget
+   is recalculated from the first calibration: 0.65 s per episode, 2.5 times faster than Experiment 1. A
+   corrected R6 (both products in float32) is in the code, off by default and not run on a GPU; calibrating
+   it is a proposal for the next block, not a result.
+2. **Gradient checkpointing stays on for every micro-batch.** The Stage 0 option to switch it off for short
+   micro-batches ("to be measured") was measured on a cycle-1 buffer: 3.60 s per step with it always on; with
+   it on above 6,000 tokens only, and off, training ran out of memory on the 24 GB card. No Experiment 2
+   adapter is trained with the option, and its saving is removed from the cost model.
+3. **Teacher candidates** (recorded 21:05 UTC, before any teacher job). On the calibrated engine a decoding
+   step costs time in proportion to episodes times context, and a mixture-of-experts model adds a loop over
+   its experts at every step, so `Qwen3-30B-A3B-Instruct-2507` cannot be qualified inside this stage's time
+   limits. `Qwen/Qwen3-14B` is tested first; `Qwen/Qwen3-32B` (dense, Apache-2.0) replaces the 30B model as
+   the second candidate and is tested only if the first does not qualify and the cap allows.
+
+4. **The acceptance rule was changed after `dev` results** (amendment 1, 2026-11-11). §6 lists the acceptance
+   rule among what is "not to be changed after any `dev` result of a trained Experiment 2 adapter is seen",
+   and §7 says a failed pilot is "not adjusted until it passes". The first pilot failed its audit; the owner
+   then approved protocol 2 and a repeat. The amendment states the change but did not cite these clauses;
+   the review of PR #3 asked for it to be recorded here.
+5. **The primary endpoint was changed after `dev` results** (amendment 2 §1, owner's decision), before any
+   test split was scored for an Experiment 2 adapter. The original endpoint is reported beside it.
+6. **Rule, detector and endpoint were developed on replicate 0 of `practice`**, a confirmatory replicate, and
+   the detector's agreement with the first audit's 80 verdicts is in-sample. The detector was corrected once
+   more after review (amendment 2 §7). Stage 3 reports every contrast with and without replicate 0.
+7. **Twins version 2** replaces the adversarial set of amendment 1 (amendment 2 §2).
+8. **Erratum.** The clock times in items 1 and 3 ("20:50", "21:05 UTC, before any teacher job") are later than
+   the commits that contain those items (20:39 and 20:46 UTC; the first teacher job was submitted at
+   20:46:12). The order of commits and ledger entries is what establishes that each was recorded first.

@@ -1,0 +1,30 @@
+{
+ "name": "r0_seed_p2",
+ "dev_engine": "new",
+ "grouped_attention": true,
+ "dev_seconds": 176.0,
+ "adv_seconds": 114.1,
+ "dev_tasks": 600,
+ "dev_success": 0.25833333333333336,
+ "dev_generation": {
+  "episodes": 950,
+  "groups": 8,
+  "turn_batches": 61,
+  "decode_steps": 3362,
+  "fed_tokens": 720181,
+  "refed_tokens": 0,
+  "gen_tokens": 96575,
+  "gen_time_s": 287.9901251409997,
+  "oom_splits": 0,
+  "stopped": 0
+ },
+ "python": "3.11.14",
+ "machine": "x86_64",
+ "job_id": "6af488faab34849891ae3a14",
+ "accelerator": "gpu",
+ "commit": "ccffe6521bfab3ce543c3874105dadf6150ab801",
+ "torch": "2.15.0+cu132",
+ "transformers": "5.22.2",
+ "peft": "0.21.2",
+ "gpu": "NVIDIA A10G"
+}

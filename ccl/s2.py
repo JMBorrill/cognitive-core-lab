@@ -16,6 +16,7 @@ import time
 from pathlib import Path
 
 from . import compose as C
+from . import verify
 from .data import episode_to_examples
 from .evaluate import _matches, episode_metrics
 from .oracle import OraclePolicy
@@ -48,13 +49,24 @@ def load_split(name: str) -> list[Task]:
 
 # ------------------------------------------------------------------ acceptance and metrics
 
-def rejection(task: Task, ep: Episode, m: dict | None = None) -> list[str]:
+def rejection(task: Task, ep: Episode, m: dict | None = None, protocol: int = 1) -> list[str]:
     """The one acceptance rule for every data source: the episode passes the validator and the
     runtime recorded no parse error, unknown tool or invalid argument. Criteria that need the
-    gold graph (unnecessary or dependency-unsafe calls) are measured, never used here."""
+    gold graph (unnecessary or dependency-unsafe calls) are measured, never used here.
+
+    Protocol 2 (Experiment 2, amendment 1; `ccl.verify`) adds two conditions that read only the episode
+    and the task's stated answer: a multi-part answer gives each fact for its own part, and the trace
+    shows no candidate of a list being told apart by whether its continuation exists. The default is
+    protocol 1, the rule of Experiments 0 and 1, whose training sets and results must not change."""
     m = m or episode_metrics(task, ep)
-    return [k for k, bad in (("not_success", not m["success"]), ("parse_error", m["parse_errors"]),
-                             ("unknown_tool", m["hallucinated_tools"]), ("invalid_args", m["invalid_args"])) if bad]
+    why = [k for k, bad in (("not_success", not m["success"]), ("parse_error", m["parse_errors"]),
+                            ("unknown_tool", m["hallucinated_tools"]), ("invalid_args", m["invalid_args"])) if bad]
+    if protocol >= 2:
+        if m["success"] and not verify.parts_ok(task, ep.trace.final):
+            why.append("answer_parts")
+        if verify.shortcut(ep.trace.to_dict()):
+            why.append("shortcut")
+    return why
 
 
 def dependency_safe(task: Task, ep: Episode) -> bool:
@@ -88,6 +100,13 @@ def metrics_row(task: Task, ep: Episode, split: str, config: str) -> dict:
     m = episode_metrics(task, ep)
     tags = dict(t.split("=", 1) for t in task.tags if "=" in t)
     safe = dependency_safe(task, ep)
+    parts, cut = verify.parts_ok(task, ep.trace.final), verify.shortcut(ep.trace.to_dict())
+    # Added with protocol 2. `success` and `accepted` keep their meaning (the original validator, protocol 1).
+    m.update({"check_parts": float(parts), "shortcut": cut, "success_parts": float(bool(m["success"]) and parts),
+              "success_clean": float(bool(m["success"]) and parts and not cut)})
+    from . import adversarial  # here, not at the top: that module imports this one. An evaluation measure only.
+    picks = adversarial.selection_picks(task, ep.trace.to_dict()) if getattr(task, "gold", None) and isinstance(task.world, dict) else []
+    m.update({"picks": len(picks), "picks_gold": sum(a for a, _ in picks), "picks_chance": round(sum(c for _, c in picks), 6)})
     m.update({"split": split, "config": config, "accepted": not rejection(task, ep, m),
               "dependency_safe_v2": float(safe),
               "strict_success": float(bool(m["success"]) and safe and m["unnecessary_calls"] == 0),
@@ -188,7 +207,9 @@ def evaluate(policy, tasks: list[Task], split: str, out: Path, config: str, batc
             if checkpoint and n[0] % 200 == 0:
                 tf.flush()
                 checkpoint()
-        if todo:
+        if todo and hasattr(policy, "run"):  # ccl.engine.Engine drives its own groups, sized by tokens
+            policy.run(todo, on_done=on_done, fewshot=fewshot)
+        elif todo:
             run_batch(todo, policy, batch_size=batch, on_done=on_done, fewshot=fewshot)
     return {"split": split, "tasks": len(tasks), "run_now": len(todo), "seconds": round(time.time() - t0, 1)}
 
