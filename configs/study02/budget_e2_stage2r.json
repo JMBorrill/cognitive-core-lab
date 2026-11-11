@@ -3,7 +3,7 @@
  "cap_usd": 5.0,
  "reserve_usd": 0.5,
  "provider_baseline_usd": 54.42606,
- "provider_baseline_time": "2026-11-11, to be read again immediately before the first job",
+ "provider_baseline_time": "2026-11-11, read immediately before the first job of the repeat",
  "max_parallel": 1,
  "ledger": "results/study02/e2/ledger_stage2r.jsonl",
  "bucket": "JMBorrill/ccl-study02",
@@ -13,6 +13,6 @@
   "a10g-small": 1.0
  },
  "approval": "Owner, 2026-11-11: a repeat of Stage 2 under protocol 2 on the corrected engine, hard cap 5 USD in total. No sealed split, no main experiment.",
- "closed": true,
- "closed_note": "Opened only when the amendment is pushed and the local tests pass."
+ "closed": false,
+ "opened": "After commit 916d37c (amendment 1, pushed; draft PR #3) and a full local test run: 87 passed, 1 skipped."
 }
