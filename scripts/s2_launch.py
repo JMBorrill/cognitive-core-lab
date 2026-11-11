@@ -265,7 +265,8 @@ def pull(experiment: str) -> None:
     budget = json.loads(BUDGET.read_text())
     a = api()
     keep = ("metrics.jsonl", "run.json", "train_run.json", "test_access.jsonl", "train_log.jsonl", "config.json",
-            "summary.json", "adapter_config.json", "DONE", "result.json", "attempts.jsonl.gz", "buffer.jsonl.gz")
+            "summary.json", "adapter_config.json", "DONE", "result.json", "attempts.jsonl.gz", "buffer.jsonl.gz",
+            "state.json")
     files = [f for f in a.list_bucket_tree(budget["bucket"], prefix=experiment + "/", recursive=True)
              if getattr(f, "type", "file") == "file" and "/checkpoints/" not in f.path
              and (f.path.endswith(keep) or "/attempts/" in f.path or "/buffer/" in f.path)]

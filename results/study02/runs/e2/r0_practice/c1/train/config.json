@@ -1,0 +1,52 @@
+{
+  "model": "/root/.cache/huggingface/hub/models--Qwen--Qwen2.5-1.5B-Instruct/snapshots/989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "train_files": [
+    "/work/runs/_data/e2_r0_practice_c1.jsonl"
+  ],
+  "val_file": "/work/runs/_data/dev_val.jsonl",
+  "stages": null,
+  "out_dir": "/work/runs/e2/r0_practice/c1/train",
+  "seed": 0,
+  "steps": 220,
+  "batch_size": 4,
+  "grad_accum": 2,
+  "lr": 0.0001,
+  "warmup": 20,
+  "weight_decay": 0.0,
+  "max_grad_norm": 1.0,
+  "bias_correction": true,
+  "max_seq_len": 4096,
+  "lora": {
+    "rank": 16,
+    "alpha": 32,
+    "dropout": 0.0,
+    "layers": null,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj",
+      "gate_proj",
+      "up_proj",
+      "down_proj"
+    ]
+  },
+  "amp": "auto",
+  "grad_checkpoint": true,
+  "grad_checkpoint_tokens": 6000,
+  "save_every": 100,
+  "eval_every": 100,
+  "val_batches": 20,
+  "total_steps": 220,
+  "trainable_params": 18464768,
+  "data": [
+    {
+      "stage": 0,
+      "path": "/work/runs/_data/e2_r0_practice_c1.jsonl",
+      "sha256": "ff9b59ad593bd13ebfd622dcd15d091e0476033f8e538979e3deec3debea8594",
+      "examples": 880,
+      "dropped_too_long": 0,
+      "weight": 1
+    }
+  ]
+}
