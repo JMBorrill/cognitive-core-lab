@@ -152,6 +152,10 @@ part. Cycle-2 adapter: `dev` 44.2% (original validator), 43.5% (each fact for it
 shortcut); adversarial set 18.3%, against 23.7% on the same 350 tasks' original worlds. 1.77 USD of the 5 USD
 cap. Stage 3 is not approved.
 
+*Clarification added with [amendment 2](AMENDMENT_2.md) §5:* "0 false accepts in 200" means 200 sampled and
+checked by program, of which 39 were read (19 flagged, 20 unflagged) and 161 were checked by program only.
+The upper bounds this supports are given there.
+
 ## 9. Not changed, not done
 
 Hypotheses and thresholds; arms; seed set and stream (frozen hashes); training settings; sampling; the

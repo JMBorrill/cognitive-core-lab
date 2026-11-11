@@ -12,7 +12,7 @@ sealed split was scored, Stage 3 has not run, and nothing is queued.*
 | | result | gate |
 |---|---|---|
 | Yield | 33.2% in cycle 1, 42.0% in cycle 2 | met (20% in both) |
-| Verifier audit, as pre-registered | **0 false accepts in 200** (19 flagged and 20 unflagged episodes read) | met (2%) |
+| Verifier audit, as pre-registered | **0 false accepts found**: 200 sampled and checked by program, 39 of them read (19 flagged, 20 unflagged), 161 checked by program only | met (2%), as a point estimate; see §5.3 for the bounds |
 | Cost per cycle | 0.79 and 0.81 of the cost model | met (within twice) |
 | `dev`, original validator | 25.8% (seed) → 30.7% → 44.2% | met (no fall over 5 points) |
 | Buffers | 960 accepted episodes: none with a shortcut, none with a wrong part; 98% strictly successful | |
@@ -154,6 +154,17 @@ identifier tried first, or the backup lookup used at once. In none is a candidat
 what came back. The 20 unflagged episodes make the oracle's calls and state the reference's facts. Verdicts,
 with a note for each: `results/study02/runs/e2/r0_practice_p2/audit_verdicts.json`.
 
+**What the denominator is** (added with [amendment 2](../../experiments/study02_e2_signal/AMENDMENT_2.md) §5).
+Three numbers must be kept apart: 200 episodes were sampled and each was checked by program; 39 of them were
+read (the 19 flagged, which are every accepted episode that is not strictly successful, and 20 unflagged
+drawn blind); 161 were checked by program only. The gate was met as a point estimate. With no false accept
+found, the one-sided 95% upper bound on the share of false accepts among all 960 accepted episodes is 1.6% if
+the program's check of the 181 unflagged strictly successful episodes is relied on (their calls are the
+oracle's and their answers state nothing the reference lacks), and 13.6% from the 39 readings alone. The
+reading therefore confirms the program on 20 episodes; it does not by itself show the rate to be under 2%,
+which would take 149 readings with none false. The reader was the assistant that ran the pilot; there was no
+second reader. Table: [`results/study02/e2/stage3_prep.md`](../../results/study02/e2/stage3_prep.md) §2.
+
 ## 6. Recommendation for the next block
 
 The gates of the pilot are met under protocol 2, so the next decision is whether and how to run Stage 3.
@@ -183,8 +194,8 @@ would add to that and is not yet costed.
   sampled attempts at once; where they agree (the shortcut-free climb, the shortcut-free `dev` score after two
   cycles) the agreement is informative, and where they differ (cycle 1's `dev` score, 35.8% against 30.7%)
   one replicate cannot say why.
-- The shortcut detector describes the forms seen so far. The audit's wider flag found no other form in 200
-  episodes; that bounds a third form, it does not exclude one.
+- The shortcut detector describes the forms seen so far. The audit's wider flag, applied by program, found no other form in 200
+  sampled episodes (39 of them read); that bounds a third form, it does not exclude one.
 - A candidate picked by luck and a candidate picked by the rule leave the same trace. Sampling four attempts
   per task admits some lucky picks into a buffer. They are correct episodes for their task, they are the same
   on complete worlds, and no check here can count them.
@@ -208,3 +219,14 @@ would add to that and is not yet costed.
 Attempt traces of both cycles, both buffers, the arm's state, the audit and its verdicts are committed. The
 adversarial set is not stored: `ccl.adversarial.adversarial_dev()` rebuilds it, and its SHA-256 is in
 `configs/study02/e2/protocol2.json`.
+
+## Errata and additions (review of PR #3, 2026-11-11; the text above is unchanged except where marked)
+
+- **§5.2, first reading, is too strong.** Adversarial success of 18.3% does not show that the selection rule is applied. A policy that makes every call correctly and takes a row at random at each selection would score about 22% on that set. Measured directly, the gold row is the first pick in 44.5% of the seed adapter's selections on `dev` and in 48.8% of the cycle-2 adapter's, against 34% at random and 100% for the oracle. Most of the gain of two cycles is getting further down the chain; the selection itself improved by a few points. §7's "no check here can count them" is superseded: `ccl.adversarial.selection_picks` counts them ([table](../../results/study02/e2/stage3_prep.md), §6).
+- **§3 and §5.1** compare the pilots with unlike definitions: "39.8% and 40.8%" is 39.8% and 41.5% like for like (shortcut only). After cycle 1 the same measure differs by 4.0 points between the two runs, so their agreement after cycle 2 is weak evidence. "Its rate in rollouts barely moves" compares the seed and cycle-1 adapters; the cycle-2 adapter, whose `dev` episodes show the shortcut 35 times, produced no rollouts.
+- **§4**: 220 of the 1,143 cycle-2 tasks are new instances of families already trained on, with a much higher yield. On families not trained on, the one- and two-hop gains vanish and the three- and four-hop gains hold. The intervals cover task sampling only.
+- **§6, row 1**: shortcut episodes on `dev` rose from 9 to 10 to 35 with none in the buffers, so the behaviour is not only learned from accepted episodes.
+- **The detector** was corrected after this report (amendment 2 §7.1); recomputed from the traces, no figure here changes. **The adversarial set** used here is version 1, which was one step short on 12 of its 350 tasks (all three adapters scored 0 on them); version 2 replaces it from Stage 3 on.
+- **Cost**: the 121/60 and 91/44 USD figures are point values from two cycles; with the twins of the test tasks the estimate is 104 and 50 USD (amendment 2 §6).
+
+Full list: [REVIEW_PR3.md](REVIEW_PR3.md).

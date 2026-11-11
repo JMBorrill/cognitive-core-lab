@@ -1,0 +1,84 @@
+{
+ "built_by": "scripts/s2_score.py --twins (ccl.adversarial.twins)",
+ "rule": "every task in which a gold call depends on a list selection and whose expected status is done or blocked",
+ "version": 2,
+ "splits": {
+  "v2/dev_adv": {
+   "tasks_in_split": 600,
+   "twins": 350,
+   "sha256": "8689eeba0c670adf150974c2cd9690a54dcf13033d8ad51adb114b88428f9cb4",
+   "hops": {
+    "2": 50,
+    "3": 136,
+    "4": 164
+   },
+   "oracle_transcript_identical": 350,
+   "walks_from_other_candidates_that_miss_a_record": 0,
+   "identical_to_version_1": 338
+  },
+  "v2/test_comp_adv": {
+   "tasks_in_split": 1200,
+   "twins": 866,
+   "sha256": "eb0889f67c5b695a1ad3ccec93b8b87438147dd2006b0d03ee241a58ca7eecca",
+   "hops": {
+    "2": 106,
+    "3": 352,
+    "4": 408
+   },
+   "oracle_transcript_identical": 866,
+   "walks_from_other_candidates_that_miss_a_record": 0,
+   "identical_to_version_1": 852
+  },
+  "v2/test_depth_adv": {
+   "tasks_in_split": 400,
+   "twins": 400,
+   "sha256": "32ddd79a18343f1fc29867f17f58f314158ced371cb95f0a4c672a56463cb33b",
+   "hops": {
+    "5": 200,
+    "6": 200
+   },
+   "oracle_transcript_identical": 400,
+   "walks_from_other_candidates_that_miss_a_record": 0,
+   "identical_to_version_1": 400
+  },
+  "v2/test_tool_adv": {
+   "tasks_in_split": 400,
+   "twins": 278,
+   "sha256": "7f954bc23dcc7c7aff9d206e1f30ad2a712df1f3b106853002e7a4f288f78fc5",
+   "hops": {
+    "2": 58,
+    "3": 104,
+    "4": 116
+   },
+   "oracle_transcript_identical": 278,
+   "walks_from_other_candidates_that_miss_a_record": 0,
+   "identical_to_version_1": 270
+  },
+  "v2/test_domain_adv": {
+   "tasks_in_split": 400,
+   "twins": 190,
+   "sha256": "69d2d379b5d00075226eb1ccad5f9a4aa12f05268cead05d820840b9edea3b47",
+   "hops": {
+    "2": 36,
+    "3": 74,
+    "4": 80
+   },
+   "oracle_transcript_identical": 190,
+   "walks_from_other_candidates_that_miss_a_record": 0,
+   "identical_to_version_1": 190
+  },
+  "v2/test_id_adv": {
+   "tasks_in_split": 400,
+   "twins": 218,
+   "sha256": "8d84e0d5b0caf7f491cbf516c681fae9dcb8e0713288f0e20ebf2648cf1e8b94",
+   "hops": {
+    "2": 38,
+    "3": 80,
+    "4": 100
+   },
+   "oracle_transcript_identical": 218,
+   "walks_from_other_candidates_that_miss_a_record": 0,
+   "identical_to_version_1": 216
+  }
+ }
+}

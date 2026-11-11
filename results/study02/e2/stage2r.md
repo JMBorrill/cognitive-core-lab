@@ -7,7 +7,7 @@ Replicate 0, `practice`, cycles 1 and 2, on the corrected engine. Acceptance rul
 | criterion | measured |  |
 |---|---|---|
 | in both cycles at least 20% of attempted tasks accepted | 33.2% and 42.0% | met |
-| verifier audit, as pre-registered: at most 2% false accepts | 200 audited; 19 flagged and 20 unflagged read (39 of 39 verdicts); 0 false accepts, 0.0% weighted | met |
+| verifier audit, as pre-registered: at most 2% false accepts | 200 sampled and checked by program; 39 of them read (19 flagged, 20 unflagged drawn blind; 39 of 39 verdicts); 161 checked by program only; 0 false accepts found, 0.0% weighted | met |
 | cost per cycle within twice the model's | 0.79x and 0.81x | met |
 | no fall of more than 5 points on `dev` between cycles (original validator) | 25.8% → 30.7% → 44.2% | met |
 

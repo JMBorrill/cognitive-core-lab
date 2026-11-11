@@ -1,0 +1,397 @@
+{
+ "engine": {
+  "calibration_greedy_own_family_tasks": {
+   "e1_s15_D1600_r0": {
+    "episodes": 400,
+    "experiment_1_success": 0.875,
+    "r1_r4": {
+     "success": 0.875,
+     "changed_against_experiment_1": 4,
+     "same_text_as_full_re_encoding": "22/24",
+     "seconds_per_episode": 0.6583
+    },
+    "r6": {
+     "success": 0.88,
+     "changed_against_experiment_1": 4,
+     "same_text_as_full_re_encoding": "24/24",
+     "seconds_per_episode": 0.4342
+    },
+    "r6_against_r1_r4": {
+     "outcome_differs": 4,
+     "length_or_calls_differ": 5
+    }
+   },
+   "e1_s15_D25_r0": {
+    "episodes": 400,
+    "experiment_1_success": 0.89,
+    "r1_r4": {
+     "success": 0.8875,
+     "changed_against_experiment_1": 1,
+     "same_text_as_full_re_encoding": "24/24",
+     "seconds_per_episode": 0.6488
+    },
+    "r6": {
+     "success": 0.8875,
+     "changed_against_experiment_1": 1,
+     "same_text_as_full_re_encoding": "24/24",
+     "seconds_per_episode": 0.4365
+    },
+    "r6_against_r1_r4": {
+     "outcome_differs": 2,
+     "length_or_calls_differ": 3
+    }
+   }
+  },
+  "seed_adapter_on_dev_greedy": {
+   "tasks": 600,
+   "r1_r4_success": 0.25666666666666665,
+   "r6_success": 0.25833333333333336,
+   "fail_to_success": 3,
+   "success_to_fail": 2,
+   "length_or_calls_differ": 32
+  },
+  "cycle_1_sampled_attempts": {
+   "attempts_with_the_same_task_seed_and_attempt_number": 5664,
+   "identical_text": 4694,
+   "outcome_differs": 72,
+   "r1_r4_success": 0.2489406779661017,
+   "r6_success": 0.2475282485875706
+  },
+  "first_version_of_r6_rejected": {
+   "changed_against_experiment_1": 113,
+   "episodes": 400,
+   "same_text_as_full_re_encoding": "12/24",
+   "cause": "attention scores rounded to bfloat16 before the softmax; not visible on a CPU, where the tests run in float32"
+  },
+  "not_measured": "the corrected engine against itself (the same adapter and tasks scored twice); Experiment 0 measured 0 of 720 for the Experiment 1 path"
+ },
+ "audit": {
+  "accepted_episodes": 960,
+  "sampled_and_checked_by_program": 200,
+  "read": 39,
+  "read_because_flagged": 19,
+  "read_blind": 20,
+  "checked_by_program_only": 161,
+  "false_accepts_found": 0,
+  "strata": {
+   "not_strictly_successful": {
+    "population": 19,
+    "sampled": 19,
+    "read": 19,
+    "false": 0,
+    "note": "a census: every one was sampled, flagged and read"
+   },
+   "strictly_successful": {
+    "population": 941,
+    "sampled": 181,
+    "flagged_by_program": 0,
+    "read": 20,
+    "false": 0
+   }
+  },
+  "what_the_program_establishes": "for each of the unflagged episodes: its calls are the oracle's calls, its answer states no value the reference answer lacks, it uses no identifier it had not observed and it passes the rule's own checks",
+  "upper_bound_95_one_sided": {
+   "if_the_programs_check_is_relied_on": {
+    "strict_stratum": 0.01641479165519244,
+    "all_accepted": 0.01608991557035009
+   },
+   "from_reading_alone": {
+    "strict_stratum": 0.13910834066826516,
+    "all_accepted": 0.13635515475920576
+   }
+  },
+  "reads_needed_for_a_2_percent_bound_from_reading_alone": {
+   "none_found": 149,
+   "one_found": 236
+  },
+  "first_pilot": {
+   "sampled_and_checked_by_program": 200,
+   "read": 80,
+   "false_accepts": 54,
+   "weighted_rate": 0.05624999999999994
+  },
+  "reader": "the assistant that ran the pilot, with a written verdict per episode; no person and no second reader"
+ },
+ "twins": {
+  "v2/dev_adv": {
+   "tasks_in_split": 600,
+   "twins": 350,
+   "sha256": "8689eeba0c670adf150974c2cd9690a54dcf13033d8ad51adb114b88428f9cb4",
+   "hops": {
+    "2": 50,
+    "3": 136,
+    "4": 164
+   },
+   "oracle_transcript_identical": 350,
+   "walks_from_other_candidates_that_miss_a_record": 0,
+   "identical_to_version_1": 338
+  },
+  "v2/test_comp_adv": {
+   "tasks_in_split": 1200,
+   "twins": 866,
+   "sha256": "eb0889f67c5b695a1ad3ccec93b8b87438147dd2006b0d03ee241a58ca7eecca",
+   "hops": {
+    "2": 106,
+    "3": 352,
+    "4": 408
+   },
+   "oracle_transcript_identical": 866,
+   "walks_from_other_candidates_that_miss_a_record": 0,
+   "identical_to_version_1": 852
+  },
+  "v2/test_depth_adv": {
+   "tasks_in_split": 400,
+   "twins": 400,
+   "sha256": "32ddd79a18343f1fc29867f17f58f314158ced371cb95f0a4c672a56463cb33b",
+   "hops": {
+    "5": 200,
+    "6": 200
+   },
+   "oracle_transcript_identical": 400,
+   "walks_from_other_candidates_that_miss_a_record": 0,
+   "identical_to_version_1": 400
+  },
+  "v2/test_tool_adv": {
+   "tasks_in_split": 400,
+   "twins": 278,
+   "sha256": "7f954bc23dcc7c7aff9d206e1f30ad2a712df1f3b106853002e7a4f288f78fc5",
+   "hops": {
+    "2": 58,
+    "3": 104,
+    "4": 116
+   },
+   "oracle_transcript_identical": 278,
+   "walks_from_other_candidates_that_miss_a_record": 0,
+   "identical_to_version_1": 270
+  },
+  "v2/test_domain_adv": {
+   "tasks_in_split": 400,
+   "twins": 190,
+   "sha256": "69d2d379b5d00075226eb1ccad5f9a4aa12f05268cead05d820840b9edea3b47",
+   "hops": {
+    "2": 36,
+    "3": 74,
+    "4": 80
+   },
+   "oracle_transcript_identical": 190,
+   "walks_from_other_candidates_that_miss_a_record": 0,
+   "identical_to_version_1": 190
+  },
+  "v2/test_id_adv": {
+   "tasks_in_split": 400,
+   "twins": 218,
+   "sha256": "8d84e0d5b0caf7f491cbf516c681fae9dcb8e0713288f0e20ebf2648cf1e8b94",
+   "hops": {
+    "2": 38,
+    "3": 80,
+    "4": 100
+   },
+   "oracle_transcript_identical": 218,
+   "walks_from_other_candidates_that_miss_a_record": 0,
+   "identical_to_version_1": 216
+  }
+ },
+ "teacher": {
+  "teacher_Qwen2.5-32B-Instruct": {
+   "repo": "Qwen/Qwen2.5-32B-Instruct",
+   "revision": "5ede1c97bbab6ce5cda5812749b4c0bdf79b18dd",
+   "protocol_of_the_run": 2,
+   "complete": true,
+   "protocol_1": {
+    "accepted": 169,
+    "acceptance": 0.845,
+    "by_hops": {
+     "1": 0.98,
+     "2": 0.88,
+     "3": 0.78,
+     "4": 0.74
+    },
+    "four_hop": 0.74
+   },
+   "protocol_2": {
+    "accepted": 164,
+    "acceptance": 0.82,
+    "by_hops": {
+     "1": 0.98,
+     "2": 0.86,
+     "3": 0.74,
+     "4": 0.7
+    },
+    "four_hop": 0.7
+   },
+   "attempts": 239,
+   "attempts_rejected_under_protocol_2_for": {
+    "shortcut": 16,
+    "answer_parts": 0
+   },
+   "qualifies_under_protocol_2": true,
+   "note": null
+  },
+  "teacher_Qwen3-14B": {
+   "repo": "Qwen/Qwen3-14B",
+   "revision": "40c069824f4251a91eefaf281ebe4c544efd3e18",
+   "protocol_of_the_run": 1,
+   "complete": true,
+   "protocol_1": {
+    "accepted": 122,
+    "acceptance": 0.61,
+    "by_hops": {
+     "1": 0.86,
+     "2": 0.74,
+     "3": 0.54,
+     "4": 0.3
+    },
+    "four_hop": 0.3
+   },
+   "protocol_2": {
+    "accepted": 109,
+    "acceptance": 0.545,
+    "by_hops": {
+     "1": 0.86,
+     "2": 0.7,
+     "3": 0.44,
+     "4": 0.18
+    },
+    "four_hop": 0.18
+   },
+   "attempts": 284,
+   "attempts_rejected_under_protocol_2_for": {
+    "shortcut": 42,
+    "answer_parts": 0
+   },
+   "qualifies_under_protocol_2": false,
+   "note": "collected under protocol 1: tasks solved by the shortcut got no retry"
+  },
+  "teacher_Qwen3-32B": {
+   "repo": "Qwen/Qwen3-32B",
+   "revision": "9216db5781bf21249d130ec9da846c4624c16137",
+   "protocol_of_the_run": 1,
+   "complete": true,
+   "protocol_1": {
+    "accepted": 155,
+    "acceptance": 0.775,
+    "by_hops": {
+     "1": 0.96,
+     "2": 0.9,
+     "3": 0.66,
+     "4": 0.58
+    },
+    "four_hop": 0.58
+   },
+   "protocol_2": {
+    "accepted": 135,
+    "acceptance": 0.675,
+    "by_hops": {
+     "1": 0.96,
+     "2": 0.88,
+     "3": 0.56,
+     "4": 0.3
+    },
+    "four_hop": 0.3
+   },
+   "attempts": 251,
+   "attempts_rejected_under_protocol_2_for": {
+    "shortcut": 42,
+    "answer_parts": 0
+   },
+   "qualifies_under_protocol_2": false,
+   "note": "collected under protocol 1: tasks solved by the shortcut got no retry"
+  }
+ },
+ "cost": {
+  "inputs": {
+   "yield": 0.3710862002319289,
+   "seconds_per_attempt": 0.29427241641337387,
+   "train_seconds_per_step": 3.188392857142857,
+   "twin_episode_against_original": 1.156871609403255,
+   "twin_episodes_per_final_adapter": 1952,
+   "test_episodes_per_final_adapter": 2800,
+   "final_adapters": {
+    "a": 18,
+    "b": 8
+   },
+   "dev_scorings": {
+    "a": 66,
+    "b": 30
+   }
+  },
+  "scenarios": {
+   "test splits on the corrected engine": {
+    "block_a_usd": 90.64749943354833,
+    "block_b_usd": 44.30757882405649,
+    "twins_block_a_usd": 13.276653726855873,
+    "twins_block_b_usd": 5.95029965436537,
+    "block_a_with_twins_usd": 103.9241531604042,
+    "block_b_with_twins_usd": 50.25787847842186,
+    "both_usd": 154.1820316388261
+   },
+   "test splits on the Experiment 1 path (the plan's rule while the engine is not approved)": {
+    "block_a_usd": 121.32388366820912,
+    "block_b_usd": 60.495459673791146,
+    "twins_block_a_usd": 49.404339123708546,
+    "twins_block_b_usd": 22.141921304862525,
+    "block_a_with_twins_usd": 170.72822279191766,
+    "block_b_with_twins_usd": 82.63738097865367,
+    "both_usd": 253.36560377057134
+   }
+  },
+  "engine_repeat_check_usd": 0.33989732677707685,
+  "contingency_in_every_figure": 1.25
+ },
+ "selection": {
+  "rollouts": {
+   "r0_practice cycle 1": {
+    "selections": 1802,
+    "gold_first_pick": 0.3951165371809101,
+    "chance": 0.3552904180540144
+   },
+   "r0_practice cycle 2": {
+    "selections": 2097,
+    "gold_first_pick": 0.4406294706723891,
+    "chance": 0.3537354951518066
+   },
+   "r0_practice_p2 cycle 1": {
+    "selections": 1854,
+    "gold_first_pick": 0.3959007551240561,
+    "chance": 0.3558342322905439
+   },
+   "r0_practice_p2 cycle 2": {
+    "selections": 2231,
+    "gold_first_pick": 0.44778126400717166,
+    "chance": 0.35496787688630244
+   }
+  },
+  "greedy": {
+   "seed adapter, v2/dev": {
+    "selections": 182,
+    "gold_first_pick": 0.44505494505494503,
+    "chance": 0.3407509157509161
+   },
+   "seed adapter, v2/dev_adv": {
+    "selections": 184,
+    "gold_first_pick": 0.42934782608695654,
+    "chance": 0.33885869565217425
+   },
+   "after cycle 1, v2/dev": {
+    "selections": 252,
+    "gold_first_pick": 0.42857142857142855,
+    "chance": 0.3400793650793649
+   },
+   "after cycle 1, v2/dev_adv": {
+    "selections": 244,
+    "gold_first_pick": 0.42213114754098363,
+    "chance": 0.3373633879781421
+   },
+   "after cycle 2, v2/dev": {
+    "selections": 344,
+    "gold_first_pick": 0.4883720930232558,
+    "chance": 0.33570736434108484
+   },
+   "after cycle 2, v2/dev_adv": {
+    "selections": 318,
+    "gold_first_pick": 0.4748427672955975,
+    "chance": 0.33527253668763063
+   }
+  }
+ }
+}

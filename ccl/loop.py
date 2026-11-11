@@ -397,6 +397,8 @@ class Practice:
             if path.exists():
                 recs = s2.read_gz(path)
                 assert [r["index"] for r in recs[::ATTEMPTS]] == idx, f"{path} does not hold the tasks now drawn"
+                assert all(r.get("protocol", 1) == self.protocol for r in recs), \
+                    f"{path} was written under another protocol; its stored verdicts are not this arm's"
             else:
                 eps = run([self.stream.get(i) for i in idx], seed)
                 assert len(eps) == ATTEMPTS * len(idx)

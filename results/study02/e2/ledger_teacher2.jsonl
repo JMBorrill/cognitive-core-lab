@@ -1,0 +1,5 @@
+{"time": "2026-11-11T17:47:16Z", "event": "reserve", "key": "e2t2_teacher_qwen25_32b", "flavor": "a100-large", "timeout_min": 40, "price_per_min": 0.041667, "reserved_usd": 1.75, "commit": "ad1a37c1f48b7f257bd14a44b05a7172e7e3cba8", "configs": []}
+{"time": "2026-11-11T17:47:16Z", "event": "submitted", "key": "e2t2_teacher_qwen25_32b", "job_id": "6af4aa249737d9a9e093312a", "url": "https://huggingface.co/jobs/JMBorrill/6af4aa249737d9a9e093312a"}
+{"time": "2026-11-11T17:59:03Z", "event": "reconcile", "provider_used_usd": 0.500004, "provider_account_total_usd": 56.692766, "ledger_settled_usd": 0}
+{"time": "2026-11-11T18:10:53Z", "event": "settled", "key": "e2t2_teacher_qwen25_32b", "job_id": "6af4aa249737d9a9e093312a", "stage": "COMPLETED", "message": null, "running_secs": 884, "cost_usd": 0.6667, "cost_source": "provider", "reserved_usd": 1.75}
+{"time": "2026-11-11T18:10:53Z", "event": "reconcile", "provider_used_usd": 0.666672, "provider_account_total_usd": 56.859434, "ledger_settled_usd": 0.6667}

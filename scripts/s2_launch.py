@@ -206,6 +206,9 @@ def submit(spec_path: str, dry_run: bool) -> None:
     if dry_run:
         print("[launch] dry run, nothing submitted:\n ", command[-1])
         return
+    # the provider's own figure as well: a ledger that is stale or missing (another clone) cannot hide spend
+    used = provider_usage()[0] - budget["provider_baseline_usd"]
+    assert used + need <= budget["cap_usd"] + 1e-6, f"provider reports {used:.2f} USD used: with {need:.2f} more the cap is exceeded"
     append({"event": "reserve", "key": spec["key"], "flavor": spec["flavor"], "timeout_min": spec["timeout_min"],
             "price_per_min": price, "reserved_usd": need, "commit": commit, "configs": spec["configs"]}, ledger_path)
     try:

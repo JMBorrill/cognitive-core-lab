@@ -13,5 +13,7 @@
   "a100-large": 2.5
  },
  "approval": "Owner, 2026-11-11: teacher re-qualification under protocol 2, hard cap 2 USD, thresholds unchanged. No sealed split, no Stage 3 training.",
- "opened": "With amendment 2, section 3, recorded and pushed before the job."
+ "opened": "With amendment 2, section 3, recorded and pushed before the job.",
+ "closed": true,
+ "closed_note": "Re-qualification ended on 2026-11-11 at 0.67 USD: the first candidate qualified, so the second was not run. Stage 3 is not approved."
 }

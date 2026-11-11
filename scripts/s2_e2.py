@@ -258,6 +258,15 @@ def cmd_probe(a) -> None:
 
 # ------------------------------------------------------------------ one cycle of a practice arm (plan §3.5)
 
+def stop(out: Path, remote, why: str) -> None:
+    """A stop rule fired. The reason stays in the arm's directory, and no later cycle of the arm starts while
+    it is there (review of PR #3: the exit code alone did not outlive the job)."""
+    (out / "STOPPED").write_text(why + "\n")
+    s2.sync(out, remote)
+    print(f"[e2] stopped: {why}", flush=True)
+    sys.exit(3)
+
+
 def cmd_cycle(a) -> None:
     """Rollouts with the current adapter, replay, buffer; a new adapter trained from the base model on seed
     plus buffer; that adapter on `dev`. Every part is skipped if it is already done, so a job that was cut
@@ -273,6 +282,7 @@ def cmd_cycle(a) -> None:
     sub, sub_remote = out / f"c{k}", (remote / f"c{k}" if remote else None)
     sub.mkdir(parents=True, exist_ok=True)
     result = json.loads((sub / "result.json").read_text()) if (sub / "result.json").exists() else {"name": f"{name}_c{k}"}
+    assert not (out / "STOPPED").exists(), f"{name} was stopped by a stop rule: {(out / 'STOPPED').read_text().strip()}"
     fams, tools = s2.load_practice()
     arm = L.Practice(out, a.replicate, a.arm, fams, tools)
     before = f"r{a.replicate}_seed" if k == 1 else f"{name}/c{k - 1}"  # the adapter this cycle's rollouts come from
@@ -305,7 +315,7 @@ def cmd_cycle(a) -> None:
     finish(sub, sub_remote, result)
     s2.sync(out, remote)
     if rec["yield"] < 0.20:
-        sys.exit(3)
+        stop(out, remote, f"cycle {k}: yield {rec['yield']:.3f} is under 20%")
     # ---- a new adapter from the base model on seed plus buffer, two passes at the planned number of steps
     rows = seed_rows(a.replicate)[0] + [r for c in range(1, k + 1) for r in s2.read_gz(out / f"buffer/c{c}.jsonl.gz")]
     data = Path(a.out) / "_data"
@@ -338,8 +348,9 @@ def cmd_cycle(a) -> None:
                    "dev_success_clean": sum(r.get("success_clean", r["success"]) for r in rows) / len(rows)})
     finish(sub, sub_remote, result)
     s2.sync(out, remote)
-    if was and dev < sum(was) / len(was) - 0.05:
-        sys.exit(3)
+    assert was, "no dev result of the previous adapter: the stop rule cannot be applied"
+    if dev < sum(was) / len(was) - 0.05:
+        stop(out, remote, f"cycle {k}: dev fell from {sum(was) / len(was):.3f} to {dev:.3f}")
     if a.adv:  # ---- and on the adversarial set (amendment 1); reported, never used by a stop rule
         t = s2.evaluate(policy, adversarial_tasks(), "v2/dev_adv", sub, f"{name}_c{k}", checkpoint=lambda: s2.sync(out, remote))
         adv = [r for r in map(json.loads, open(sub / "metrics.jsonl")) if r["split"] == "v2/dev_adv"]

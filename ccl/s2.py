@@ -104,6 +104,9 @@ def metrics_row(task: Task, ep: Episode, split: str, config: str) -> dict:
     # Added with protocol 2. `success` and `accepted` keep their meaning (the original validator, protocol 1).
     m.update({"check_parts": float(parts), "shortcut": cut, "success_parts": float(bool(m["success"]) and parts),
               "success_clean": float(bool(m["success"]) and parts and not cut)})
+    from . import adversarial  # here, not at the top: that module imports this one. An evaluation measure only.
+    picks = adversarial.selection_picks(task, ep.trace.to_dict()) if getattr(task, "gold", None) and isinstance(task.world, dict) else []
+    m.update({"picks": len(picks), "picks_gold": sum(a for a, _ in picks), "picks_chance": round(sum(c for _, c in picks), 6)})
     m.update({"split": split, "config": config, "accepted": not rejection(task, ep, m),
               "dependency_safe_v2": float(safe),
               "strict_success": float(bool(m["success"]) and safe and m["unnecessary_calls"] == 0),

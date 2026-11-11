@@ -203,7 +203,7 @@ def books() -> dict:
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     cyc = cycles()
-    twin_of = {t.task_id: next(x for x in t.tags if x.startswith("twin_of="))[8:] for t in adversarial.adversarial_dev()}
+    twin_of = {t.task_id: next(x for x in t.tags if x.startswith("twin_of="))[8:] for t in adversarial.adversarial_dev(version=1)}
     adapters = {"seed adapter": RUNS / SEED, **{f"after cycle {c['cycle']}": RUNS / ARM / f"c{c['cycle']}" for c in cyc}}
     dev = {k: dev_table(d) for k, d in adapters.items()}
     adv = {k: adversarial_table(d, twin_of) for k, d in adapters.items()}
@@ -257,8 +257,9 @@ def main() -> None:
     md += table(["criterion", "measured", ""], [
         ["in both cycles at least 20% of attempted tasks accepted", " and ".join(pc(c["yield"]) for c in cyc) or "-", ok(gates["yield"])],
         ["verifier audit, as pre-registered: at most 2% false accepts",
-         (f"{au['sampled']} audited; {au['flagged']} flagged and {au['blind']} unflagged read ({au['read']} of {au['to_read']} verdicts); "
-          f"{au['false_accepts']} false accepts, {pc(au['false_accept_rate'])} weighted") if au else "not run", ok(gates["audit"])],
+         (f"{au['sampled']} sampled and checked by program; {au['read']} of them read ({au['flagged']} flagged, {au['blind']} unflagged "
+          f"drawn blind; {au['read']} of {au['to_read']} verdicts); {au['sampled'] - au['read']} checked by program only; "
+          f"{au['false_accepts']} false accepts found, {pc(au['false_accept_rate'])} weighted") if au else "not run", ok(gates["audit"])],
         ["cost per cycle within twice the model's", " and ".join(f"{c['cost_ratio_to_model']:.2f}x" for c in cyc) or "-", ok(gates["cost"])],
         ["no fall of more than 5 points on `dev` between cycles (original validator)", " → ".join(pc(v) for v in series), ok(gates["dev"])]])
     md += [f"**Pilot {'passed' if res['passed'] else 'did not pass'}.**", ""]

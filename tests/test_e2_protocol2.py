@@ -118,6 +118,10 @@ def test_shortcut_is_a_probe_and_a_hit_on_one_column_whatever_the_tool_or_the_or
     assert not S(nf("AS-3"), get("IS-3"))  # a mistyped identifier from another column, then the right one
     assert not S(nf("ZZ-9"), get("IS-3"))  # an invented identifier
     assert not S(under("IS-3", []), get("IS-3"))  # the same candidate asked two things
+    # the hit failed once itself (a wrong tool first) and other candidates were probed: still a shortcut
+    # (review of PR #3: the first implementation subtracted every probed value from the hits)
+    assert S(call("find_instrument", "IS-3", error="not_found"), under("IS-3", [{"assay_id": "AS-9"}]), under("IS-1", []), under("IS-2", []))
+    assert S(nf("IS-1"), call("find_instrument", "IS-3", error="not_found"), get("IS-3"))
     assert not V.shortcut({"calls": [nf("IS-1"), LISTED, get("IS-3")]})  # a probe needs the list before it
     one = call("list_doctor_assays", "DR-1", {"assays": [{"assay_id": "AS-1", "instrument_id": "IS-1"}]})
     assert not V.shortcut({"calls": [one, nf("IS-9"), get("IS-1")]})  # one candidate: nothing to tell apart
@@ -156,7 +160,7 @@ def test_the_detector_agrees_with_every_verdict_of_the_first_pilots_audit_and_wi
 @pytest.fixture(scope="module")
 def twins():
     dev = {t.task_id: t for t in s2.load_split("dev")}
-    adv = A.adversarial_dev()
+    adv = A.adversarial_dev(version=1)
     return [(t, dev[next(x for x in t.tags if x.startswith("twin_of="))[8:]]) for t in adv]
 
 
@@ -210,7 +214,7 @@ def test_twins_are_the_same_task_for_an_agent_that_applies_the_rule(twins):
     assert len(twins) == 350 and len({t.task_id for t, _ in twins}) == 350
     recorded = json.loads((ROOT / "configs/study02/e2/protocol2.json").read_text())["adversarial_dev"]
     assert L.tasks_sha256([t for t, _ in twins]) == recorded["sha256"] and recorded["tasks"] == 350
-    assert L.tasks_sha256(A.adversarial_dev()) == recorded["sha256"]  # built again: the same bytes
+    assert L.tasks_sha256(A.adversarial_dev(version=1)) == recorded["sha256"]  # built again: the same bytes
     on_twin = run_batch([t for t, _ in twins], OraclePolicy(), batch_size=512)
     on_orig = {e.task.task_id: e for e in run_batch([o for _, o in twins], OraclePolicy(), batch_size=512)}
     for e, (t, o) in zip(on_twin, twins):
@@ -350,7 +354,7 @@ def test_protocol_two_code_reads_no_sealed_split_and_training_sets_of_experiment
     assert s2.rows_sha256(rows) == cfg["data"]["sha256"] and stats["rejected"] == 0
     # the adversarial set is built from dev families only, and no practice family is among them
     dev = {f["id"] for f in s2.read_gz(ROOT / "data/v2/dev/families.jsonl.gz")}
-    assert {t.template for t in A.adversarial_dev()} <= dev and not dev & {f["id"] for f in fams}
+    assert {t.template for t in A.adversarial_dev(version=1)} <= dev and not dev & {f["id"] for f in fams}
 
 
 # ---------------------------------------------------------------- the repeated pilot's audit and analysis
@@ -389,7 +393,7 @@ def test_the_repeated_pilots_audit_and_analysis_run_on_a_scripted_protocol_two_a
     def score(d, one):
         d.mkdir(parents=True)
         with open(d / "metrics.jsonl", "w") as f:
-            for split, tasks in (("v2/dev", s2.load_split("dev")), ("v2/dev_adv", A.adversarial_dev())):
+            for split, tasks in (("v2/dev", s2.load_split("dev")), ("v2/dev_adv", A.adversarial_dev(version=1))):
                 for t in tasks:
                     f.write(json.dumps(s2.metrics_row(t, one(t), split, d.name)) + "\n")
     score(runs / "r0_seed_p2", policy(1, False))

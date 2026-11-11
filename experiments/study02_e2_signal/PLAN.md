@@ -479,9 +479,19 @@ each fact of a multi-part answer given for its own part), an adversarial evaluat
 records, three separately reported measures on the unchanged `dev`, and a pre-registered audit with the 2%
 gate. Where this plan and the amendment differ, the amendment holds.
 
-**Outcome of the repeated pilot**: all four gates met, the audit with 0 false accepts in 200
+**Outcome of the repeated pilot**: all four gates met, the audit with 0 false accepts found (200 sampled
+and checked by program, 39 of them read; bounds in amendment 2 §5)
 ([report](../../docs/study02/REPORT_E2_STAGE2R.md)). 1.77 USD of the 5 USD cap. Stage 3 is not approved; its
 endpoint and its teacher arm are open decisions the report lists.
+
+## Amendment 2: preparation of Stage 3 (2026-11-11)
+
+[AMENDMENT_2.md](AMENDMENT_2.md): the primary endpoint becomes correctly attributed, shortcut-free success;
+complete-world twins of the test tasks are pre-registered (version 2 of the twins); the corrected engine's
+evidence and known differences are recorded; the audit's denominators and bounds are restated and the Stage 3
+audit is sized for them; a teacher is re-qualified under protocol 2 (`Qwen/Qwen2.5-32B-Instruct`: 82%, 70%
+at four hops; 0.67 USD of a 2 USD cap); PR #3 is reviewed and its findings acted on
+([docs/study02/REVIEW_PR3.md](../../docs/study02/REVIEW_PR3.md)). Stage 3 is not started.
 
 ## Frozen inputs
 
@@ -544,3 +554,18 @@ Report: [docs/study02/REPORT_E2_STAGE1.md](../../docs/study02/REPORT_E2_STAGE1.m
    its experts at every step, so `Qwen3-30B-A3B-Instruct-2507` cannot be qualified inside this stage's time
    limits. `Qwen/Qwen3-14B` is tested first; `Qwen/Qwen3-32B` (dense, Apache-2.0) replaces the 30B model as
    the second candidate and is tested only if the first does not qualify and the cap allows.
+
+4. **The acceptance rule was changed after `dev` results** (amendment 1, 2026-11-11). §6 lists the acceptance
+   rule among what is "not to be changed after any `dev` result of a trained Experiment 2 adapter is seen",
+   and §7 says a failed pilot is "not adjusted until it passes". The first pilot failed its audit; the owner
+   then approved protocol 2 and a repeat. The amendment states the change but did not cite these clauses;
+   the review of PR #3 asked for it to be recorded here.
+5. **The primary endpoint was changed after `dev` results** (amendment 2 §1, owner's decision), before any
+   test split was scored for an Experiment 2 adapter. The original endpoint is reported beside it.
+6. **Rule, detector and endpoint were developed on replicate 0 of `practice`**, a confirmatory replicate, and
+   the detector's agreement with the first audit's 80 verdicts is in-sample. The detector was corrected once
+   more after review (amendment 2 §7). Stage 3 reports every contrast with and without replicate 0.
+7. **Twins version 2** replaces the adversarial set of amendment 1 (amendment 2 §2).
+8. **Erratum.** The clock times in items 1 and 3 ("20:50", "21:05 UTC, before any teacher job") are later than
+   the commits that contain those items (20:39 and 20:46 UTC; the first teacher job was submitted at
+   20:46:12). The order of commits and ledger entries is what establishes that each was recorded first.

@@ -213,3 +213,12 @@ rollout and `dev` parts by about a third; that is not yet costed from a measurem
 Attempt traces of both cycles, both buffers, the arm's state and the audit with its verdicts are committed.
 `dev` traces are in the storage bucket; the per-episode shortcut flags derived from them are committed as
 `shortcuts.json` beside each run's metrics.
+
+## Errata (review of PR #3, 2026-11-11; the text above is unchanged)
+
+- §4: "In each of the 54 cases no other attempt at the task passed" is wrong. 21 of the 54 had another passing attempt; none had a passing attempt free of the shortcut.
+- §1 and §4: the comparison "1 of 705" for oracle-trained adapters is on own-family tasks, not on `dev`; it does not show that practice adapters use the shortcut more on like tasks. Figures that include the empty-list form (9.4%, 43 of 282, 39.8%) were computed after the audit found that form.
+- The audit: 200 episodes were sampled and checked by program, 80 were read (all that the program flagged; no blind reading), 54 were false.
+- What a rising score on the adversarial set shows is limited: see the errata of the repeat's report.
+
+Full list: [REVIEW_PR3.md](REVIEW_PR3.md).

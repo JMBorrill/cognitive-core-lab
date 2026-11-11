@@ -352,3 +352,13 @@ uv venv --python 3.11 .venv && uv pip install --python .venv/bin/python -r requi
 Attempt traces of the probe and of both teacher qualifications are committed
 (`results/study02/runs/e2/*/attempts*`). Adapters are in the storage bucket; their SHA-256 is in each
 `summary.json`.
+
+## Errata (review of PR #3, 2026-11-11; the text above is unchanged)
+
+- §6: "A practice replicate costs 11.4 USD ... 1.9 scoring" is the figure with test splits on the new engine. By the plan's rule it is 12.83 USD (3.32 scoring).
+- §4.6: "a third" of the teacher's demonstrations being not strict is 35 of 155 (23%) for `Qwen3-32B`.
+- §4.1: cached decoding matched full re-encoding on 22 of 24 checked tasks for `e1_s15_D1600_r0` (24 of 24 for the other adapter).
+- Yield "33.3%" is 133 of 400 (33.25%).
+- The teacher qualification reported here is under protocol 1. Under protocol 2 see amendment 2 §3a.
+
+Full list: [REVIEW_PR3.md](REVIEW_PR3.md).

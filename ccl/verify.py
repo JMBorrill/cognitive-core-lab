@@ -191,8 +191,8 @@ def shortcut(trace: dict) -> bool:
         for f in {f for r in rows for f in r}:
             col = {str(r.get(f)).strip().upper() for r in rows}
             p, h = col & probes, col & hits
-            if p and h - p:
-                return True
+            if any(x != y for x in p for y in h):  # a probe and a hit on different values (the hit may itself
+                return True                         # have failed once, e.g. with another tool, before it succeeded)
     return False
 
 
