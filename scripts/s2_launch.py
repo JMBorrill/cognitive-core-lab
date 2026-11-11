@@ -260,13 +260,14 @@ def status(name: str | None = None) -> None:
                      indent=1))
 
 
-def pull(experiment: str) -> None:
-    """Copy the small result files of an experiment from the bucket (no checkpoints, no weights)."""
+def pull(experiment: str, traces: bool = False) -> None:
+    """Copy the small result files of an experiment from the bucket (no checkpoints, no weights). With
+    `traces`, per-episode traces too (not committed: analyses that need them write a small derived file)."""
     budget = json.loads(BUDGET.read_text())
     a = api()
     keep = ("metrics.jsonl", "run.json", "train_run.json", "test_access.jsonl", "train_log.jsonl", "config.json",
             "summary.json", "adapter_config.json", "DONE", "result.json", "attempts.jsonl.gz", "buffer.jsonl.gz",
-            "state.json")
+            "state.json") + (("traces.jsonl.gz",) if traces else ())
     files = [f for f in a.list_bucket_tree(budget["bucket"], prefix=experiment + "/", recursive=True)
              if getattr(f, "type", "file") == "file" and "/checkpoints/" not in f.path
              and (f.path.endswith(keep) or "/attempts/" in f.path or "/buffer/" in f.path)]
@@ -284,6 +285,7 @@ def main():
     ap.add_argument("arg", nargs="?")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--budget", default=None, help="name of a later stage's budget (status and settle)")
+    ap.add_argument("--traces", action="store_true", help="pull: also the per-episode traces")
     a = ap.parse_args()
     if a.command == "status":
         status(a.budget)
@@ -292,7 +294,7 @@ def main():
     elif a.command == "settle":
         settle(a.budget)
     elif a.command == "pull":
-        pull(a.arg)
+        pull(a.arg, a.traces)
     elif a.command == "logs":
         for line in api().fetch_job_logs(job_id=a.arg):
             print(line)

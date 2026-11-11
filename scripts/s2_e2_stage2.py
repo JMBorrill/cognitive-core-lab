@@ -56,6 +56,37 @@ def by_hops(rows: list[dict]) -> dict:
     return {"all": sum(r["success"] for r in rows) / len(rows), **{str(h): sum(v) / len(v) for h, v in sorted(g.items())}}
 
 
+def shortcuts(d: Path) -> dict:
+    """Per scored episode of a run: was a success reached by the shortcut (`ccl.loop.by_elimination`, by a
+    "not found"; `ccl.loop.by_empty_list`). Derived from the run's traces when they are here (pull with
+    --traces) and written to `shortcuts.json`, which is committed; otherwise read from that file."""
+    import gzip
+    out = d / "shortcuts.json"
+    if (d / "traces.jsonl.gz").exists():
+        flags = {}
+        with gzip.open(d / "traces.jsonl.gz", "rt") as f:
+            for x in map(json.loads, f):
+                flags[f"{x['split']}|{x['task_id']}"] = [L.by_elimination(x["trace"]), L.by_empty_list(x["trace"])]
+        out.write_text(json.dumps(dict(sorted(flags.items()))) + "\n")
+    return json.loads(out.read_text()) if out.exists() else {}
+
+
+def by_hops_clean(d: Path, split: str = "v2/dev") -> dict:
+    """Success by hops, and success not counting episodes reached by the shortcut."""
+    flags = shortcuts(d)
+    rows = [r for r in map(json.loads, open(d / "metrics.jsonl")) if r["split"] == split]
+    g = defaultdict(lambda: [0, 0.0, 0, 0])
+    for r in rows:
+        nf, em = flags.get(f"{split}|{r['task_id']}", [False, False])
+        for k in (str(r["hops"]), "all"):
+            g[k][0] += 1
+            g[k][1] += r["success"]
+            g[k][2] += bool(r["success"]) and (nf or em)
+            g[k][3] += bool(r["success"]) and nf
+    return {k: {"episodes": v[0], "success": v[1] / v[0], "successes": int(v[1]), "by_shortcut": v[2], "by_not_found": v[3],
+                "success_without_shortcut": (v[1] - v[2]) / v[0]} for k, v in sorted(g.items())} if flags else {}
+
+
 def diff_interval(a: tuple[int, int], b: tuple[int, int]) -> dict:
     """Difference of two independent proportions b - a with a 95% normal interval (different tasks in each)."""
     pa, pb = a[0] / a[1], b[0] / b[1]
@@ -91,6 +122,11 @@ def cycles() -> list[dict]:
                     for name, v in sorted(g.items())}
         picks = {i: L.choose(by[i]) for i in offered if i in accepted}
         admissible = [x for i in offered for x in by[i] if not x["rejection"]]
+        cut = {i for i, p in picks.items() if L.shortcut(p["trace"])}
+        clean = defaultdict(lambda: [0, 0])
+        for i in offered:
+            clean[str(fam[i]["hops"])][0] += 1
+            clean[str(fam[i]["hops"])][1] += i in accepted and i not in cut
         acc = [i for i in offered if i in accepted]
         lo = (k - 1) * L.CYCLE_ACCEPT  # the oracle arm keeps the next 480 stream tasks in every cycle
         oracle = [arm.stream.get(i) and i for i in range(lo, lo + L.CYCLE_ACCEPT)]
@@ -105,6 +141,10 @@ def cycles() -> list[dict]:
             "by_selections": split(lambda i: sum(t.startswith("rule=") for t in task[i].tags)),
             "accepted_strict": sum(p["strict"] for p in picks.values()),
             "accepted_by_elimination": sum(L.by_elimination(p["trace"]) for p in picks.values()),
+            "accepted_by_empty_list": sum(L.by_empty_list(p["trace"]) for p in picks.values()),
+            "accepted_by_shortcut": len(cut),
+            "accepted_by_shortcut_by_hops": dict(sorted(Counter(str(fam[i]["hops"]) for i in cut).items())),
+            "by_hops_without_shortcut": {h: {"offered": v[0], "accepted": v[1], "yield": v[1] / v[0]} for h, v in sorted(clean.items())},
             "admissible_by_elimination": sum(L.by_elimination(x["trace"]) for x in admissible),
             "admissible_attempts": len(admissible), "replay_failed": c.get("replay_failed", 0),
             "diversity": {"offered": L.diversity([fam[i] for i in offered], [task[i] for i in offered], seed_f),
@@ -128,6 +168,7 @@ def audit() -> dict:
     verdicts = json.loads(v.read_text()) if v.exists() else {}
     total = sum(x["weight"] for x in a["sample"])
     false = {"read": 0.0, "with_elimination": 0.0}
+    kinds = Counter()
     n = Counter()
     for x in a["sample"]:
         key = f"{x['cycle']}:{x['index']}"
@@ -137,10 +178,12 @@ def audit() -> dict:
         n["read"] += human is not None
         n["false_by_reading"] += bool(human)
         n["by_elimination_or_unobserved"] += elim
+        if human:
+            kinds[verdicts[key].get("kind", "?")] += 1
         false["read"] += x["weight"] * bool(human)
         false["with_elimination"] += x["weight"] * bool(human or elim)
     return {"accepted_episodes": a["accepted_episodes"], "not_strict": a["not_strict"], "sampled": a["sampled"],
-            **n, "verdicts_recorded": len(verdicts),
+            **n, "verdicts_recorded": len(verdicts), "false_accepts_by_kind": dict(sorted(kinds.items())),
             "false_accept_rate_by_reading": false["read"] / total,
             "false_accept_rate_counting_elimination": false["with_elimination"] / total,
             "limit": 0.02}
@@ -194,6 +237,10 @@ def main() -> None:
     R = load("s2_e2_rebudget")
     x = R.inputs()
     seed_dev = by_hops(dev_rows(RUNS / "r0_seed"))
+    clean_dev = {"seed adapter": by_hops_clean(RUNS / "r0_seed"),
+                 **{f"after cycle {c['cycle']}": by_hops_clean(RUNS / ARM / f"c{c['cycle']}") for c in cyc if c["dev"]}}
+    oracle_ref = {d.name.replace("calib_", ""): by_hops_clean(d, "own") for d in sorted(RUNS.glob("calib_e1_s15_*"))}
+    strict = [c["accepted_strict"] / c["accepted"] for c in cyc]
     # what the cost model, at Stage 1's measurements, expects one cycle to take in GPU-seconds
     model = [{"rollouts": min(L.CYCLE_ACCEPT / x["yield"], L.CYCLE_TASK_CAP) * L.ATTEMPTS * x["attempt_seconds"],
               "training": (L.SEED_FAMILIES * L.SEED_INSTANCES + c["cycle"] * L.CYCLE_ACCEPT) / 4 * x["train_seconds_per_step"],
@@ -208,14 +255,20 @@ def main() -> None:
              "audit": bool(au) and au["false_accept_rate_counting_elimination"] <= au["limit"] and au["read"] == au["flagged"],
              "cost": all(c["cost_ratio_to_model"] <= 2 for c in cyc),
              "dev": all(b >= a - 0.05 for a, b in zip(dev, dev[1:])) and len(dev) == 3}
-    climb = {}
+    climb, climb_clean = {}, {}
     if len(cyc) == 2:
         for h in ("1", "2", "3", "4"):
             a, b = cyc[0]["by_hops"].get(h), cyc[1]["by_hops"].get(h)
             if a and b:
                 climb[h] = diff_interval((a["accepted"], a["offered"]), (b["accepted"], b["offered"]))
+                a, b = cyc[0]["by_hops_without_shortcut"][h], cyc[1]["by_hops_without_shortcut"][h]
+                climb_clean[h] = diff_interval((a["accepted"], a["offered"]), (b["accepted"], b["offered"]))
     res = {"cycles": cyc, "seed_dev": seed_dev, "dev_by_adapter": dev, "comparator_dev_1600_families": comparator(),
            "audit": au, "gates": gates, "passed": all(gates.values()), "yield_change_by_hops": climb,
+           "yield_change_by_hops_without_shortcut": climb_clean, "dev_without_shortcut": clean_dev,
+           "oracle_trained_reference_own_family": oracle_ref,
+           "not_strict_share_by_cycle": [1 - x for x in strict],
+           "strictness_warning": {"rise_points": 100 * (strict[0] - strict[1]) if len(strict) == 2 else None, "stops_at": 10.0},
            "engine_revision_r6": r6(), "books": books()}
     if len(cyc) == 2:  # the remaining stages again, with what two cycles measured in place of one probe
         y = sum(c["accepted"] for c in cyc) / sum(c["tasks_offered"] for c in cyc)
@@ -239,7 +292,18 @@ def main() -> None:
           "counting episodes found by elimination or with an unobserved identifier") if au else "not run", ok(gates["audit"])],
         ["cost per cycle within twice the model's", " and ".join(f"{c['cost_ratio_to_model']:.2f}x" for c in cyc), ok(gates["cost"])],
         ["no fall of more than 5 points on `dev` between cycles", " → ".join(pc(v) for v in dev), ok(gates["dev"])]])
-    md += [f"**Pilot {'passed' if res['passed'] else 'did not pass'}.**", "", "## Does practice climb?", "",
+    md += [f"**Pilot {'passed' if res['passed'] else 'did not pass'}.**", ""]
+    if au:
+        md += ["The audit counts, as recorded before the pilot, every sampled episode found by elimination (a \"not found\" "
+               "on one candidate, then another) or using an unobserved identifier. By reading, the same shortcut also "
+               f"appears through empty lists, and one episode states a fact for the wrong record: "
+               f"{au['false_by_reading']} of {au['sampled']} sampled episodes are false accepts by reading "
+               f"({pc(au['false_accept_rate_by_reading'])} weighted; kinds: {au['false_accepts_by_kind']}).", ""]
+    w = res["strictness_warning"]
+    if w["rise_points"] is not None:
+        md += [f"Accepted but not strictly successful: {' and '.join(pc(x) for x in res['not_strict_share_by_cycle'])} of the two "
+               f"cycles' accepted episodes, a rise of {w['rise_points']:.1f} points. The plan's warning stops a run above 10.", ""]
+    md += ["## Does practice climb?", "",
            "Yield by number of hops. The two cycles see different tasks of the same stream, so the comparison is "
            "between proportions on different tasks.", ""]
     md += table(["hops", *[f"cycle {c['cycle']}: offered" for c in cyc][:1], "accepted", "yield",
@@ -248,6 +312,12 @@ def main() -> None:
                                                  pc(c["by_hops"].get(h, {}).get("yield")))],
                   *([f"{100 * climb[h]['difference']:+.1f} [{100 * climb[h]['lo']:+.1f}, {100 * climb[h]['hi']:+.1f}]"] if h in climb else [])]
                  for h in ("1", "2", "3", "4")])
+    if climb_clean:
+        md += ["The same without accepted episodes that reached their record by the shortcut (either form):", ""]
+        md += table(["hops", "cycle 1 yield", "cycle 2 yield", "change (95% interval)", "accepted by shortcut, cycles 1 and 2"],
+                    [[h, *[f"{pc(c['by_hops_without_shortcut'][h]['yield'])} ({c['by_hops_without_shortcut'][h]['accepted']} of {c['by_hops_without_shortcut'][h]['offered']})" for c in cyc],
+                      f"{100 * climb_clean[h]['difference']:+.1f} [{100 * climb_clean[h]['lo']:+.1f}, {100 * climb_clean[h]['hi']:+.1f}]",
+                      " and ".join(str(c["accepted_by_shortcut_by_hops"].get(h, 0)) for c in cyc)] for h in ("1", "2", "3", "4")])
     md += ["By number of list selections:", ""]
     sels = sorted({k for c in cyc for k in c["by_selections"]})
     md += table(["selections", *[f"cycle {c['cycle']} yield (accepted of offered)" for c in cyc]],
@@ -262,6 +332,17 @@ def main() -> None:
         rows.append([f"Experiment 1, 1,600 families, oracle labels (mean of {cmp_['adapters']}; scored after the fact)",
                      *[pc(cmp_.get(k)) for k in ("all", "1", "2", "3", "4")]])
     md += table(["adapter", "all", "1 hop", "2", "3", "4"], rows)
+    if all(clean_dev.values()):
+        md += ["### `dev` without successes reached by the shortcut", "",
+               "The validator accepts the shortcut on `dev` as it does in practice. Success, and success not counting "
+               "episodes that reached a record by trying candidates in turn (in brackets: how many successes those are).", ""]
+        md += table(["adapter", "all", "1 hop", "2", "3", "4"],
+                    [[k, *[f"{pc(v[h]['success'])} → {pc(v[h]['success_without_shortcut'])} ({v[h]['by_shortcut']})" for h in ("all", "1", "2", "3", "4")]]
+                     for k, v in clean_dev.items()])
+        if any(oracle_ref.values()):
+            md += ["For comparison, adapters trained on oracle episodes (Experiment 1, own-family tasks, the Stage 1 "
+                   "calibration's traces): " + "; ".join(f"`{k}` {v['all']['by_shortcut']} of {v['all']['successes']} successes"
+                                                         for k, v in oracle_ref.items() if v) + ".", ""]
     md += ["## What each cycle's buffer holds (plan §3.3)", ""]
     for c in cyc:
         d = c["diversity"]
@@ -276,9 +357,11 @@ def main() -> None:
             ["share needing an edge the seed lacks", *[g(x, "outside_reference", "new_edge") for x in cols]],
             ["share deeper than the seed", *[g(x, "outside_reference", "deeper") for x in cols]]])
     md += ["## Accepted episodes", ""] + table(
-        ["cycle", "accepted", "strictly successful", "found by elimination", "admissible attempts found by elimination", "failed replay"],
+        ["cycle", "accepted", "strictly successful", "found by elimination (not found)", "through empty lists (post-hoc)",
+         "either", "admissible attempts found by elimination", "failed replay"],
         [[c["cycle"], c["accepted"], f"{c['accepted_strict']} ({pc(c['accepted_strict'] / max(1, c['accepted']))})",
           f"{c['accepted_by_elimination']} ({pc(c['accepted_by_elimination'] / max(1, c['accepted']))})",
+          c["accepted_by_empty_list"], f"{c['accepted_by_shortcut']} ({pc(c['accepted_by_shortcut'] / max(1, c['accepted']))})",
           f"{c['admissible_by_elimination']} of {c['admissible_attempts']}", c["replay_failed"]] for c in cyc])
     md += ["## Throughput and cost per cycle", ""] + table(
         ["cycle", "tasks offered", "s per attempt", "rollouts (s)", "training (s)", "s per step", "dev (s)", "GPU-seconds", "model", "ratio"],

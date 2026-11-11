@@ -12,6 +12,7 @@
  "flavors": {
   "a10g-small": 1.0
  },
- "closed": false,
- "approval": "Owner, 2026-11-11: Stage 2 at a hard cap of 10 USD, with one calibration of the corrected engine revision R6. Not approved: dev scoring of Experiment 1's adapters."
+ "closed": true,
+ "approval": "Owner, 2026-11-11: Stage 2 at a hard cap of 10 USD, with one calibration of the corrected engine revision R6. Not approved: dev scoring of Experiment 1's adapters.",
+ "closed_note": "Stage 2 ended on 2026-11-11 at 2.00 USD. The pilot did not pass its audit gate; Stage 3 is not approved."
 }

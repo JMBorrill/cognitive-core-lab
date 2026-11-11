@@ -450,6 +450,26 @@ as point 4 says. Stage 3 is not approved.
 7. **Reported per cycle:** yield by hops and by list selections, the diversity table, strict share, the count
    found by elimination, throughput, and `dev` by hops (`scripts/s2_e2_stage2.py`).
 
+## Outcome of Stage 2 (2026-11-11)
+
+Report: [docs/study02/REPORT_E2_STAGE2.md](../../docs/study02/REPORT_E2_STAGE2.md).
+
+- **Yield**: 34.2% and 45.2% (gate 20% in both cycles): met.
+- **`dev`**: 25.7% (seed) → 35.8% → 47.0%: met.
+- **Cost per cycle**: 0.94 and 1.00 of the model: met.
+- **Verifier audit: not met.** 200 episodes audited, 80 read. 5.7% false accepts by the count recorded before
+  the pilot, 5.6% by reading; the limit is 2%. Accepted episodes reached by trying a list's candidates in turn
+  were 9 of 480 in cycle 1 and 45 of 480 in cycle 2 (both forms; the second form, through empty lists, was found
+  by the audit's reading and its count is post-hoc). The same shortcut accounts for 43 of the cycle-2 adapter's
+  282 `dev` successes, and for 1 of 705 successes of two adapters trained on oracle episodes.
+- **The pilot did not pass. By §7: stop and report.** The arms of Stage 3 would be compared on an endpoint that
+  counts the shortcut, which practice arms learn and oracle arms do not. Stage 3 is not run as designed; the
+  report proposes an amendment to the acceptance rule and the endpoint, and a repeated pilot under it. Neither
+  is adopted until the owner decides.
+- **Corrected R6**, one calibration: outcome criteria met (4 and 1 of 400 outcomes changed, success within 0.5
+  points); 0.43 s per episode, so the speed criterion is not met. It stays off.
+- **Cost**: 2.00 USD of the 10 USD cap. The stage's budget is closed.
+
 ## Frozen inputs
 
 Recorded in [`configs/study02/e2/frozen.json`](../../configs/study02/e2/frozen.json) at the end of Stage 1

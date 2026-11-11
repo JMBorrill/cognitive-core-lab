@@ -36,7 +36,8 @@ Experiment 2 are in **[docs/study02/REPORT_E0_E1.md](docs/study02/REPORT_E0_E1.m
 | compute | 50.39 USD of a 60 USD cap (one minute was billed after the report was written; budget closed) |
 | review | [independent checks and corrections](docs/study02/REVIEW_E0_E1.md); the confirmatory result stands |
 | Experiment 2, Stages 0 and 1 | built and calibrated, 2.04 USD of a 15 USD cap: a rollout engine that reproduces Experiment 1's outcomes 2.5 times faster (four times was required); the seed adapter is accepted on 33% of practice tasks, mostly shallow ones (82 / 52 / 17 / 3% at one to four hops); `Qwen3-32B` qualifies as teacher. [Report](docs/study02/REPORT_E2_STAGE1.md) |
-| next | Stage 2 of the [Experiment 2 plan](experiments/study02_e2_signal/PLAN.md), a two-cycle pilot: awaiting approval. Nothing beyond Stage 1 has run |
+| Experiment 2, Stage 2 (pilot) | two cycles of verified self-practice, 2.00 USD of a 10 USD cap: `dev` rises from 25.7% to 47.0% with no demonstration beyond the seed, and three- and four-hop tasks become solvable. **The pilot did not pass its verifier audit**: 9.4% of cycle 2's accepted episodes reach a record by trying a list's candidates in turn, which the simulated worlds allow and the validator accepts; without them `dev` is 39.8%. [Report](docs/study02/REPORT_E2_STAGE2.md) |
+| next | a decision on how to close that shortcut before the main run. Stage 3 is not approved and nothing is queued |
 
 - [Proposal](docs/study02/PROPOSAL.md): hypotheses, design, statistics, cost, stop/go decisions
 - [Study 01 audit](docs/study02/STUDY01_AUDIT.md) and its [generated tables](docs/study02/audit_tables.md) (`python scripts/study02_audit.py`)
@@ -53,6 +54,9 @@ Experiment 2 are in **[docs/study02/REPORT_E0_E1.md](docs/study02/REPORT_E0_E1.m
   (`python scripts/s2_e2_stage1.py`), [budget recalculated from them](experiments/study02_e2_signal/budget_stage1.md)
   (`python scripts/s2_e2_rebudget.py`), [frozen inputs](configs/study02/e2/frozen.json),
   [Stage 1 ledger](results/study02/e2/ledger.jsonl)
+- Experiment 2, Stage 2: [report](docs/study02/REPORT_E2_STAGE2.md), [measurements](results/study02/e2/stage2.md)
+  (`python scripts/s2_e2_stage2.py`), [audit verdicts](results/study02/runs/e2/r0_practice/audit_verdicts.json),
+  [Stage 2 ledger](results/study02/e2/ledger_stage2.jsonl)
 
 ```
 ccl/sft.py              tokenisation, episode packing, batch schedule (shared by the MLX and PyTorch trainers)
@@ -73,13 +77,14 @@ ccl/loop.py             seed set, task stream, acceptance, replay, curriculum, r
 scripts/s2_e2.py        what a Stage 1 job runs (seed adapter, calibration, dev, yield probe, teacher qualification); CPU replay
 scripts/s2_e2_stage1.py Stage 1 measurements against the plan's gates; frozen inputs
 scripts/s2_e2_rebudget.py the plan's cost model with Stage 1's measurements as inputs
+scripts/s2_e2_stage2.py the pilot against its gates: yield by depth per cycle, the verifier audit, the shortcut in buffers and on dev
 ```
 
 Reproduce on any Linux machine (CPU is enough for everything except training and scoring):
 
 ```bash
 uv venv --python 3.11 .venv && uv pip install --python .venv/bin/python -r requirements-cuda.lock
-.venv/bin/python -m pytest -q                   # 74 tests (one needs the Qwen checkpoint); Study 01's MLX test is skipped without MLX
+.venv/bin/python -m pytest -q                   # 77 tests (one needs the Qwen checkpoint); Study 01's MLX test is skipped without MLX
 .venv/bin/python scripts/build_v2.py            # ~40 s; reproduces data/v2 byte for byte
 .venv/bin/python scripts/s2_prepare_v1.py       # rebuilds the Study 01 training files and checks their hashes
 .venv/bin/python scripts/s2_train.py configs/study02/e1/e1_s05_D1600_r0.json --out runs2    # needs a GPU

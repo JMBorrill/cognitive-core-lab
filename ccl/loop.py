@@ -168,6 +168,36 @@ def by_elimination(trace: dict) -> bool:
     return False
 
 
+def by_empty_list(trace: dict) -> bool:
+    """The same shortcut as `by_elimination`, through empty lists: a candidate off the gold path has no
+    records listed under it, so listing under one candidate after another shows which one is on the path.
+    A list call that returns nothing, and a later call of the same tool that returns something, the two
+    arguments being the same field of two records of one earlier list. Written after the pilot's audit, which
+    found this form by reading; anything it counts is labelled post-hoc."""
+    calls = [c for c in trace["calls"] if c["outcome"] != "limit"]
+
+    def rows_of(c):
+        return next((v for v in (c["result"] or {}).values() if isinstance(v, list)), None) if c["outcome"] == "ok" else None
+    for k, c in enumerate(calls):
+        if rows_of(c) != []:
+            continue
+        bad = {str(v) for v in (c["args"] or {}).values()}
+        good = {str(v) for d in calls[k + 1:] if d["tool"] == c["tool"] and rows_of(d)
+                for v in (d["args"] or {}).values()} - bad
+        for e in calls[:k]:
+            rows = rows_of(e)
+            if rows and all(isinstance(r, dict) for r in rows):
+                for f in {f for r in rows for f in r}:
+                    col = {str(r.get(f)) for r in rows}
+                    if col & bad and col & good:
+                        return True
+    return False
+
+
+def shortcut(trace: dict) -> bool:
+    return by_elimination(trace) or by_empty_list(trace)
+
+
 def unobserved_identifier(task: Task, trace: dict) -> bool:
     """True if a call uses an identifier that was neither in the request nor in an earlier observation."""
     import re

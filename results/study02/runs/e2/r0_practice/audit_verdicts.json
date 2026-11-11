@@ -1,0 +1,402 @@
+{
+ "1:16": {
+  "false_accept": false,
+  "kind": "none",
+  "note": "Right record and right answer; an unnecessary, repeated or mistaken call, or the backup tool used at once."
+ },
+ "1:31": {
+  "false_accept": false,
+  "kind": "none",
+  "note": "Right record and right answer; an unnecessary, repeated or mistaken call, or the backup tool used at once."
+ },
+ "1:148": {
+  "false_accept": true,
+  "kind": "(iii) elimination, empty list",
+  "note": "Listed under one candidate after another; only the candidate on the gold path has records. The selection rule was not what found the record."
+ },
+ "1:159": {
+  "false_accept": false,
+  "kind": "none",
+  "note": "Right record and right answer; an unnecessary, repeated or mistaken call, or the backup tool used at once."
+ },
+ "1:178": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "1:195": {
+  "false_accept": true,
+  "kind": "(iii) elimination, empty list",
+  "note": "Listed under one candidate after another; only the candidate on the gold path has records. The selection rule was not what found the record."
+ },
+ "1:250": {
+  "false_accept": false,
+  "kind": "none",
+  "note": "Right record and right answer; an unnecessary, repeated or mistaken call, or the backup tool used at once."
+ },
+ "1:438": {
+  "false_accept": false,
+  "kind": "none",
+  "note": "Right record and right answer; an unnecessary, repeated or mistaken call, or the backup tool used at once."
+ },
+ "1:472": {
+  "false_accept": false,
+  "kind": "none",
+  "note": "Right record and right answer; an unnecessary, repeated or mistaken call, or the backup tool used at once."
+ },
+ "1:529": {
+  "false_accept": false,
+  "kind": "none",
+  "note": "Right record and right answer; an unnecessary, repeated or mistaken call, or the backup tool used at once."
+ },
+ "1:629": {
+  "false_accept": false,
+  "kind": "none",
+  "note": "Right record and right answer; an unnecessary, repeated or mistaken call, or the backup tool used at once."
+ },
+ "1:642": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "1:898": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "1:1044": {
+  "false_accept": true,
+  "kind": "(iii) elimination, empty list",
+  "note": "Listed under one candidate after another; only the candidate on the gold path has records. The selection rule was not what found the record."
+ },
+ "1:1050": {
+  "false_accept": true,
+  "kind": "(iii) elimination, empty list",
+  "note": "Listed under one candidate after another; only the candidate on the gold path has records. The selection rule was not what found the record."
+ },
+ "1:1058": {
+  "false_accept": false,
+  "kind": "none",
+  "note": "Right record and right answer; an unnecessary, repeated or mistaken call, or the backup tool used at once."
+ },
+ "1:1074": {
+  "false_accept": true,
+  "kind": "(iii) elimination, empty list",
+  "note": "Listed under one candidate after another; only the candidate on the gold path has records. The selection rule was not what found the record."
+ },
+ "1:1159": {
+  "false_accept": false,
+  "kind": "none",
+  "note": "Right record and right answer; an unnecessary, repeated or mistaken call, or the backup tool used at once."
+ },
+ "1:1179": {
+  "false_accept": true,
+  "kind": "(iii) elimination, empty list",
+  "note": "Listed under one candidate after another; only the candidate on the gold path has records. The selection rule was not what found the record."
+ },
+ "1:1251": {
+  "false_accept": false,
+  "kind": "none",
+  "note": "Right record and right answer; an unnecessary, repeated or mistaken call, or the backup tool used at once."
+ },
+ "2:1509": {
+  "false_accept": true,
+  "kind": "(iii) elimination, empty list",
+  "note": "Listed under one candidate after another; only the candidate on the gold path has records. The selection rule was not what found the record."
+ },
+ "2:1511": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "2:1571": {
+  "false_accept": false,
+  "kind": "none",
+  "note": "A driver identifier was invented and the call failed (not found); the driver was then found by name and the trip assigned correctly. The required record was not reached by the invented identifier."
+ },
+ "2:1623": {
+  "false_accept": true,
+  "kind": "(iii) elimination, empty list",
+  "note": "Listed under one candidate after another; only the candidate on the gold path has records. The selection rule was not what found the record."
+ },
+ "2:1637": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "2:1639": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "2:1658": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "2:1661": {
+  "false_accept": false,
+  "kind": "none",
+  "note": "Right record and right answer; an unnecessary, repeated or mistaken call, or the backup tool used at once."
+ },
+ "2:1692": {
+  "false_accept": true,
+  "kind": "(iii) elimination, empty list",
+  "note": "Listed under one candidate after another; only the candidate on the gold path has records. The selection rule was not what found the record."
+ },
+ "2:1698": {
+  "false_accept": true,
+  "kind": "(iii) elimination, empty list",
+  "note": "Listed under one candidate after another; only the candidate on the gold path has records. The selection rule was not what found the record."
+ },
+ "2:1713": {
+  "false_accept": true,
+  "kind": "(iii) elimination, empty list",
+  "note": "Listed under one candidate after another; only the candidate on the gold path has records. The selection rule was not what found the record."
+ },
+ "2:1716": {
+  "false_accept": false,
+  "kind": "none",
+  "note": "Right record and right answer; an unnecessary, repeated or mistaken call, or the backup tool used at once."
+ },
+ "2:1723": {
+  "false_accept": false,
+  "kind": "none",
+  "note": "Right record and right answer; an unnecessary, repeated or mistaken call, or the backup tool used at once."
+ },
+ "2:1726": {
+  "false_accept": true,
+  "kind": "(iii) elimination, empty list",
+  "note": "Listed under one candidate after another; only the candidate on the gold path has records. The selection rule was not what found the record."
+ },
+ "2:1770": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "2:1774": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "2:1776": {
+  "false_accept": true,
+  "kind": "(iii) elimination, empty list",
+  "note": "Listed under one candidate after another; only the candidate on the gold path has records. The selection rule was not what found the record."
+ },
+ "2:1782": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "2:1816": {
+  "false_accept": false,
+  "kind": "none",
+  "note": "Right record and right answer; an unnecessary, repeated or mistaken call, or the backup tool used at once."
+ },
+ "2:1817": {
+  "false_accept": true,
+  "kind": "(iii) elimination, empty list",
+  "note": "Listed under one candidate after another; only the candidate on the gold path has records. The selection rule was not what found the record."
+ },
+ "2:1825": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "2:1826": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "2:1854": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "2:1858": {
+  "false_accept": false,
+  "kind": "none",
+  "note": "Right record and right answer; an unnecessary, repeated or mistaken call, or the backup tool used at once."
+ },
+ "2:1877": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "2:1896": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "2:1916": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "2:1923": {
+  "false_accept": false,
+  "kind": "none",
+  "note": "Right record and right answer; an unnecessary, repeated or mistaken call, or the backup tool used at once."
+ },
+ "2:1925": {
+  "false_accept": false,
+  "kind": "none",
+  "note": "Right record and right answer; an unnecessary, repeated or mistaken call, or the backup tool used at once."
+ },
+ "2:1933": {
+  "false_accept": false,
+  "kind": "none",
+  "note": "Right record and right answer; an unnecessary, repeated or mistaken call, or the backup tool used at once."
+ },
+ "2:1946": {
+  "false_accept": true,
+  "kind": "(iii) elimination, empty list",
+  "note": "Listed under one candidate after another; only the candidate on the gold path has records. The selection rule was not what found the record."
+ },
+ "2:1962": {
+  "false_accept": true,
+  "kind": "(i) wrong record",
+  "note": "Two-part question whose two facts are both 'merit'. The answer gives 'merit' for the first part and 'fail' for the second, which is the grade of the other course's earliest enrollment. The validator checks that each fact string occurs."
+ },
+ "2:1976": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "2:1984": {
+  "false_accept": true,
+  "kind": "(iii) elimination, empty list",
+  "note": "Listed under one candidate after another; only the candidate on the gold path has records. The selection rule was not what found the record."
+ },
+ "2:2003": {
+  "false_accept": true,
+  "kind": "(iii) elimination, empty list",
+  "note": "Listed under one candidate after another; only the candidate on the gold path has records. The selection rule was not what found the record."
+ },
+ "2:2033": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "2:2057": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "2:2068": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "2:2077": {
+  "false_accept": true,
+  "kind": "(iii) elimination, empty list",
+  "note": "Listed under one candidate after another; only the candidate on the gold path has records. The selection rule was not what found the record."
+ },
+ "2:2097": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "2:2111": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "2:2116": {
+  "false_accept": false,
+  "kind": "none",
+  "note": "Right record and right answer; an unnecessary, repeated or mistaken call, or the backup tool used at once."
+ },
+ "2:2117": {
+  "false_accept": false,
+  "kind": "none",
+  "note": "Right record and right answer; an unnecessary, repeated or mistaken call, or the backup tool used at once."
+ },
+ "2:2122": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "2:2154": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "2:2165": {
+  "false_accept": true,
+  "kind": "(iii) elimination, empty list",
+  "note": "Listed under one candidate after another; only the candidate on the gold path has records. The selection rule was not what found the record."
+ },
+ "2:2204": {
+  "false_accept": true,
+  "kind": "(iii) elimination, empty list",
+  "note": "Listed under one candidate after another; only the candidate on the gold path has records. The selection rule was not what found the record."
+ },
+ "2:2205": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "2:2210": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "2:2271": {
+  "false_accept": false,
+  "kind": "none",
+  "note": "Right record and right answer; an unnecessary, repeated or mistaken call, or the backup tool used at once."
+ },
+ "2:2281": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "2:2285": {
+  "false_accept": false,
+  "kind": "none",
+  "note": "Right record and right answer; an unnecessary, repeated or mistaken call, or the backup tool used at once."
+ },
+ "2:2290": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "2:2331": {
+  "false_accept": false,
+  "kind": "none",
+  "note": "Right record and right answer; an unnecessary, repeated or mistaken call, or the backup tool used at once."
+ },
+ "2:2332": {
+  "false_accept": true,
+  "kind": "(iii) elimination, empty list",
+  "note": "Listed under one candidate after another; only the candidate on the gold path has records. The selection rule was not what found the record."
+ },
+ "2:2340": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "2:2387": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "2:2395": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "2:2441": {
+  "false_accept": true,
+  "kind": "(iii) elimination, not found",
+  "note": "Asked for the referenced record of one listed candidate after another until one existed; the selection rule was not what found the record."
+ },
+ "2:2464": {
+  "false_accept": false,
+  "kind": "none",
+  "note": "Right record and right answer; an unnecessary, repeated or mistaken call, or the backup tool used at once."
+ }
+}

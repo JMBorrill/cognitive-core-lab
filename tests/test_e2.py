@@ -291,6 +291,15 @@ def test_elimination_is_recognised_from_the_trace_and_a_corrected_identifier_is_
     retry = {"tool": "get_instrument", "args": {"instrument_id": "IS-3"}, "outcome": "error",
              "result": {"error": "timeout", "retryable": True}}
     assert not L.by_elimination({"calls": [listed, retry, get("IS-3", True)]})  # a retry after a transient failure
+    # the same shortcut through empty lists: only the candidate on the gold path has records listed under it
+    under = lambda i, rows: {"tool": "list_instrument_assays", "args": {"instrument_id": i}, "outcome": "ok",  # noqa: E731
+                             "result": {"assays": rows}}
+    assert L.by_empty_list({"calls": [listed, under("IS-1", []), under("IS-3", [{"assay_id": "AS-9"}])]})
+    assert not L.by_empty_list({"calls": [listed, under("IS-3", [{"assay_id": "AS-9"}])]})
+    assert not L.by_empty_list({"calls": [listed, under("IS-1", [])]})  # nothing found afterwards
+    assert not L.by_empty_list({"calls": [listed, under("ZZ-1", []), under("IS-3", [{"assay_id": "AS-9"}])]})  # not a candidate
+    assert L.shortcut({"calls": [listed, under("IS-1", []), under("IS-3", [{"assay_id": "AS-9"}])]})
+    assert not L.by_elimination({"calls": [listed, under("IS-1", []), under("IS-3", [{"assay_id": "AS-9"}])]})
 
 
 def test_audit_sample_takes_half_from_the_not_strict_and_weights_back_to_the_population(practice):
