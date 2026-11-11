@@ -401,7 +401,7 @@ def cmd_teacher(a) -> None:
     load_s = time.time() - t0
     kw = dict(token_budget=a.token_budget, max_rows=a.max_rows)
     result = {"name": name, "model": {"repo": a.repo, "revision": a.revision}, "tasks": len(tasks),
-              "load_seconds": round(load_s, 1), "thresholds": QUALIFY, "passes": {}}
+              "protocol": L.PROTOCOL, "load_seconds": round(load_s, 1), "thresholds": QUALIFY, "passes": {}}
     rows = []
     todo = tasks
     for label, attempt, temp in (("greedy", 0, 0.0), ("retry", 1, TEACHER_RETRY_T)):
